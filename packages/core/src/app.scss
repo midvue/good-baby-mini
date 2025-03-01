@@ -1,4 +1,6 @@
 @import './styles/reset.scss';
+@import 'tailwindcss/base';
+@import 'tailwindcss/utilities';
 
 .mv-ellipsis {
   white-space: nowrap;
@@ -32,6 +34,3 @@
   font-family: 'DIN Alternate';
   src: url('./assets/font/DINAlternateBold.woff2') format('truetype');
 }
-
-@import 'tailwindcss/base';
-@import 'tailwindcss/utilities';

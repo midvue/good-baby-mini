@@ -1,8 +1,7 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
-import { Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { Navbar } from '@mid-vue/taro-h5-ui'
 import { useAppStore } from '@/stores/app'
-import { themeConfig } from '@/dict'
 
 export default defineComponent({
   name: 'Home',
@@ -13,18 +12,15 @@ export default defineComponent({
       return (
         <div class='home'>
           <Navbar
+            title='首页'
             defaultConfig={{
               frontColor: '#000000',
               backgroundColor: 'transparent'
             }}
-          >
-            {{
-              left: () =>
-                appStore.isLogin && (
-                  <Image src='mine/icon-scan-btn.png' class='scan-btn' onClick={() => {}} />
-                )
-            }}
-          </Navbar>
+          ></Navbar>
+          <div class='home-header'>
+            <div class='mr-20'>111</div>
+          </div>
         </div>
       )
     }

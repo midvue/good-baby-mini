@@ -14,15 +14,11 @@ export default defineComponent({
     const [state, setState] = defineCtxState<ILoginState>({
       showLoading: false,
       showPhonePopup: false,
-      checkAgreement: false,
       loginByPhone: false,
-      showReadAgreementDialog: false,
-      ticket: '',
       form: {
         mobile: '',
         verificationCode: ''
-      },
-      activeIndex: 0
+      }
     })
 
     appStore.logout()

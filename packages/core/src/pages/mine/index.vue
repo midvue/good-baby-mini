@@ -2,7 +2,6 @@
 import { defineComponent } from 'vue'
 import { Image, Navbar } from '@mid-vue/taro-h5-ui'
 import { useAppStore } from '@/stores/app'
-import { themeConfig } from '@/dict'
 
 export default defineComponent({
   name: 'Mine',
@@ -11,20 +10,14 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class={`mine ${themeConfig.name}`}>
+        <div class='mine'>
           <Navbar
+            title='我的'
             defaultConfig={{
               frontColor: '#000000',
               backgroundColor: 'transparent'
             }}
-          >
-            {{
-              left: () =>
-                appStore.isLogin && (
-                  <Image src='mine/icon-scan-btn.png' class='scan-btn' onClick={() => {}} />
-                )
-            }}
-          </Navbar>
+          ></Navbar>
         </div>
       )
     }

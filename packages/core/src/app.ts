@@ -5,9 +5,9 @@ import { createPinia } from 'pinia'
 import Http, { defaultInterceptors, type HttpResponse } from '@mid-vue/http-client'
 import { throttle } from '@mid-vue/shared'
 import { useConfigProvider } from '@mid-vue/taro-h5-ui'
-import './app.scss'
-import { EnumChannelType, EnumEnvVersion } from './dict'
+import { EnumEnvVersion } from './dict'
 import { clearStorage, getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
+import './app.scss'
 
 if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
   const { miniProgram } = Taro.getAccountInfoSync()
@@ -85,13 +85,10 @@ const navigateToLogin = throttle(
 Http.init({
   baseURL: getMetaEnv().BASE_URL,
   token: () => getToken(),
-  headers: {
-    'X-associated-system-code': EnumChannelType.WE_CHAT
-  },
   interceptors: {
     response: [defaultInterceptors().response],
     rejectResponse: (res: HttpResponse) => {
-      if ([60010, 100201, 16113].includes(res?.data?.code)) {
+      if ([401, 403].includes(res?.data?.code)) {
         navigateToLogin(res)
       }
       return Promise.reject(res)
