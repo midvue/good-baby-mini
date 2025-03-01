@@ -1,8 +1,6 @@
-# good-baby-mini
-
 ## 介绍
 
-宝宝生辰八字,喂养指南,成长指南-小程序
+这是货主整车小程序
 
 ## 快速开始
 
@@ -21,6 +19,7 @@
 ```
 
 ```shell
+#货主端整车小程序
 > pnpm dev:weapp 启动开发
 > pnpm build:weapp 打包生产/测试
 ```
@@ -30,6 +29,11 @@
 ### 知识储备
 
 > 为了便于团队协作和提高代码可维护性，请务必熟悉团队开发规范和hook思路
+
+1. 务必了解 ECS 开发规范：[前往学习了解](http://mid-vue-doc-dev.kyslb.com/guide/rules/js-rules.html)
+2. 务必了解 hook 编程思路：[前往学习了解](http://mid-vue-doc-dev.kyslb.com/guide/hooks/hook-intro.html)
+
+![详情](https://ic-img.ky-express.com/default/20240927_18368858074_!!1727433560488_1795_913.png)
 
 ## 目录结构
 
@@ -53,4 +57,8 @@ Q1. Vue文件中提示 “Cannot find module '@/stores/app'or its corresponding 
 
 Q1: 点击预览时，提示代码包过大 “Error: 代码包大小超过限制,main package source size 2786KB exceed max limit 2MB ”
 
+![](https://ic-img.ky-express.com/default/20240927_2736885804_!!1727410829309_690_396.png)
+
 解：选中右上角 “详情”，勾选上 “预览及真机调试时主包、分包体积上限调整为4M” 即可解决
+
+![](https://ic-img.ky-express.com/default/20240927_45568858036_!!1727423865795_1375_927.png)

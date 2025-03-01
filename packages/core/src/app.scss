@@ -1,0 +1,37 @@
+@import './styles/reset.scss';
+
+.mv-ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.mv-multi-ellipsis--l2 {
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2;
+  line-break: anywhere;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden;
+}
+
+.form-item-card {
+  border-radius: 12px;
+  background-color: white;
+  margin-top: 10px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+@font-face {
+  font-family: 'Alimama ShuHeiTi';
+  src: url('./assets/font/AlimamaShuHeiTi.woff2') format('truetype');
+}
+
+@font-face {
+  font-family: 'DIN Alternate';
+  src: url('./assets/font/DINAlternateBold.woff2') format('truetype');
+}
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/utilities';

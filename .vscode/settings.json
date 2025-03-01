@@ -1,0 +1,75 @@
+{
+  "editor.formatOnSave": true,
+  // 添加 vue 支持
+  "eslint.validate": ["javascript", "javascriptreact", "vue"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "emmet.triggerExpansionOnTab": true,
+  "emmet.includeLanguages": {
+    "javascript": "html",
+    "vue-html": "html",
+    "plaintext": "jade",
+    "ejs": "html"
+  },
+  "files.exclude": {
+    // "**/node_modules": true
+  },
+
+  "cSpell.words": [
+    "Alimama",
+    "Aplus",
+    "appkey",
+    "btns",
+    "clearfix",
+    "commitlint",
+    "consola",
+    "Getphonenumber",
+    "iconfont",
+    "kuasheng",
+    "picocolors",
+    "pinia",
+    "preinstall",
+    "qrcode",
+    "Refresherrefresh",
+    "Scrolltolower",
+    "Scrolltoupper",
+    "tailwindcss",
+    "tarojs",
+    "totallength",
+    "tsdoc",
+    "umengfe",
+    "unplugin",
+    "vant",
+    "vconsole",
+    "vhooks",
+    "vite",
+    "vitepress",
+    "volar",
+    "vueuse",
+    "weapp"
+  ]
+}

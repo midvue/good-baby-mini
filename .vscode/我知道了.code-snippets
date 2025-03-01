@@ -1,0 +1,15 @@
+{
+	"我知道了弹框": {
+		"prefix": ["我知道", "wozhiddao", "iknow"],
+		"body": [
+			"Taro.showModal({",
+			"  title: '温馨提示',",
+			"  content: '$1',",
+			"  showCancel: false,",
+			"  confirmText: '我知道了',",
+			"  confirmColor: '#8365F6'",
+			"})"
+		],
+		"description": "我知道了弹框"
+	}
+}

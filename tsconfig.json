@@ -1,0 +1,15 @@
+{
+  "extends": "@mid-vue/tsconfig/tsconfig.web.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "~/*": ["src/*"]
+    },
+    "noImplicitThis": false,
+    "module": "commonjs",
+    "typeRoots": ["node_modules/@types"]
+  },
+  "include": ["./packages", "./types", "babel.config.js"]
+}

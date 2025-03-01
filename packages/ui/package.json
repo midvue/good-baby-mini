@@ -1,0 +1,17 @@
+{
+  "name": "@mid-vue/taro-h5-ui",
+  "version": "0.0.2",
+  "description": "mid-vue weapp Taro3 的组件库",
+  "main": "./src/index.ts",
+  "source": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "async-validator": "^4.2.5"
+  }
+}

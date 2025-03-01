@@ -1,0 +1,9 @@
+/node_modules
+dist/
+deploy_versions/
+.temp/
+.rn_temp/
+node_modules/
+testMock/
+.DS_Store
+project.private.config.json

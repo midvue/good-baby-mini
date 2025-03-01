@@ -1,0 +1,131 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4682392 */
+  src: url('iconfont.woff2?t=1730456935377') format('woff2'),
+       url('iconfont.woff?t=1730456935377') format('woff'),
+       url('iconfont.ttf?t=1730456935377') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mv-icon-upload:before {
+  content: "\e709";
+}
+
+.mv-icon-vip:before {
+  content: "\e708";
+}
+
+.mv-icon-licheng:before {
+  content: "\e707";
+}
+
+.mv-icon-delete-o:before {
+  content: "\e602";
+}
+
+.mv-icon-view:before {
+  content: "\e601";
+}
+
+.mv-icon-arrow-left:before {
+  content: "\e704";
+}
+
+.mv-icon-xuqiuchexing1:before {
+  content: "\e701";
+}
+
+.mv-icon-home:before {
+  content: "\e6fe";
+}
+
+.mv-icon-cross:before {
+  content: "\e6ff";
+}
+
+.mv-icon-checked:before {
+  content: "\e600";
+}
+
+.mv-icon-search:before {
+  content: "\e67f";
+}
+
+.mv-icon-edit:before {
+  content: "\e67d";
+}
+
+.mv-icon-delete:before {
+  content: "\e67e";
+}
+
+.mv-icon-picture:before {
+  content: "\e67b";
+}
+
+.mv-icon-time:before {
+  content: "\e67c";
+}
+
+.mv-icon-copy:before {
+  content: "\e679";
+}
+
+.mv-icon-question-o:before {
+  content: "\e678";
+}
+
+.mv-icon-plus-o:before {
+  content: "\e677";
+}
+
+.mv-icon-remind:before {
+  content: "\e675";
+}
+
+.mv-icon-xunjia:before {
+  content: "\e673";
+}
+
+.mv-icon-dingdan:before {
+  content: "\e674";
+}
+
+.mv-icon-close-1:before {
+  content: "\e662";
+}
+
+.mv-icon-fail-o:before {
+  content: "\e665";
+}
+
+.mv-icon-info-o:before {
+  content: "\e666";
+}
+
+.mv-icon-success-o:before {
+  content: "\e667";
+}
+
+.mv-icon-close:before {
+  content: "\e668";
+}
+
+.mv-icon-arrow:before {
+  content: "\e66b";
+}
+
+.mv-icon-mine:before {
+  content: "\e66c";
+}
+
+.mv-icon-wait:before {
+  content: "\e66d";
+}
+
