@@ -1,13 +1,32 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
 import { Navbar } from '@mid-vue/taro-h5-ui'
-import { useAppStore } from '@/stores/app'
+import { defineCtxState } from '@mid-vue/use'
+import { useRecords, useTools } from './hooks'
+import { type IHomeState } from './types'
+import { apiGetFeedRecordList } from './api'
 
 export default defineComponent({
   name: 'Home',
   setup() {
-    const appStore = useAppStore()
+    const [state, setState] = defineCtxState<IHomeState>({
+      pagination: {
+        current: 1,
+        size: 20,
+        total: 0
+      },
+      feedRecords: []
+    })
 
+    async function init() {
+      const res = await apiGetFeedRecordList(state.pagination)
+      setState((state) => {
+        state.feedRecords = res.list
+      })
+    }
+    init()
+    const { render: renderTools } = useTools()
+    const { render: renderRecords } = useRecords()
     return () => {
       return (
         <div class='home'>
@@ -18,9 +37,8 @@ export default defineComponent({
               backgroundColor: 'transparent'
             }}
           ></Navbar>
-          <div class='home-header'>
-            <div class='mr-20'>111</div>
-          </div>
+          {renderTools()}
+          {renderRecords()}
         </div>
       )
     }

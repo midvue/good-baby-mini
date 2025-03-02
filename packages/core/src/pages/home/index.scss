@@ -5,7 +5,93 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  .home-header {
-    background-color: red;
+
+  .home-tools {
+    width: 100%;
+    padding: 20px $padding-w;
+    display: flex;
+    justify-content: space-between;
+    flex: none;
+    .home-tools-card {
+      width: 95px;
+      height: 95px;
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(to bottom, #f8e1a4, #fbf5d5);
+      border-radius: 12px;
+      justify-content: center;
+      align-items: center;
+      box-shadow: $box-shadow;
+      .card-title {
+        font-size: $font-size-2;
+        color: $title-color2;
+        font-weight: bold;
+      }
+      .card-content {
+        font-size: $font-size-1;
+        color: $title-color3;
+        padding: 8px 0;
+      }
+      .card-time {
+        font-size: $font-size-1;
+        color: $text-color;
+      }
+    }
+  }
+
+  .home-records {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .home-records-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: $font-size-2;
+      height: 44px;
+      padding: 0 $padding-w;
+
+      .header-title {
+        color: $title-color;
+        font-weight: bold;
+      }
+      .header-more {
+        color: $primary-color;
+      }
+    }
+    .home-records-scroll {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      .home-records-item {
+        min-height: 86px;
+        box-shadow: $box-shadow;
+        border-radius: 8px;
+        margin: 12px $padding-w 0;
+        padding: 15px;
+
+        &:last-child {
+          margin-bottom: 12px;
+        }
+        .records-item-title {
+          font-size: $font-size-2;
+          color: $primary-color;
+          font-weight: bold;
+        }
+        .records-item-content {
+          color: $title-color3;
+          font-size: $font-size-2;
+          padding: 5px 0;
+        }
+        .records-item-time {
+          color: $text-color;
+          font-size: $font-size-1;
+        }
+      }
+    }
   }
 }

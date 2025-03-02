@@ -8,8 +8,10 @@ module.exports = {
         framework: 'vue3',
         ts: true,
         vueJsx: true,
-        compiler: 'webpack5'
+        compiler: 'webpack5',
+        plugins: ['@babel/plugin-proposal-optional-chaining']
       }
     ]
-  ]
+  ],
+  plugins: ['@babel/plugin-proposal-optional-chaining']
 }

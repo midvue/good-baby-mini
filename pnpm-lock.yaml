@@ -12,8 +12,8 @@ importers:
         specifier: ^7.7.7
         version: 7.26.9
       '@mid-vue/http-client':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: workspace:*
+        version: link:packages/http-client
       '@mid-vue/shared':
         specifier: ^0.0.1
         version: 0.0.1
@@ -75,6 +75,9 @@ importers:
       '@babel/core':
         specifier: ^7.8.0
         version: 7.26.9
+      '@babel/plugin-proposal-optional-chaining':
+        specifier: ^7.21.0
+        version: 7.21.0(@babel/core@7.26.9)
       '@babel/plugin-transform-class-properties':
         specifier: ^7.25.4
         version: 7.25.9(@babel/core@7.26.9)
@@ -161,6 +164,22 @@ importers:
         version: 5.91.0(@swc/core@1.3.96)
 
   packages/core: {}
+
+  packages/http-client:
+    dependencies:
+      axios:
+        specifier: 1.6.8
+        version: 1.6.8
+      js-md5:
+        specifier: 0.7.3
+        version: 0.7.3
+      qs:
+        specifier: 6.11.0
+        version: 6.11.0
+    devDependencies:
+      '@types/js-md5':
+        specifier: ^0.7.2
+        version: 0.7.2
 
   packages/ui:
     dependencies:
@@ -948,6 +967,21 @@ packages:
       - supports-color
     dev: true
 
+  /@babel/plugin-proposal-optional-chaining@7.21.0(@babel/core@7.26.9):
+    resolution: {integrity: sha512-p4zeefM72gpmEe2fkUr/OnOXpWEf8nAgk7ZYVqqfFiyIG7oFfVZcCrU64hWn5xp4tQ9LkV4bTIa5rD0KANpKNA==}
+    engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.26.9
+      '@babel/helper-plugin-utils': 7.26.5
+      '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
+      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.26.9)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@babel/plugin-proposal-pipeline-operator@7.18.9(@babel/core@7.21.4):
     resolution: {integrity: sha512-Pc33e6m8f4MJhRXVCUwiKZNtEm+W2CUPHIL0lyJNtkp+w6d75CLw3gsBKQ81VAMUgT9jVPIEU8gwJ5nJgmJ1Ag==}
     engines: {node: '>=6.9.0'}
@@ -1227,6 +1261,15 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.4
+      '@babel/helper-plugin-utils': 7.26.5
+    dev: true
+
+  /@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.26.9):
+    resolution: {integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.26.9
       '@babel/helper-plugin-utils': 7.26.5
     dev: true
 
@@ -4088,16 +4131,6 @@ packages:
       - typescript
     dev: true
 
-  /@mid-vue/http-client@0.0.1:
-    resolution: {integrity: sha512-H7G5wSjWWJicYsSdBNZpLlt1OUlCeA2xYEIFM0QycQiAHQp3G9QFPiY/4ghY09x15G+m13X60cp5tTa2BQUVBw==}
-    dependencies:
-      axios: 1.6.8
-      js-md5: 0.7.3
-      qs: 6.11.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
   /@mid-vue/shared@0.0.1:
     resolution: {integrity: sha512-K/hN2oGwLu0PCNqlUy8krnrR5+PcxbD+EnMGYDE3Fl5sPN1Q1VNEdnCzHENyC5uCquLTb9/MstpuieasT7iIpA==}
     dependencies:
@@ -4600,7 +4633,7 @@ packages:
       '@tarojs/service': 4.0.9
       '@tarojs/shared': 4.0.9
       adm-zip: 0.5.16
-      axios: 1.8.1
+      axios: 1.6.8
       cli-highlight: 2.1.11
       download-git-repo: 3.0.2
       envinfo: 7.14.0
@@ -5408,6 +5441,10 @@ packages:
   /@types/js-cookie@3.0.6:
     resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
     dev: false
+
+  /@types/js-md5@0.7.2:
+    resolution: {integrity: sha512-IwcFIov1JbiEToo3DgrVEwkMUR1BVlVyLjk245AzGHyyOlyddDFIeSIZO+WlhTortOa4P1PdCS8cDrTl7RW1HA==}
+    dev: true
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -6429,17 +6466,6 @@ packages:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
-    dev: false
-
-  /axios@1.8.1:
-    resolution: {integrity: sha512-NN+fvwH/kV01dYUQ3PTOZns4LWtWhOFCAhQ/pHb88WQ1hNe5V/dvFwc4VJcDL11LT9xSX0QtsR8sWUuyOuOq7g==}
-    dependencies:
-      follow-redirects: 1.15.9
-      form-data: 4.0.2
-      proxy-from-env: 1.1.0
-    transitivePeerDependencies:
-      - debug
-    dev: true
 
   /babel-code-frame@6.26.0:
     resolution: {integrity: sha512-XqYMR2dfdGMW+hd0IUZ2PwK+fGeFkOxZJ0wY+JaQAHzt1Zx8LcvpiZD2NiGkEG8qx0CfkAOr5xt76d1e8vG90g==}
