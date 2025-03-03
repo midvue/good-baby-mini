@@ -66,5 +66,5 @@ let cells = [
 //如果需要校验可以用到
 //const { validate, errMsg } = formRef.value.validate();
 
-return () => <mid-vue-form ref={formRef} cells={cells} v-model={state.form}></mid-vue-form>
+return () => <Form ref={formRef} cells={cells} v-model={state.form}></Form>
 ```

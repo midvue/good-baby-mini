@@ -1,0 +1,56 @@
+.feed-milk {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  .feed-milk-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .feed-milk-records-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: $font-size-2;
+      height: 44px;
+      padding: 0 $padding-w;
+
+      .header-title {
+        color: $title-color;
+        font-weight: bold;
+      }
+      .header-more {
+        color: $primary-color;
+      }
+    }
+    .form-item-card {
+      box-shadow: $box-shadow;
+      border-radius: 8px;
+      margin: 12px $padding-w 0;
+      padding: 15px;
+
+      &:last-child {
+        margin-bottom: 12px;
+      }
+      .records-item-title {
+        font-size: $font-size-2;
+        color: $primary-color;
+        font-weight: bold;
+      }
+      .records-item-content {
+        color: $title-color3;
+        font-size: $font-size-2;
+        padding: 5px 0;
+      }
+      .records-item-time {
+        color: $text-color;
+        font-size: $font-size-1;
+      }
+    }
+  }
+}

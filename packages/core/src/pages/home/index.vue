@@ -1,5 +1,6 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
+import { useDidShow } from '@tarojs/taro'
 import { Navbar } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { useRecords, useTools } from './hooks'
@@ -25,6 +26,9 @@ export default defineComponent({
       })
     }
     init()
+    useDidShow(() => {
+      init()
+    })
     const { render: renderTools } = useTools()
     const { render: renderRecords } = useRecords()
     return () => {

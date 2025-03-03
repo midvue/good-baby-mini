@@ -2,7 +2,8 @@ export default {
   pages: [
     'pages/home/index',
     'pages/mine/index', // 我的
-    'pages/login/index'
+    'pages/login/index',
+    'pages/feed-milk/index'
   ],
   subpackages: [
     {
