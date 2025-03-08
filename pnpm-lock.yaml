@@ -12,8 +12,8 @@ importers:
         specifier: ^7.7.7
         version: 7.26.9
       '@mid-vue/http-client':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.2
+        version: 0.0.2
       '@mid-vue/shared':
         specifier: ^0.0.1
         version: 0.0.1
@@ -75,11 +75,11 @@ importers:
       '@babel/core':
         specifier: ^7.8.0
         version: 7.26.9
-      '@babel/plugin-proposal-optional-chaining':
-        specifier: ^7.21.0
-        version: 7.21.0(@babel/core@7.26.9)
       '@babel/plugin-transform-class-properties':
         specifier: ^7.25.4
+        version: 7.25.9(@babel/core@7.26.9)
+      '@babel/plugin-transform-optional-chaining':
+        specifier: ^7.25.9
         version: 7.25.9(@babel/core@7.26.9)
       '@mid-vue/eslint-config':
         specifier: ^0.0.1
@@ -1852,8 +1852,8 @@ packages:
   '@mid-vue/eslint-config@0.0.1':
     resolution: {integrity: sha512-v3VuxrjoIFK9/JNnl//ah+Ex6QpXcu6F0ll6qeWeO05/Uy+EUadolqI8EwD9ER6Yr1TxhpATyxuSfzxT4bhACw==}
 
-  '@mid-vue/http-client@0.0.1':
-    resolution: {integrity: sha512-H7G5wSjWWJicYsSdBNZpLlt1OUlCeA2xYEIFM0QycQiAHQp3G9QFPiY/4ghY09x15G+m13X60cp5tTa2BQUVBw==}
+  '@mid-vue/http-client@0.0.2':
+    resolution: {integrity: sha512-uoJ8K51LeIp85zKw5x0MtFoNJkmU9RzNqtw0tyrNlupmgiwarFHo9zd7B7jJG65Qn+h17JKg4hs6v0DZ2n0BmA==}
 
   '@mid-vue/shared@0.0.1':
     resolution: {integrity: sha512-K/hN2oGwLu0PCNqlUy8krnrR5+PcxbD+EnMGYDE3Fl5sPN1Q1VNEdnCzHENyC5uCquLTb9/MstpuieasT7iIpA==}
@@ -2150,7 +2150,6 @@ packages:
   '@tarojs/binding-linux-x64-gnu@4.0.9':
     resolution: {integrity: sha512-e17nAi34hAKRbsbf+S1Str35NTZly5aFv8kgXwquP+S6y2I29/F16Hr5jX0u1zZvr+D6nHTk3jAWPOuf7MN4Ew==}
     engines: {node: '>= 18'}
-    cpu: [x64]
     os: [linux]
 
   '@tarojs/binding-win32-x64-msvc@4.0.9':
@@ -8962,15 +8961,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/plugin-proposal-optional-chaining@7.21.0(@babel/core@7.26.9)':
-    dependencies:
-      '@babel/core': 7.26.9
-      '@babel/helper-plugin-utils': 7.26.5
-      '@babel/helper-skip-transparent-expression-wrappers': 7.25.9
-      '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.26.9)
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/plugin-proposal-pipeline-operator@7.18.9(@babel/core@7.21.4)':
     dependencies:
       '@babel/core': 7.21.4
@@ -9119,11 +9109,6 @@ snapshots:
   '@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.21.4)':
     dependencies:
       '@babel/core': 7.21.4
-      '@babel/helper-plugin-utils': 7.26.5
-
-  '@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.26.9)':
-    dependencies:
-      '@babel/core': 7.26.9
       '@babel/helper-plugin-utils': 7.26.5
 
   '@babel/plugin-syntax-pipeline-operator@7.26.7(@babel/core@7.21.4)':
@@ -10815,7 +10800,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mid-vue/http-client@0.0.1':
+  '@mid-vue/http-client@0.0.2':
     dependencies:
       axios: 1.6.8
       js-md5: 0.7.3

@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.7.7",
-    "@mid-vue/http-client": "^0.0.1",
+    "@mid-vue/http-client": "^0.0.2",
     "@mid-vue/shared": "^0.0.1",
     "@mid-vue/taro-h5-ui": "workspace:*",
     "@mid-vue/use": "^0.0.1",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
+    "@babel/plugin-transform-optional-chaining": "^7.25.9",
     "@babel/plugin-transform-class-properties": "^7.25.4",
     "@mid-vue/eslint-config": "^0.0.1",
     "@mid-vue/tsconfig": "^0.0.1",
