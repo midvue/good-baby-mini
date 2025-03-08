@@ -56,7 +56,7 @@ export const useAppStore = defineStore('app-store', {
         data: { code }
       }
       let res = await Http.post<IUserInfo>(option)
-      setToken(res.token)
+      this.setToken(res.token)
     },
 
     setToken(this: IAppStore, token: string) {

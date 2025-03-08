@@ -14,7 +14,7 @@ export const useRecords = () => {
           <div class='header-title'>喂养记录</div>
           <div class='header-more'>更多</div>
         </div>
-        <ScrollView scrollY class='home-records-scroll' enable-flex>
+        <ScrollView class='home-records-scroll' enable-flex scroll-y>
           {state.feedRecords.map((record, index) => {
             return (
               <div class='home-records-item' key={index}>

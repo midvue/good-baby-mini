@@ -1,16 +1,18 @@
 <script lang="tsx">
-import { defineComponent } from 'vue'
+import { defineComponent, watch } from 'vue'
 import { useDidShow } from '@tarojs/taro'
-import { Navbar } from '@mid-vue/taro-h5-ui'
+import { hideLoading, Navbar, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
 import { apiGetFeedRecordList } from './api'
+import { useAppStore } from '@/stores'
 
 export default defineComponent({
   name: 'Home',
   setup() {
     const [state, setState] = defineCtxState<IHomeState>({
+      loading: false,
       pagination: {
         current: 1,
         size: 20,
@@ -19,12 +21,36 @@ export default defineComponent({
       feedRecords: []
     })
 
+    let appStore = useAppStore()
+    watch(
+      () => appStore.isLogin,
+      (isLogin) => {
+        isLogin && init()
+      }
+    )
+
+    watch(
+      () => state.loading,
+      (loading) => {
+        loading
+          ? showLoading({
+              title: '加载中'
+            })
+          : hideLoading()
+      }
+    )
+
     async function init() {
-      const res = await apiGetFeedRecordList(state.pagination)
+      if (!appStore.isLogin) return
+      state.loading = true
+      const res = await apiGetFeedRecordList(state.pagination).finally(() => {
+        state.loading = false
+      })
       setState((state) => {
         state.feedRecords = res.list
       })
     }
+
     useDidShow(() => {
       init()
     })

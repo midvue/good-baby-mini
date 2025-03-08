@@ -84,7 +84,8 @@ export default defineConfig<'webpack5'>(async (merge) => {
         include: [
           (modulePath: string) => modulePath.indexOf(`${path.sep}packages${path.sep}ui`) >= 0,
           (modulePath: string) => modulePath.indexOf(`${path.sep}http-client`) >= 0,
-          (modulePath: string) => modulePath.indexOf(`@mid-vue${path.sep}use`) >= 0
+          (modulePath: string) => modulePath.indexOf(`@mid-vue${path.sep}use`) >= 0,
+          (modulePath: string) => modulePath.indexOf(`${path.sep}birpc`) >= 0
         ]
       },
 
@@ -137,7 +138,9 @@ export default defineConfig<'webpack5'>(async (merge) => {
       compile: {
         include: [
           (modulePath: string) => modulePath.indexOf(`${path.sep}packages${path.sep}ui`) >= 0,
-          (modulePath: string) => modulePath.indexOf(`${path.sep}http-client`) >= 0
+          (modulePath: string) => modulePath.indexOf(`${path.sep}http-client`) >= 0,
+          (modulePath: string) => modulePath.indexOf(`@mid-vue${path.sep}use`) >= 0,
+          (modulePath: string) => modulePath.indexOf(`${path.sep}birpc`) >= 0
         ]
       },
       webpackChain(chain: any) {
