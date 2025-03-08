@@ -28,7 +28,7 @@ export const useTools = () => {
   function onItemClick(index: number) {
     const tool = toolsConfList[index]
     navigateTo({
-      path: '/pages/feed-milk/index',
+      path: '/pages/sub-home/feed-milk/index',
       query: {
         feedType: tool.feedType
       }

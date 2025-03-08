@@ -1,4 +1,3 @@
-import Taro from '@tarojs/taro'
 import { ScrollView } from '@tarojs/components'
 import { useCtxState } from '@mid-vue/use'
 import { dateFromNow } from '@mid-vue/shared'

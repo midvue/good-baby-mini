@@ -2,14 +2,18 @@ export default {
   pages: [
     'pages/home/index',
     'pages/mine/index', // 我的
-    'pages/login/index',
-    'pages/feed-milk/index'
+    'pages/login/index'
   ],
   subpackages: [
     {
       //sub 用户中心子包
       root: 'pages/sub-mine',
-      pages: ['web-page/index']
+      pages: ['web-page/index', 'setting']
+    },
+    {
+      //sub 用户中心子包
+      root: 'pages/sub-home',
+      pages: ['feed-milk/index']
     }
   ],
   preloadRule: {
