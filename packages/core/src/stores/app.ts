@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useHttp } from '@mid-vue/http-client'
+import Http, { useHttp } from '@mid-vue/http-client'
 import {
   clearStorage,
   getEnvVersion,
@@ -10,6 +10,7 @@ import {
   setToken,
   setUserInfo
 } from '@/utils'
+import Taro from '@tarojs/taro'
 
 interface IAppStore {
   userInfo: IUserInfo
@@ -46,7 +47,17 @@ export const useAppStore = defineStore('app-store', {
     }
   },
   actions: {
-    wxLogin() {},
+    /** 微信授权登录 */
+    async wxLogin() {
+      if (this.token) return
+      let { code } = await Taro.login()
+      const option = {
+        url: '/app/account/wxLogin',
+        data: { code }
+      }
+      let res = await Http.post<IUserInfo>(option)
+      setToken(res.token)
+    },
 
     setToken(this: IAppStore, token: string) {
       this.token = token
@@ -57,10 +68,8 @@ export const useAppStore = defineStore('app-store', {
     setUseInfo(this: IAppStore, userInfo: IUserInfo) {
       const token = userInfo.token
       this.userInfo = userInfo
-      this.mobile = userInfo.mobile
       this.token = token
       this.isLogin = !!token
-      this.isBindCode = !!userInfo.customerCode
       setToken(userInfo.token)
       return setUserInfo(userInfo)
     },

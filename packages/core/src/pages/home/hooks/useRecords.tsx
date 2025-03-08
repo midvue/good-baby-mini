@@ -14,10 +14,10 @@ export const useRecords = () => {
           <div class='header-title'>喂养记录</div>
           <div class='header-more'>更多</div>
         </div>
-        <ScrollView scrollY class='home-records-scroll'>
-          {state.feedRecords.map((record) => {
+        <ScrollView scrollY class='home-records-scroll' enable-flex>
+          {state.feedRecords.map((record, index) => {
             return (
-              <div class='home-records-item'>
+              <div class='home-records-item' key={index}>
                 <div class='records-item-title'>{+record.type === 10 ? '奶粉' : '其他'}</div>
                 <div class='records-item-content'>{record.content}</div>
                 <div class='records-item-time'>

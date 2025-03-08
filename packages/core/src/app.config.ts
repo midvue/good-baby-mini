@@ -8,7 +8,7 @@ export default {
     {
       //sub 用户中心子包
       root: 'pages/sub-mine',
-      pages: ['web-page/index', 'setting']
+      pages: ['web-page/index']
     },
     {
       //sub 用户中心子包

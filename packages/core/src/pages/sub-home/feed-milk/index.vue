@@ -1,20 +1,11 @@
 <script lang="tsx">
-import { defineComponent, ref } from 'vue'
-import Taro from '@tarojs/taro'
-import {
-  Button,
-  FooterBar,
-  Form,
-  type FormInstance,
-  Input,
-  Navbar,
-  showLoading
-} from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
 import { navigateBack, useRoute } from '@/use'
-import { useRecords, useTools } from './hooks'
+import { Button, FooterBar, Form, type FormInstance, Input, Navbar } from '@mid-vue/taro-h5-ui'
+import { defineCtxState } from '@mid-vue/use'
+import Taro from '@tarojs/taro'
+import { defineComponent, ref } from 'vue'
+import { apiAddFeedRecord } from './api'
 import { type IFeedMilkState } from './types'
-import { apiAddFeedRecord, apiGetFeedRecordList } from './api'
 
 export default defineComponent({
   name: 'FeedMilk',

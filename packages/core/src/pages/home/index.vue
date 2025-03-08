@@ -6,7 +6,6 @@ import { defineCtxState } from '@mid-vue/use'
 import { useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
 import { apiGetFeedRecordList } from './api'
-import Popup from '@mid-vue/taro-h5-ui/src/components/popup/Popup.vue'
 
 export default defineComponent({
   name: 'Home',
@@ -26,7 +25,6 @@ export default defineComponent({
         state.feedRecords = res.list
       })
     }
-    init()
     useDidShow(() => {
       init()
     })
