@@ -8,6 +8,7 @@ import { useConfigProvider } from '@mid-vue/taro-h5-ui'
 import { EnumEnvVersion } from './dict'
 import { clearStorage, getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
 import './app.scss'
+import { useLogin } from './use/useLogin'
 
 if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
   const { miniProgram } = Taro.getAccountInfoSync()
@@ -100,5 +101,7 @@ Http.init({
       icon: 'none'
     })
 })
+
+useLogin().wxLogin()
 
 export default App
