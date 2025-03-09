@@ -9,7 +9,7 @@ import { EnumEnvVersion } from './dict'
 import { clearStorage, getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
 import './app.scss'
 import { useAppStore } from './stores'
-import { useUpdateManager } from './use'
+import { initDict, useUpdateManager } from './use'
 
 if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
   const { miniProgram } = Taro.getAccountInfoSync()
@@ -77,5 +77,6 @@ Http.init({
     })
 })
 useAppStore().wxLogin()
+initDict()
 
 export default App

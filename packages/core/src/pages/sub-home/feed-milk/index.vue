@@ -1,6 +1,16 @@
 <script lang="tsx">
 import { navigateBack, useRoute } from '@/use'
-import { Button, FooterBar, Form, type FormInstance, Input, Navbar } from '@mid-vue/taro-h5-ui'
+import {
+  Button,
+  FooterBar,
+  Form,
+  type FormInstance,
+  IFormItem,
+  Input,
+  Navbar,
+  Picker,
+  Textarea
+} from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import Taro from '@tarojs/taro'
 import { defineComponent, ref } from 'vue'
@@ -20,7 +30,7 @@ export default defineComponent({
 
     const formRef = ref<FormInstance>()
 
-    const cells = [
+    const cells: IFormItem<IFeedMilkState['form']>[] = [
       {
         attrs: {
           class: 'form-item-card'
@@ -31,17 +41,19 @@ export default defineComponent({
             label: '喂养时间',
             field: 'feedTime',
             attrs: { required: true, border: true },
-            component: () => <Input v-model={state.form.feedTime} placeholder='请输入'></Input>
+            component: () => <Picker v-model={state.form.feedTime} mode='time'></Picker>
           },
           {
             label: '喂养类型',
-            field: 'feedType',
+            field: 'type',
+            attrs: { required: true, border: true },
             component: () => <Input v-model={state.form.milk.type} placeholder='请输入'></Input>
           },
           {
             label: '喂养容量',
-            field: 'amount',
-            component: () => <Input v-model={state.form.milk.amount} placeholder='请输入'></Input>
+            field: 'milk.amount',
+            attrs: { required: true },
+            component: () => <Picker v-model={state.form.milk.type} mode='time'></Picker>
           }
         ]
       },
@@ -54,8 +66,10 @@ export default defineComponent({
           {
             label: '备注',
             field: 'remark',
-            attrs: { required: true, border: true },
-            component: () => <Input v-model={state.form.remark} placeholder='请输入'></Input>
+            attrs: {
+              labelAlign: 'top'
+            },
+            component: () => <Textarea v-model={state.form.remark} placeholder='请输入'></Textarea>
           }
         ]
       }

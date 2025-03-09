@@ -1,40 +1,68 @@
 <template>
-  <picker class="mv-picker" :value="pickerIndex" v-bind="$attrs" @change="handleChange">
+  <picker
+    class="mv-picker"
+    :mode="mode"
+    :range="range"
+    :rangeKey="rangeKey"
+    :value="pickerIndex"
+    :disabled="disabled"
+    :start="start"
+    :end="end"
+    v-bind="$attrs"
+    @change="handleChange"
+  >
     <slot></slot>
     <template v-if="!$slots.default">
-      <text>{{ pickerLabel }}</text>
+      <text>{{ pickerLabel || '请选择' }}</text>
     </template>
   </picker>
 </template>
-<script>
-import { ref, onMounted, watch, defineComponent } from 'vue'
+<script lang="ts">
+import { CommonEvent, Picker } from '@tarojs/components'
+import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
 export default defineComponent({
   name: 'MvPicker',
   inheritAttrs: false,
+  components: { Picker },
   props: {
+    mode: {
+      type: String as PropType<'selector' | 'multiSelector' | 'time' | 'date' | 'region'>,
+      default: 'selector'
+    },
     modelValue: {
       type: [String, Number],
+      default: ''
+    },
+    range: {
+      type: Array as PropType<(any | Record<string, any>)[]>,
+      default: () => []
+    },
+    rangeKey: {
+      type: String,
       default: ''
     },
     valueKey: {
       type: String,
       default: ''
+    },
+    start: [String],
+    end: [String],
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { attrs, emit }) {
     const pickerIndex = ref(0)
-    const pickerLabel = ref(null)
+    const pickerLabel = ref()
 
     watch(
       () => props.modelValue,
       () => {
         if (attrs.mode === 'selector') {
-          // REVIEW: 这里暂时注释掉 - Tim
-          // if (props.modelValue) {
           setPickerIndex()
           setPickerLabel()
-          // }
         } else {
           if (props.modelValue) {
             pickerLabel.value = props.modelValue
@@ -43,31 +71,23 @@ export default defineComponent({
       }
     )
     const setPickerIndex = () => {
-      const key = props.valueKey || attrs.rangeKey
-      const index = attrs.range.findIndex((item) => {
+      const key = props.valueKey || props.rangeKey
+      const index = props.range.findIndex((item) => {
         const i = key ? item[key] : item
         return i === props.modelValue
       })
       pickerIndex.value = index < 0 ? 0 : index
     }
     const setPickerLabel = () => {
-      pickerLabel.value = attrs.rangeKey
-        ? attrs.range[pickerIndex.value][attrs.rangeKey]
-        : attrs.range[pickerIndex.value]
+      pickerLabel.value = props.rangeKey
+        ? props.range[pickerIndex.value][props.rangeKey]
+        : props.range[pickerIndex.value]
     }
     onMounted(() => {
-      if (attrs.mode === 'selector') {
+      if (props.mode === 'selector') {
         if (props.modelValue) {
           setPickerIndex()
           setPickerLabel()
-        } else if (!attrs.hasOwnProperty('value') && attrs?.range?.[pickerIndex.value]) {
-          setPickerLabel()
-          const key = props.valueKey || attrs.rangeKey
-
-          emit(
-            'update:modelValue',
-            key ? attrs.range[pickerIndex.value][key] : attrs.range[pickerIndex.value]
-          )
         }
       } else {
         if (props.modelValue) {
@@ -76,18 +96,17 @@ export default defineComponent({
       }
     })
 
-    const handleChange = (e) => {
+    const handleChange = (e: CommonEvent) => {
       const index = e.detail.value
       if (attrs.mode === 'selector') {
         pickerIndex.value = index
         setPickerLabel()
-        const key = props.valueKey || attrs.rangeKey
-
+        const key = props.valueKey || props.rangeKey
         emit(
           'update:modelValue',
-          key ? attrs.range[pickerIndex.value][key] : attrs.range[pickerIndex.value]
+          key ? props.range[pickerIndex.value][key] : props.range[pickerIndex.value]
         )
-        emit('change', e, attrs.range[index])
+        emit('change', e, props.range[index])
       } else {
         pickerLabel.value = index
         emit('update:modelValue', pickerLabel.value)

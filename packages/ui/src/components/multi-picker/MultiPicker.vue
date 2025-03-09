@@ -6,8 +6,8 @@
     :range-key="conf.label"
     :value="multiIndex"
     :range="range"
-    @change="hanldeMultiChange"
-    @columnchange="hanldeMultiColChange"
+    @change="handleMultiChange"
+    @columnchange="handleMultiColChange"
   >
     <view class="mv-multi-picker__label">
       <slot name="label" v-if="$slots.label"></slot>
@@ -86,7 +86,7 @@ export default defineComponent({
       }
     )
 
-    const hanldeMultiChange = (e) => {
+    const handleMultiChange = (e) => {
       const indexs = e.detail.value
       const lastIndex = indexs.length - 1
       //特殊处理 ,级别少的地方,eg:东莞
@@ -112,7 +112,7 @@ export default defineComponent({
     }
 
     //列改变时触发
-    const hanldeMultiColChange = (e) => {
+    const handleMultiColChange = (e) => {
       const col = e.detail.column
       const row = e.detail.value
       state.multiIndex[col] = row
@@ -123,8 +123,8 @@ export default defineComponent({
 
     return {
       ...toRefs(state),
-      hanldeMultiChange,
-      hanldeMultiColChange,
+      handleMultiChange,
+      handleMultiColChange,
       setRange
     }
   }
