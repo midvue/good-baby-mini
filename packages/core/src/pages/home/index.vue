@@ -34,13 +34,7 @@ export default defineComponent({
     return () => {
       return (
         <div class='home'>
-          <Navbar
-            title='首页'
-            defaultConfig={{
-              frontColor: '#000000',
-              backgroundColor: 'transparent'
-            }}
-          ></Navbar>
+          <Navbar leftArrow={false} showHome={false}></Navbar>
           {renderTools()}
           {renderRecords()}
         </div>

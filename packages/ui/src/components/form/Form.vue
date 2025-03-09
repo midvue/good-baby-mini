@@ -125,6 +125,7 @@ export default defineComponent({
       }
       const requiredType = props.requiredType || cell.attrs?.requiredType
       const labelAlign = props.labelAlign || cell.attrs?.labelAlign
+      const labelWidth = cell.attrs?.labelWidth || props.labelWidth
 
       const onClick = (event: ItemClickEvent) => {
         const click = cell.attrs?.onClick || props.onItemClick
@@ -150,6 +151,7 @@ export default defineComponent({
         <FormItem
           requiredType={requiredType}
           labelAlign={labelAlign}
+          labelWidth={labelWidth}
           field={cell.field}
           key={index + '' + cell.field!}
           rules={cell.rules}

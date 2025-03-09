@@ -15,7 +15,7 @@
     @tap="onClick"
   >
     <view
-      v-if="label || $slots.label"
+      v-if="(label || $slots.label) && '0px' != labelWidth"
       :class="['mv-form-item-label', labelClass]"
       :style="{ width: labelWidth }"
     >
@@ -39,7 +39,6 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, computed } from 'vue'
 import { type CommonEvent } from '@tarojs/components'
-import { type MpEvent } from '@tarojs/runtime'
 import { isFunction, isPromise } from '@mid-vue/shared'
 import { FORM_KEY } from '../../constants'
 import { useParent } from '../../use/useRelation'
@@ -194,7 +193,7 @@ export default defineComponent({
       setValidateValue
     })
 
-    const onClick = (e: CommonEvent<MpEvent>) => {
+    const onClick = (e: CommonEvent) => {
       emit('click', e)
     }
     return { state, isFunction, onClick, requiredRef }

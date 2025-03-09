@@ -27,6 +27,9 @@ export const formProps = {
     type: String as PropType<EnumLabelAlignType>,
     default: EnumLabelAlign.LEFT
   },
+  labelWidth: {
+    type: String
+  },
   onItemClick: {
     type: Function as PropType<(event: ItemClickEvent) => void>
   }

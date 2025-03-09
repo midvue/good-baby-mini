@@ -1,23 +1,22 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
-import { Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { Navbar } from '@mid-vue/taro-h5-ui'
 import { useAppStore } from '@/stores/app'
+import { useList, useProfile } from './hooks'
 
 export default defineComponent({
   name: 'Mine',
   setup() {
     const appStore = useAppStore()
 
+    let { render: renderProfile } = useProfile()
+    let { render: renderList } = useList()
+
     return () => {
       return (
         <div class='mine'>
-          <Navbar
-            title='我的'
-            defaultConfig={{
-              frontColor: '#000000',
-              backgroundColor: 'transparent'
-            }}
-          ></Navbar>
+          {renderProfile()}
+          {renderList()}
         </div>
       )
     }
