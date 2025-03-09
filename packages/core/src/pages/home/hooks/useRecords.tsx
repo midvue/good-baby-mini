@@ -21,11 +21,8 @@ export const useRecords = () => {
 
   async function init() {
     if (!appStore.isLogin) return
-    setState((state) => (state.loading = true))
 
-    const res = await apiGetFeedRecordList(state.pagination).finally(() => {
-      setState((state) => (state.loading = false))
-    })
+    const res = await apiGetFeedRecordList(state.pagination)
     setState((state) => {
       state.feedRecords = res.list
     })

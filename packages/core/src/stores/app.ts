@@ -22,16 +22,6 @@ interface IAppStore {
   appId: string
   version: string
 }
-interface ICustomerResp {
-  customerId: string
-  /** 客户编码 */
-  customerCode: string
-  customerShortName: string
-  /** 销售名字 */
-  marketName: string
-  /**销售电话 */
-  marketPhone: string
-}
 
 export const useAppStore = defineStore('app-store', {
   state: (): IAppStore => {

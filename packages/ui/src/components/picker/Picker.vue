@@ -39,11 +39,11 @@ export default defineComponent({
     },
     rangeKey: {
       type: String,
-      default: ''
+      default: 'name'
     },
     valueKey: {
       type: String,
-      default: ''
+      default: 'code'
     },
     start: [String],
     end: [String],

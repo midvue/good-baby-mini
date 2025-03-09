@@ -1,7 +1,7 @@
-import { Form, FormInstance, Icon, IFormItem, Input, showPopup } from '@mid-vue/taro-h5-ui'
+import { Form, FormInstance, Icon, IFormItem, showPopup } from '@mid-vue/taro-h5-ui'
 import { ref } from 'vue'
-import { IMineState } from '../types'
-import { navigateTo } from '@/use'
+
+import { BabyInfo } from '@/components/baby-info'
 
 /** 菜单列表 */
 export let useList = () => {
@@ -29,11 +29,12 @@ export let useList = () => {
           label: () => renderItem('宝宝管理'),
           attrs: {
             border: true,
-            onClick(event) {
+            onClick() {
               showPopup({
                 round: true,
+                height: '50%',
                 render(scoped) {
-                  return <div>111</div>
+                  return <BabyInfo onClose={scoped.close}></BabyInfo>
                 }
               })
             }
