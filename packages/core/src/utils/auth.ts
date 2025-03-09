@@ -14,7 +14,6 @@ export function isLogin() {
 
 export function setUserInfo(user: IUserInfo) {
   setUserId(user.userId)
-  setToken(user.token)
   return setStorage(USER_INFO_KEY, user)
 }
 /**

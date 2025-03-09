@@ -1,5 +1,3 @@
-import { defineStore } from 'pinia'
-import Http, { useHttp } from '@mid-vue/http-client'
 import {
   clearStorage,
   getEnvVersion,
@@ -10,7 +8,9 @@ import {
   setToken,
   setUserInfo
 } from '@/utils'
+import Http from '@mid-vue/http-client'
 import Taro from '@tarojs/taro'
+import { defineStore } from 'pinia'
 
 interface IAppStore {
   userInfo: IUserInfo
@@ -55,8 +55,9 @@ export const useAppStore = defineStore('app-store', {
         url: '/app/account/wxLogin',
         data: { code }
       }
-      let res = await Http.post<IUserInfo>(option)
+      let res = await Http.post<{ token: string }>(option)
       this.setToken(res.token)
+      this.getUseInfo()
     },
 
     setToken(this: IAppStore, token: string) {
@@ -65,12 +66,11 @@ export const useAppStore = defineStore('app-store', {
       return setToken(token)
     },
 
-    setUseInfo(this: IAppStore, userInfo: IUserInfo) {
-      const token = userInfo.token
+    async getUseInfo() {
+      let userInfo = await Http.get<IUserInfo>({
+        url: '/app/account/info'
+      })
       this.userInfo = userInfo
-      this.token = token
-      this.isLogin = !!token
-      setToken(userInfo.token)
       return setUserInfo(userInfo)
     },
 
@@ -100,20 +100,13 @@ export const useAppStore = defineStore('app-store', {
       if (!getToken()) {
         return
       }
-      try {
-        await useHttp<ICustomerResp>({
-          url: 'mid-vue.cargo.wet.logout',
-          data: { token: this.token }
-        })
-      } finally {
-        this.isLogin = false
-        this.token = ''
-        this.userInfo = {} as IUserInfo
-        const envVersion = getEnvVersion()
-        clearStorage()
-        //环境不清除，否则会导致切换环境时，无法获取到环境变量
-        setEnvVersion(envVersion)
-      }
+      this.isLogin = false
+      this.token = ''
+      this.userInfo = {} as IUserInfo
+      const envVersion = getEnvVersion()
+      clearStorage()
+      //环境不清除，否则会导致切换环境时，无法获取到环境变量
+      setEnvVersion(envVersion)
     }
   }
 })
