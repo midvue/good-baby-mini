@@ -1,23 +1,13 @@
-export interface IFeedRecord {
-  id: number
+export interface IMilk {
   type: string | number
   feedTime: string
-  content: string
-  remark: string
+  volume: number
   createTime: number
   updateTime: number
 }
 
-export interface FeedRecordResp {
-  count: number
-  list: IFeedRecord[]
-}
-
 export interface IFeedMilkState {
-  form: IFeedRecord & {
-    milk: {
-      amount: number
-      type: number
-    }
-  }
+  feedType: number
+  remark: string
+  form: IMilk
 }

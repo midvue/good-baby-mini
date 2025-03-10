@@ -60,7 +60,7 @@ export default defineComponent({
     watch(
       () => props.modelValue,
       () => {
-        if (attrs.mode === 'selector') {
+        if (props.mode === 'selector') {
           setPickerIndex()
           setPickerLabel()
         } else {
@@ -98,7 +98,8 @@ export default defineComponent({
 
     const handleChange = (e: CommonEvent) => {
       const index = e.detail.value
-      if (attrs.mode === 'selector') {
+
+      if (props.mode === 'selector') {
         pickerIndex.value = index
         setPickerLabel()
         const key = props.valueKey || props.rangeKey

@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { navigateBack, useRoute } from '@/use'
+import { navigateBack, useDictList, useRoute } from '@/use'
 import {
   Button,
   FooterBar,
@@ -15,20 +15,34 @@ import { defineCtxState } from '@mid-vue/use'
 import Taro from '@tarojs/taro'
 import { defineComponent, ref } from 'vue'
 import { apiAddFeedRecord } from './api'
-import { type IFeedMilkState } from './types'
+import { IMilk, type IFeedMilkState } from './types'
 
 export default defineComponent({
   name: 'baby-manage',
   setup() {
     const { query } = useRoute<{ feedType: number }>()
     const [state, setState] = defineCtxState<IFeedMilkState>({
-      form: {
-        type: query.feedType || 10,
-        milk: {}
-      } as IFeedMilkState['form']
+      feedType: query.feedType,
+      remark: '',
+      form: {} as IMilk
     })
 
     const formRef = ref<FormInstance>()
+
+    let milkList = useDictList('MILK_TYPE')
+
+    function initVolumeList() {
+      let min = 30
+      let max = 400
+      let curr = min
+      let volumeList = []
+      while (curr < max) {
+        volumeList.push({ code: curr, name: curr + 'ml' })
+        curr += 5
+      }
+      return volumeList
+    }
+    let volumeList = initVolumeList()
 
     const cells: IFormItem<IFeedMilkState['form']>[] = [
       {
@@ -47,13 +61,13 @@ export default defineComponent({
             label: '喂养类型',
             field: 'type',
             attrs: { required: true, border: true },
-            component: () => <Input v-model={state.form.milk.type} placeholder='请输入'></Input>
+            component: () => <Picker v-model={state.form.type} range={milkList}></Picker>
           },
           {
             label: '喂养容量',
-            field: 'milk.amount',
+            field: 'volume',
             attrs: { required: true },
-            component: () => <Picker v-model={state.form.milk.type} mode='time'></Picker>
+            component: () => <Picker v-model={state.form.volume} range={volumeList}></Picker>
           }
         ]
       },
@@ -65,19 +79,21 @@ export default defineComponent({
           //多层级嵌套
           {
             label: '备注',
-            field: 'remark',
             attrs: {
               labelAlign: 'top'
             },
-            component: () => <Textarea v-model={state.form.remark} placeholder='请输入'></Textarea>
+            component: () => <Textarea v-model={state.remark} placeholder='请输入'></Textarea>
           }
         ]
       }
     ]
     const onSubmit = async () => {
-      const { milk, ...rest } = state.form
-      rest.content = '' + milk.type + milk.amount
-      const res = await apiAddFeedRecord(rest).catch(() => false)
+      const res = await apiAddFeedRecord({
+        feedType: state.feedType,
+        remark: state.remark,
+        feedTime: state.form.feedTime,
+        content: state.form
+      }).catch(() => false)
       if (!res) return
       Taro.showToast({ title: '添加成功' })
       navigateBack()

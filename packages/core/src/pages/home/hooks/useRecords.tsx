@@ -6,6 +6,7 @@ import { useDidShow } from '@tarojs/taro'
 import { watch } from 'vue'
 import { apiGetFeedRecordList } from '../api'
 import { type IHomeState } from '../types'
+import { useDictMap } from '@/use'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -32,6 +33,9 @@ export const useRecords = () => {
     init()
   })
 
+  let feedTypeMap = useDictMap('FEED_TYPE')
+  let milkTypeMap = useDictMap('MILK_TYPE')
+
   return {
     render: () => (
       <div class='home-records'>
@@ -43,10 +47,14 @@ export const useRecords = () => {
         <ScrollView class='home-records-wrapper' scroll-y>
           <div class='home-records-scroll'>
             {state.feedRecords.map((record, index) => {
+              let { volume, type } = record.content
               return (
                 <div class='home-records-item' key={index}>
-                  <div class='records-item-title'>{+record.type === 10 ? '奶粉' : '其他'}</div>
-                  <div class='records-item-content'>{record.content}</div>
+                  <div class='records-item-title'>{feedTypeMap[record.feedType].name}</div>
+                  <div class='records-item-content'>
+                    <span>{milkTypeMap[type].name}</span>
+                    <span>{volume} ml</span>
+                  </div>
                   <div class='records-item-time'>
                     {dateFromNow(record.feedTime, {
                       today: '${h}小时${m}分钟前'

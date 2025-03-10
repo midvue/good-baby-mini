@@ -1,15 +1,15 @@
-import { IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { computed, reactive, watch } from 'vue'
 import { apiBabyList } from '../api'
 import { useDidShow } from '@tarojs/taro'
+import { setBabyInfo } from '@/utils'
 
 export const useBabyInfo = () => {
   //const [state, setState] = useCtxState<IHomeState>()
 
   const currState = reactive({
-    babyInfo: {} as IBaby
+    babyInfo: {} as BabyInfo
   })
 
   let appStore = useAppStore()
@@ -29,6 +29,7 @@ export const useBabyInfo = () => {
     if (!appStore.isLogin) return
     apiBabyList().then((res) => {
       currState.babyInfo = res?.[0] || {}
+      setBabyInfo(currState.babyInfo)
     })
   }
 

@@ -5,6 +5,7 @@ const USER_INFO_KEY = 'userInfo'
 const USER_INFO_ID_KEY = 'userId'
 const TOKEN_KEY = 'token'
 const ENV_VERSION_KEY = 'envVersion'
+const USER_BABY_KEY = 'BABYInfo'
 
 export function isLogin() {
   return !!getToken()
@@ -13,7 +14,7 @@ export function isLogin() {
 /* ------------------用户信息--------------------- */
 
 export function setUserInfo(user: IUserInfo) {
-  setUserId(user.userId)
+  setUserId(user.id)
   return setStorage(USER_INFO_KEY, user)
 }
 /**
@@ -24,6 +25,21 @@ export function getUserInfo() {
 }
 export function clearUserInfo() {
   removeStorage(USER_INFO_KEY)
+}
+
+/* ------------------当前宝宝信息--------------------- */
+
+export function setBabyInfo(user: BabyInfo) {
+  return setStorage(USER_BABY_KEY, user)
+}
+/**
+ * 获取用户信息
+ */
+export function getBabyInfo() {
+  return getStorage<BabyInfo>(USER_BABY_KEY) || ({} as BabyInfo)
+}
+export function clearBabyInfo() {
+  removeStorage(USER_BABY_KEY)
 }
 
 /* ------------------token--------------------- */
