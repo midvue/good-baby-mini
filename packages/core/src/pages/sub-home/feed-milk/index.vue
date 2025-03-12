@@ -27,6 +27,8 @@ export default defineComponent({
       feedType: query.feedType,
       remark: '',
       form: {
+        type: 10,
+        volume: 150,
         feedTime: dateFormat(Date.now(), `HH:mm`)
       } as IMilk
     })

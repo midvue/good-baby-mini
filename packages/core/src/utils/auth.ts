@@ -33,7 +33,7 @@ export function setBabyInfo(user: BabyInfo) {
   return setStorage(USER_BABY_KEY, user)
 }
 /**
- * 获取用户信息
+ * 获取宝宝信息
  */
 export function getBabyInfo() {
   return getStorage<BabyInfo>(USER_BABY_KEY) || ({} as BabyInfo)

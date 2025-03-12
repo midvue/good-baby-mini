@@ -7,6 +7,7 @@ import { watch } from 'vue'
 import { apiGetFeedRecordList } from '../api'
 import { type IHomeState } from '../types'
 import { useDictMap } from '@/use'
+import { Image } from '@tarojs/components'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -50,15 +51,19 @@ export const useRecords = () => {
               let { volume, type } = record.content
               return (
                 <div class='home-records-item' key={index}>
-                  <div class='records-item-title'>{feedTypeMap[record.feedType].name}</div>
-                  <div class='records-item-content'>
-                    <span>{milkTypeMap[type].name}</span>
-                    <span>{volume} ml</span>
-                  </div>
                   <div class='records-item-time'>
                     {dateFromNow(record.feedTime, {
                       today: '${h}小时${m}分钟前'
                     })}
+                  </div>
+                  <div class='home-records-item-wrapper'>
+                    <div class='record-item-logo'></div>
+                    <div>
+                      <div class='records-item-title'>{milkTypeMap[type].name}</div>
+                      <div class='records-item-content'>
+                        <span>总量: {volume} ml</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )

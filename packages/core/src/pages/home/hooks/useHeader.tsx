@@ -4,8 +4,9 @@ import { computed, reactive, watch } from 'vue'
 import { apiBabyList } from '../api'
 import { useDidShow } from '@tarojs/taro'
 import { setBabyInfo } from '@/utils'
+import { Navbar } from '@mid-vue/taro-h5-ui'
 
-export const useBabyInfo = () => {
+export const useHeader = () => {
   //const [state, setState] = useCtxState<IHomeState>()
 
   const currState = reactive({
@@ -42,11 +43,14 @@ export const useBabyInfo = () => {
 
   return {
     render: () => (
-      <div class='home-baby-info'>
-        <div class='baby-info-avatar'></div>
-        <div class='baby-info-content'>
-          <div class='info-name'>{currState.babyInfo.nickname}</div>
-          <div class='info-time'>{birthTimeRef.value}</div>
+      <div class='home-header'>
+        <Navbar leftArrow={false} showHome={false}></Navbar>
+        <div class='home-baby-info'>
+          <div class='baby-info-avatar'></div>
+          <div class='baby-info-content'>
+            <div class='info-name'>{currState.babyInfo.nickname}</div>
+            <div class='info-time'>{birthTimeRef.value}</div>
+          </div>
         </div>
       </div>
     )
