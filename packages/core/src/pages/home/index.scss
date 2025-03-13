@@ -8,7 +8,7 @@
   overflow: hidden;
   .home-header {
     width: 100%;
-    height: 194px;
+    height: 196px;
     background: linear-gradient(39deg, #e8e4ff 16%, #ffe0e5 85%);
   }
 
@@ -52,7 +52,7 @@
     justify-content: space-between;
     flex: none;
     position: relative;
-    margin-top: -24 px;
+    margin-top: -24px;
     background: #ffffff;
     border-radius: 16px 16px 0px 0px;
     .home-tools-card {
@@ -82,7 +82,8 @@
         position: absolute;
         right: 5px;
         bottom: 10px;
-        width: 32px;
+        max-width: 35px;
+        max-height: 35px;
         z-index: 0;
       }
     }
@@ -188,6 +189,14 @@
             border-radius: 50%;
             flex: none;
             margin-right: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .item-logo-img {
+              max-width: 32px;
+              max-height: 32px;
+            }
           }
           .records-item-title {
             font-size: $font-size-2;

@@ -37,7 +37,7 @@ export const useTools = () => {
 
   const formatFeedTime = (feedType: number) => {
     const record = state.feedRecords.find((item) => +item.feedType === feedType)
-    if (!record) return ''
+    if (!record) return '刚刚'
     return dateFromNow(record.feedTime, {
       today: '${h}小时${m}分钟前'
     })

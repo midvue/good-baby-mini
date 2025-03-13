@@ -7,7 +7,8 @@ import { watch } from 'vue'
 import { apiGetFeedRecordList } from '../api'
 import { type IHomeState } from '../types'
 import { useDictMap } from '@/use'
-import { Image } from '@tarojs/components'
+import iconFeedMilk from '@/assets/images/icon_feed_milk.png'
+import { Image } from '@mid-vue/taro-h5-ui'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -57,7 +58,9 @@ export const useRecords = () => {
                     })}
                   </div>
                   <div class='home-records-item-wrapper'>
-                    <div class='record-item-logo'></div>
+                    <div class='record-item-logo'>
+                      <Image src={iconFeedMilk} class='item-logo-img'></Image>
+                    </div>
                     <div>
                       <div class='records-item-title'>{milkTypeMap[type].name}</div>
                       <div class='records-item-content'>
