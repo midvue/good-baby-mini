@@ -4,7 +4,8 @@ import { computed, reactive, watch } from 'vue'
 import { apiBabyList } from '../api'
 import { useDidShow } from '@tarojs/taro'
 import { setBabyInfo } from '@/utils'
-import { Navbar } from '@mid-vue/taro-h5-ui'
+import { Image, Navbar } from '@mid-vue/taro-h5-ui'
+import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 
 export const useHeader = () => {
   //const [state, setState] = useCtxState<IHomeState>()
@@ -46,7 +47,7 @@ export const useHeader = () => {
       <div class='home-header'>
         <Navbar leftArrow={false} showHome={false}></Navbar>
         <div class='home-baby-info'>
-          <div class='baby-info-avatar'></div>
+          <Image class='baby-info-avatar' src={imgBabyAvatar}></Image>
           <div class='baby-info-content'>
             <div class='info-name'>{currState.babyInfo.nickname}</div>
             <div class='info-time'>{birthTimeRef.value}</div>

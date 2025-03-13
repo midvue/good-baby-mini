@@ -28,8 +28,11 @@ export default defineComponent({
   },
   setup(props) {
     const regImgPrefix = /^(wxfile|http|https|data):/
+    console.log(props.src, 222)
+
     const imgSrc = computed(() => {
-      return regImgPrefix.test(props.src) ? props.src : `${BASE_URL}${props.src}`
+      // return regImgPrefix.test(props.src) ? props.src : `${BASE_URL}${props.src}`
+      return props.src
     })
 
     const handleTap = (event: BaseEventOrig) => {
