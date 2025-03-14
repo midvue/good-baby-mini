@@ -1,9 +1,9 @@
 import { Form, FormInstance, Icon, IFormItem, Image, showPopup } from '@mid-vue/taro-h5-ui'
 import { ref } from 'vue'
 
-import { BabyInfo } from '@/components/baby-info'
 import { iconAboutMe, iconAged, iconBaby, iconInvite, iconSetting, iconWeChat } from '../assets'
 import img_wechat from '../assets/img_wechat.jpg'
+import { navigateTo } from '@/use'
 
 /** 菜单列表 */
 export let useList = () => {
@@ -30,12 +30,8 @@ export let useList = () => {
           attrs: {
             border: true,
             onClick() {
-              showPopup({
-                round: true,
-                height: '50%',
-                render(scoped) {
-                  return <BabyInfo onClose={scoped.close}></BabyInfo>
-                }
+              navigateTo({
+                path: '/pages/sub-home/baby-manage/index'
               })
             }
           }

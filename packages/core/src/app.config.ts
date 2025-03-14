@@ -13,10 +13,13 @@ export default {
     {
       //sub 用户中心子包
       root: 'pages/sub-home',
-      pages: ['feed-milk/index']
+      pages: ['feed-milk/index', 'baby-manage/index']
     }
   ],
   preloadRule: {
+    'pages/home/index': {
+      packages: ['pages/sub-home']
+    },
     'pages/mine/index': {
       packages: ['pages/sub-mine']
     }
