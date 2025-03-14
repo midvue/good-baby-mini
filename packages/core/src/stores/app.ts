@@ -1,5 +1,6 @@
 import {
   clearStorage,
+  clearToken,
   getEnvVersion,
   getMetaEnv,
   getToken,
@@ -94,7 +95,7 @@ export const useAppStore = defineStore('app-store', {
       this.token = ''
       this.userInfo = {} as IUserInfo
       const envVersion = getEnvVersion()
-      clearStorage()
+      await clearToken()
       //环境不清除，否则会导致切换环境时，无法获取到环境变量
       setEnvVersion(envVersion)
     }

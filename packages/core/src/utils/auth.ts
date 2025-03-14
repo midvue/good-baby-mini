@@ -65,7 +65,7 @@ export function getToken() {
 }
 
 export function clearToken() {
-  removeStorage(TOKEN_KEY)
+  return removeStorage(TOKEN_KEY)
 }
 
 /* ------------------MetaEnv--------------------- */
