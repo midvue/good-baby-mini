@@ -30,8 +30,8 @@ export default {
   },
   lazyCodeLoading: 'requiredComponents',
   tabBar: {
-    color: '#524D63',
-    selectedColor: '#8365F6',
+    color: '#AFA8BC',
+    selectedColor: '#FF5D9E',
     backgroundColor: '#FFFFFF',
     borderStyle: 'white',
     position: 'bottom',
@@ -39,14 +39,14 @@ export default {
       {
         pagePath: 'pages/home/index',
         text: '喂养',
-        selectedIconPath: 'assets/images/ic_order_create_active.png',
-        iconPath: 'assets/images/ic_order_create.png'
+        selectedIconPath: 'assets/images/icon_home_active.png',
+        iconPath: 'assets/images/icon_home.png'
       },
       {
         pagePath: 'pages/mine/index',
         text: '我的',
-        selectedIconPath: 'assets/images/ic_user_active.png',
-        iconPath: 'assets/images/ic_user.png'
+        selectedIconPath: 'assets/images/icon_mine_active.png',
+        iconPath: 'assets/images/icon_mine.png'
       }
     ]
   }

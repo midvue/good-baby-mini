@@ -1,8 +1,8 @@
 <script lang="tsx">
-import { hideLoading, Navbar, showLoading } from '@mid-vue/taro-h5-ui'
+import { hideLoading, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { defineComponent, watch } from 'vue'
-import { useBabyInfo, useRecords, useTools } from './hooks'
+import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
 
 export default defineComponent({
@@ -29,14 +29,13 @@ export default defineComponent({
       }
     )
 
-    const { render: renderBabyInfo } = useBabyInfo()
+    const { render: renderHeader } = useHeader()
     const { render: renderTools } = useTools()
     const { render: renderRecords } = useRecords()
     return () => {
       return (
         <div class='home'>
-          <Navbar leftArrow={false} showHome={false}></Navbar>
-          {renderBabyInfo()}
+          {renderHeader()}
           {renderTools()}
           {renderRecords()}
         </div>
