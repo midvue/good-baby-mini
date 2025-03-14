@@ -23,7 +23,12 @@ export default defineComponent({
     let genderMap = useDictMap('GENDER')
 
     let formatBirthTime = (baby: BabyInfo) => {
-      let diffTime = dateDiff(Date.now(), useDate(baby.birthTime).valueOf())
+      let diffTime = dateDiff(
+        Date.now(),
+        useDate(baby.birthDate)
+          .format('YYYY-MM-DD ' + baby.birthTime)
+          .valueOf()
+      )
       return durationFormatNoZero(diffTime, { format: 'Y岁M月D天H小时m分钟' })
     }
 

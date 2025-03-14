@@ -36,9 +36,14 @@ export const useHeader = () => {
   }
 
   let birthTimeRef = computed(() => {
-    let birthTime = currState.babyInfo.birthTime
-    if (!birthTime) return ''
-    let diffTime = dateDiff(Date.now(), useDate(birthTime).valueOf())
+    let { birthDate, birthTime } = currState.babyInfo
+    if (!birthDate) return ''
+    let diffTime = dateDiff(
+      Date.now(),
+      useDate(birthDate)
+        .format('YYYY-MM-DD ' + birthTime)
+        .valueOf()
+    )
     return durationFormatNoZero(diffTime, { format: 'Y岁M月D天H小时m分钟' })
   })
 
