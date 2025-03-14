@@ -1,0 +1,26 @@
+.feed-milk {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  .feed-milk-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .form-item-card {
+      box-shadow: $box-shadow;
+      border-radius: 8px;
+      margin: 12px $padding-w 0;
+      padding: 15px;
+
+      &:last-child {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+      }
+    }
+  }
+}

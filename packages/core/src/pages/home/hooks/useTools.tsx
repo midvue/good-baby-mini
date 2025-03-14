@@ -17,18 +17,19 @@ export const useTools = () => {
     {
       feedType: 10,
       name: '奶粉',
+      path: '/feed-milk/index',
       render: () => {
         return <div class='home-tools-card'>111</div>
       }
     },
-    { feedType: 20, updateTime: 0, name: '尿布' },
+    { feedType: 20, updateTime: 0, name: '尿布', path: '/diapering/index' },
     { feedType: 30, updateTime: 0, name: '其他' }
   ]
 
   function onItemClick(index: number) {
     const tool = toolsConfList[index]
     navigateTo({
-      path: '/pages/sub-home/feed-milk/index',
+      path: '/pages/sub-home' + tool.path,
       query: {
         feedType: tool.feedType
       }

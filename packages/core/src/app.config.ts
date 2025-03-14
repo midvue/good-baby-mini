@@ -13,7 +13,7 @@ export default {
     {
       //sub 用户中心子包
       root: 'pages/sub-home',
-      pages: ['feed-milk/index']
+      pages: ['feed-milk/index', 'diapering/index']
     }
   ],
   preloadRule: {
