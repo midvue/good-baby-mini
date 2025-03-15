@@ -16,10 +16,10 @@ import { defineCtxState } from '@mid-vue/use'
 import { navigateBack, useDictList, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { apiAddFeedRecord } from './api'
-import { type IFeedMilkState } from './types'
+import { type IMilk, type IFeedMilkState } from './types'
 
 export default defineComponent({
-  name: 'FeedMilk',
+  name: 'HeightWeight',
   setup() {
     const { query } = useRoute<{ feedType: number }>()
     const [state] = defineCtxState<IFeedMilkState>({
@@ -28,7 +28,7 @@ export default defineComponent({
       form: {
         type: 10,
         volume: 150,
-        feedTime: dateFormat(Date.now(), 'HH:mm')
+        feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
       } as IMilk
     })
 
@@ -101,7 +101,6 @@ export default defineComponent({
         feedTime,
         content: { ...state.form, feedTime }
       }).catch(() => false)
-
       if (!res) return
       Taro.showToast({ title: '添加成功' })
       navigateBack()

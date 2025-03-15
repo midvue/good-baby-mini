@@ -1,14 +1,14 @@
 <script lang="tsx">
+import { defineComponent, watch } from 'vue'
 import { hideLoading, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
-import { defineComponent, watch } from 'vue'
 import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
 
 export default defineComponent({
   name: 'Home',
   setup() {
-    const [state, setState] = defineCtxState<IHomeState>({
+    const [state] = defineCtxState<IHomeState>({
       loading: false,
       pagination: {
         current: 1,
