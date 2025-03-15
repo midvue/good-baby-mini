@@ -61,12 +61,17 @@ export interface IFormItem<T = Record<string, any>> {
   rules?: IRule[]
   render?: (field?: keyof T, index?: number) => JSX.Element | string | null
   attrs?: {
+    /** 是否显示必填 */
     required?: boolean | (() => boolean)
+    /** 下边框 */
     border?: boolean
     class?: string
+    /** label宽度,0px则隐藏label */
     labelWidth?: string
     labelClass?: string
+    /** 右边箭头 */
     rightArrow?: boolean
+    /** label对齐,top顶部对齐 */
     labelAlign?: EnumLabelAlignType
     onClick?: (event: ItemClickEvent) => any
     [key: string]: string | boolean | undefined | Function
