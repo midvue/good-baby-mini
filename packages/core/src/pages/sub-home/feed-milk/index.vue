@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { navigateBack, useDictList, useRoute } from '@/use'
+import { navigateBack, useDictList, useDictMap, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
 import {
@@ -94,6 +94,7 @@ export default defineComponent({
     ]
     const onSubmit = async () => {
       let feedTime = dateFormat(Date.now(), `YYYY-MM-DD ${state.form.feedTime}`)
+
       const res = await apiAddFeedRecord({
         babyId: getBabyInfo().id,
         feedType: state.feedType,
@@ -101,6 +102,7 @@ export default defineComponent({
         feedTime,
         content: { ...state.form, feedTime }
       }).catch(() => false)
+
       if (!res) return
       Taro.showToast({ title: '添加成功' })
       navigateBack()
