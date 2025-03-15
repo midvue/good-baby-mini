@@ -30,60 +30,52 @@ export default defineComponent({
       remark: '',
       form: {
         feedTime: dateFormat(Date.now(), `HH:mm`),
-        diaperingType: ''
+        type: '30',
+        poopType: '10',
+        poopColor: '10'
       }
     })
 
     const formRef = ref<FormInstance>()
 
-    let milkList = useDictList('MILK_TYPE')
+    // let milkList = useDictList('MILK_TYPE')
+    let poopTypeList = useDictList('POOP_TYPE')
+    let poopColorList = useDictList('POOP_COLOR')
+    let diaperTypeList = useDictList('DIAPER_TYPE')
+    // console.log(poopColorList, milkList)
+    // function initVolumeList() {
+    //   let min = 30
+    //   let max = 400
+    //   let curr = min
+    //   let volumeList = []
+    //   while (curr < max) {
+    //     volumeList.push({ code: curr, name: curr + 'ml' })
+    //     curr += 5
+    //   }
+    //   return volumeList
+    // }
+    // let volumeList = initVolumeList()
+    // const handlePhoto = () => {
+    //   Taro.chooseImage({
+    //     count: 1, // 默认9
+    //     sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+    //     sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有，在H5浏览器端支持使用 `user` 和 `environment`分别指定为前后摄像头
+    //     success: function (res) {
+    //       // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+    //       var tempFilePaths = res.tempFilePaths
+    //     }
+    //   })
+    // }
+    // const poopColorList = [
+    //   { label: '黄色', value: '#f8d603' },
+    //   { label: '墨绿色', value: '#465611' },
+    //   { label: '棕色', value: '#5d4520' },
+    //   { label: '绿色', value: '#73a615' },
+    //   { label: '红色', value: '#b7372c' },
+    //   { label: '黑色', value: '#3e3232' },
+    //   { label: '灰白色', value: '#cbc3bd' }
+    // ]
 
-    function initVolumeList() {
-      let min = 30
-      let max = 400
-      let curr = min
-      let volumeList = []
-      while (curr < max) {
-        volumeList.push({ code: curr, name: curr + 'ml' })
-        curr += 5
-      }
-      return volumeList
-    }
-    let volumeList = initVolumeList()
-    const handlePhoto = () => {
-      Taro.chooseImage({
-        count: 1, // 默认9
-        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有，在H5浏览器端支持使用 `user` 和 `environment`分别指定为前后摄像头
-        success: function (res) {
-          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-          var tempFilePaths = res.tempFilePaths
-        }
-      })
-    }
-    const poopColorList = [
-      { label: '黄色', value: '#f8d603' },
-      { label: '墨绿色', value: '#465611' },
-      { label: '棕色', value: '#5d4520' },
-      { label: '绿色', value: '#73a615' },
-      { label: '红色', value: '#b7372c' },
-      { label: '黑色', value: '#3e3232' },
-      { label: '灰白色', value: '#cbc3bd' }
-    ]
-    const diaperingTypeList = [
-      {
-        label: '嘘嘘',
-        value: 'pee'
-      },
-      {
-        label: '便便',
-        value: 'poop'
-      },
-      {
-        label: '嘘嘘+便便',
-        value: 'both'
-      }
-    ]
     const cells: IFormItem<IFeedMilkState['form']>[] = [
       {
         attrs: {
@@ -106,87 +98,109 @@ export default defineComponent({
         children: [
           //多层级嵌套
           {
-            label: '选择类型和状态',
+            label: '尿布状态',
+            field: 'type',
+
             attrs: {
               labelAlign: 'top'
             },
             component: () => {
               return (
-                <div class='flex flex-col	size-full'>
-                  <div class='flex justify-between size-full'>
-                    {diaperingTypeList.map((item) => (
-                      <Button
-                        size='small'
-                        round
-                        type={state.form.diaperingType === item.value ? 'warning' : 'default'}
-                        onClick={() => (state.form.diaperingType = item.value)}
-                      >
-                        {item.label}
-                      </Button>
-                    ))}
-                  </div>
-                  <p class='py-8'>尿布重量</p>
+                <div class='grid grid-cols-3 gap-10 size-full'>
+                  {diaperTypeList.map((item) => (
+                    <div
+                      class={{ 'tag-item': true, active: state.form.type === item.code }}
+                      onClick={() => (state.form.type = item.code)}
+                    >
+                      {state.form.type === item.code ? <Icon name='mv-icon-checked'></Icon> : <></>}
+                      {item.name}
+                    </div>
+                  ))}
+                  {/* <p class='py-8'>尿布重量</p>
                   <div class='flex justify-between size-full'>
                     {['很轻', '正常', '很重'].map((item) => (
                       <Button class='tag-item' size='small' round type='warning'>
                         {item}
                       </Button>
                     ))}
-                  </div>
-                  <p class='py-8'>便便状态</p>
-                  <div class='grid grid-cols-3 gap-10 size-full'>
-                    {[
-                      '普通软糊状',
-                      '较干',
-                      '成型',
-                      '颗粒状',
-                      '水样状',
-                      '水便分离',
-                      '蛋花汤状',
-                      '血便',
-                      '油性大便',
-                      '豆腐渣样',
-                      '泡沫状'
-                    ].map((item) => (
-                      <Button class='tag-item' size='small' round type='warning'>
-                        {item}
-                      </Button>
-                    ))}
-                  </div>
-                  <p class='py-8'>便便颜色</p>
-                  <div class='color-form'>
-                    <Icon name='mv-icon-upload' onClick={handlePhoto}></Icon>
-                    <ul class='color-list'>
-                      {poopColorList.map((item) => (
-                        <div class='color-item' style={{ background: item.value }}>
-                          <p>{item.label}</p>
-                        </div>
-                      ))}
-                    </ul>
-                  </div>
+                  </div> */}
                 </div>
               )
             }
-          }
-        ]
-      },
-      {
-        attrs: {
-          class: 'form-item-card'
-        },
-        children: [
-          //多层级嵌套
+          },
           {
-            label: '设置提醒',
+            label: '臭臭状态',
+            field: 'poopType',
+            attrs: {
+              labelAlign: 'top',
+              class: 'py-10'
+            },
             component: () => (
-              <>
-                <Picker v-model={state.form.feedTime} mode='time'></Picker>
-                <Switch></Switch>
-              </>
+              <div class='grid grid-cols-3 gap-10 size-full'>
+                {poopTypeList.map((item) => (
+                  <div
+                    class={{ 'tag-item': true, active: state.form.poopType === item.code }}
+                    onClick={() => (state.form.poopType = item.code)}
+                  >
+                    {state.form.poopType === item.code ? (
+                      <Icon name='mv-icon-checked'></Icon>
+                    ) : (
+                      <></>
+                    )}
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            )
+          },
+          {
+            label: '臭臭颜色',
+            field: 'poopColor',
+            attrs: {
+              labelAlign: 'top',
+              class: 'py-10'
+            },
+            component: () => (
+              <div class='color-form'>
+                {/* <Icon name='mv-icon-upload' onClick={handlePhoto}></Icon> */}
+                <ul class='color-list'>
+                  {poopColorList.map((item) => (
+                    <div
+                      class='color-item'
+                      style={{ background: item.ext }}
+                      onClick={() => (state.form.poopColor = item.code)}
+                    >
+                      {state.form.poopColor === item.code ? (
+                        <Icon name='mv-icon-checked'></Icon>
+                      ) : (
+                        <></>
+                      )}
+                      <p>{item.name}</p>
+                    </div>
+                  ))}
+                </ul>
+              </div>
             )
           }
         ]
       },
+      // {
+      //   attrs: {
+      //     class: 'form-item-card'
+      //   },
+      //   children: [
+      //     //多层级嵌套
+      //     {
+      //       label: '设置提醒',
+      //       component: () => (
+      //         <>
+      //           <Picker v-model={state.form.feedTime} mode='time'></Picker>
+      //           <Switch></Switch>
+      //         </>
+      //       )
+      //     }
+      //   ]
+      // },
       {
         attrs: {
           class: 'form-item-card'
@@ -229,7 +243,7 @@ export default defineComponent({
           ></Navbar>
           <Form ref={formRef} cells={cells} v-model={state.form}></Form>
           <FooterBar>
-            <Button type='warning' size='large' onClick={onSubmit}>
+            <Button type='primary' size='large' round onClick={onSubmit}>
               保存
             </Button>
           </FooterBar>
