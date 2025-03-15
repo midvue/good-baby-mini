@@ -87,7 +87,7 @@ export default defineComponent({
             label: '更换时间',
             field: 'feedTime',
             attrs: { required: true, border: true },
-            component: () => <Picker v-model={state.form.feedTime} mode='date'></Picker>
+            component: () => <Picker v-model={state.form.feedTime} mode='time'></Picker>
           }
         ]
       },
