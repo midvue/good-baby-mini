@@ -1,10 +1,11 @@
-.feed-milk {
+.diapering {
   width: 100%;
   min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  background: #fee7dc;
 
   .feed-milk-form {
     width: 100%;
@@ -20,6 +21,39 @@
       &:last-child {
         margin-bottom: 12px;
         padding-bottom: 12px;
+      }
+    }
+  }
+  .color-form {
+    display: flex;
+    .mv-icon-upload {
+      width: 70px;
+      height: 70px;
+      color: $warning-color;
+      border: 1px solid $warning-color;
+      font-size: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 2.2;
+    }
+    > ul {
+      display: flex;
+      overflow-x: auto;
+      margin-left: 20px;
+      .color-item {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 40px;
+        margin-right: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        position: relative;
+        p {
+          width: 100%;
+          position: absolute;
+          bottom: -30px;
+          text-align: center;
+        }
       }
     }
   }

@@ -19,9 +19,15 @@ export const useTools = () => {
     {
       feedType: EnumFeedType.MILK,
       name: '奶粉',
-      bgImg: imgFeedMilk
+      bgImg: imgFeedMilk,
+      path: '/feed-milk/index'
     },
-    { feedType: EnumFeedType.DIAPER, name: '换尿布', bgImg: imgFeedDiaper },
+    {
+      feedType: EnumFeedType.DIAPER,
+      name: '换尿布',
+      bgImg: imgFeedDiaper,
+      path: '/diapering/index'
+    },
     { feedType: EnumFeedType.HEIGHT_WEIGHT, name: '身高体重' }
   ]
 
