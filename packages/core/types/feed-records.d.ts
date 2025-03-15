@@ -2,11 +2,11 @@ declare global {
   /** 尿布 */
   interface IDiaper {
     /** 尿布类型 */
-    type: string | number
+    type: string
     /** 臭臭状态  */
-    poopType: number
+    poopType: string
     /** 臭臭颜色  */
-    poopColor: number
+    poopColor: string
     /** 喂养时间  */
     feedTime: string
   }
