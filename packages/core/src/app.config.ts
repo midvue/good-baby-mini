@@ -1,8 +1,7 @@
 export default {
   pages: [
     'pages/home/index',
-    'pages/mine/index', // 我的
-    'pages/login/index'
+    'pages/mine/index' // 我的
   ],
   subpackages: [
     {

@@ -1,5 +1,3 @@
-$overlay-bg-color: rgba(0, 0, 0, 0.4) !default;
-
 .overlay-fade-enter-active,
 .overlay-fade-leave-active {
   transition-property: opacity;
@@ -12,12 +10,13 @@ $overlay-bg-color: rgba(0, 0, 0, 0.4) !default;
 }
 
 .mv-overlay {
+  --mv-overlay-bg-color: rgba(0, 0, 0, 0.4);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: $overlay-bg-color;
+  background: var(--mv-overlay-bg-color);
 }
 
 .mv-overflow-hidden {

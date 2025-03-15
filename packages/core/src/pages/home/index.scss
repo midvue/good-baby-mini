@@ -17,7 +17,7 @@
     height: 70px;
     display: flex;
     align-items: center;
-    padding: 0 $padding-w;
+    padding: 0 var(--mv-padding-w);
 
     .baby-info-avatar {
       width: 55px;
@@ -33,12 +33,12 @@
       flex-direction: column;
 
       .info-name {
-        font-size: $font-size-3;
+        font-size: var(--mv-font-size-3);
         font-weight: bold;
       }
       .info-time {
-        font-size: $font-size-2;
-        color: $title-color3;
+        font-size: var(--mv-font-size-2);
+        color: var(--mv-title-color3);
         margin-top: 8px;
       }
     }
@@ -47,7 +47,7 @@
   .home-tools {
     width: 100%;
     height: 122px;
-    padding: 13px $padding-w;
+    padding: 13px var(--mv-padding-w);
     display: flex;
     justify-content: space-between;
     flex: none;
@@ -66,16 +66,16 @@
       padding: 10px 8px;
       position: relative;
       .card-title {
-        font-size: $font-size-2;
+        font-size: var(--mv-font-size-2);
         color: #ffffff;
         font-weight: bold;
       }
       .card-content {
-        font-size: $font-size-1;
+        font-size: var(--mv-font-size-1);
         color: #ffffff;
       }
       .card-time {
-        font-size: $font-size-1;
+        font-size: var(--mv-font-size-1);
         color: #ffffff;
       }
       .card-bg-image {
@@ -123,17 +123,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: $font-size-2;
+      font-size: var(--mv-font-size-2);
       height: 44px;
-      padding: 0 $padding-w;
+      padding: 0 var(--mv-padding-w);
       flex: none;
 
       .header-title {
-        color: $title-color2;
+        color: var(--mv-title-color2);
         font-weight: bold;
       }
       .header-more {
-        color: $primary-color;
+        color: var(--mv-primary-color);
       }
     }
     .home-records-wrapper {
@@ -147,8 +147,8 @@
       flex-direction: column;
 
       .home-records-item {
-        margin: 0 $padding-w;
-        padding: 0 $padding-w;
+        margin: 0 var(--mv-padding-w);
+        padding: 0 var(--mv-padding-w);
         flex: none;
         position: relative;
 
@@ -157,8 +157,8 @@
         }
 
         .records-item-time {
-          color: $title-color3;
-          font-size: $font-size-2;
+          color: var(--mv-title-color3);
+          font-size: var(--mv-font-size-2);
           margin-bottom: 8px;
           position: relative;
 
@@ -175,7 +175,7 @@
         }
 
         .home-records-item-wrapper {
-          box-shadow: $box-shadow;
+          box-shadow: var(--mv-box-shadow);
           border-radius: 8px;
           padding: 12px 15px;
           margin-bottom: 22px;
@@ -199,13 +199,13 @@
             }
           }
           .records-item-title {
-            font-size: $font-size-2;
-            color: $primary-color;
+            font-size: var(--mv-font-size-2);
+            color: var(--mv-primary-color);
             font-weight: bold;
           }
           .records-item-content {
-            color: $title-color3;
-            font-size: $font-size-1;
+            color: var(--mv-title-color3);
+            font-size: var(--mv-font-size-1);
             margin-top: 6px;
           }
         }

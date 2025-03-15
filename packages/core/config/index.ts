@@ -63,9 +63,7 @@ export default defineConfig<'webpack5'>(async (merge) => {
     cache: {
       enable: false // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
     },
-    sass: {
-      resource: [path.resolve(process.cwd(), 'src/styles/variables.scss')]
-    },
+
     mini: {
       postcss: {
         pxtransform: {

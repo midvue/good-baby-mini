@@ -73,7 +73,7 @@ export default defineComponent({
         margin-right: 0.2em;
         margin-bottom: 0.2em;
         white-space: nowrap;
-        background-color: $title-color;
+        background-color: var(--mv-title-color);
         border-radius: 50%;
       }
     }

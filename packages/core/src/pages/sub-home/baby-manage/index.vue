@@ -61,9 +61,9 @@ export default defineComponent({
             }}
           ></Navbar>
           <div class='baby-list'>
-            {currState.list.map((baby) => {
+            {currState.list.map((baby, index) => {
               return (
-                <div class='baby-list-item' onClick={() => onBabyClick(baby)}>
+                <div class='baby-list-item' key={index} onClick={() => onBabyClick(baby)}>
                   <Image class='baby-avatar' src={imgBabyAvatar}></Image>
                   <div class='baby-info'>
                     <div class='baby-name'>{baby.nickname}</div>

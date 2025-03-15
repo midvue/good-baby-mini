@@ -142,9 +142,9 @@ export default {
         width: 24px;
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
-        background-color: $primary-color-active;
+        background-color: var(--mv-primary-color-active);
       }
-      /* border-bottom: 2px solid $primary-color-active; */
+      /* border-bottom: 2px solid var(--mv-primary-color-active); */
     }
   }
 

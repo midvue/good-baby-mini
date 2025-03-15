@@ -180,6 +180,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../styles/hairline';
 .mv-search-picker-label {
   width: 100%;
   line-height: 1.5;
@@ -206,7 +207,7 @@ export default {
     background-color: #fff;
 
     &__left {
-      color: $text-color;
+      color: var(--mv-text-color);
       cursor: pointer;
       height: 100%;
       display: inline-flex;
@@ -219,7 +220,7 @@ export default {
       display: inline-flex;
       align-items: center;
       height: 100%;
-      color: $primary-color;
+      color: var(--mv-primary-color);
       cursor: pointer;
       padding: 0 8px;
       flex: none;
@@ -233,7 +234,7 @@ export default {
       right: 0;
       bottom: 0;
       left: 0;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid var(--mv-border-color);
       transform: scaleY(0.5);
       @extend %px-media;
     }

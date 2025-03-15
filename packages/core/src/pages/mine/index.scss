@@ -14,7 +14,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    padding: $padding-w;
+    padding: var(--mv-padding-w);
 
     .profile-bg {
       position: absolute;
@@ -56,7 +56,7 @@
     .profile-panel {
       position: absolute;
       bottom: -24px;
-      left: $padding-w;
+      left: var(--mv-padding-w);
       width: 343px;
       height: 72px;
       background: #ffffff;

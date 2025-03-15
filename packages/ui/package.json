@@ -8,7 +8,8 @@
     ".": {
       "import": "./src/index.ts",
       "require": "./src/index.ts"
-    }
+    },
+    "./variables.scss": "./src/components/styles/variables.scss"
   },
   "scripts": {},
   "dependencies": {

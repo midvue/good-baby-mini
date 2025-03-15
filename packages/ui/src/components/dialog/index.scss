@@ -1,3 +1,4 @@
+@import '../styles/hairline';
 .mv-dialog {
   width: 300px;
   overflow: hidden;
@@ -13,7 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $title-color;
+    color: var(--mv-title-color);
     font-weight: bold;
   }
 
@@ -44,7 +45,7 @@
     }
     .dialog-btn-confirm {
       flex: 1;
-      color: $primary-color;
+      color: var(--mv-primary-color);
       @extend %hairline--surround;
     }
   }

@@ -1,23 +1,22 @@
 <script lang="tsx">
 import { navigateBack, useDictList, useRoute } from '@/use'
+import { getBabyInfo } from '@/utils'
+import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
   FooterBar,
   Form,
-  type FormInstance,
   IFormItem,
-  Input,
   Navbar,
   Picker,
-  Textarea
+  Textarea,
+  type FormInstance
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import Taro from '@tarojs/taro'
 import { defineComponent, ref } from 'vue'
 import { apiAddFeedRecord } from './api'
 import { IMilk, type IFeedMilkState } from './types'
-import { dateFormat } from '@mid-vue/shared'
-import { getBabyInfo } from '@/utils'
 
 export default defineComponent({
   name: 'feed-milk',

@@ -235,7 +235,7 @@ export default defineComponent({
     flex-direction: column;
 
     .empty-placeholder {
-      color: $text-color;
+      color: var(--mv-text-color);
       font-size: 15px;
       padding-top: 10px;
     }
@@ -252,16 +252,16 @@ export default defineComponent({
     box-sizing: border-box;
 
     &:active {
-      background-color: $hover-color;
+      background-color: var(--mv-hover-color);
     }
     .prefix-icon,
     .suffix-icon {
       font-size: inherit;
       margin-right: 3px;
-      color: $text-color;
+      color: var(--mv-text-color);
     }
     .text-active {
-      color: $primary-color;
+      color: var(--mv-primary-color);
     }
   }
 }
