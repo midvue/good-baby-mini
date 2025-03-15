@@ -87,28 +87,28 @@ const onClick = (event: Event) => {
 $types:
   (
     label: 'primary',
-    color: $primary-color,
-    border-color: $primary-color
+    color: var(--mv-primary-color),
+    border-color: var(--mv-primary-color)
   ),
   (
     label: 'success',
-    color: $success-color,
-    border-color: $success-color
+    color: var(--mv-success-color),
+    border-color: var(--mv-success-color)
   ),
   (
     label: 'warning',
-    color: $warning-color,
-    border-color: $warning-color
+    color: var(--mv-warning-color),
+    border-color: var(--mv-warning-color)
   ),
   (
     label: 'danger',
-    color: $danger-color,
-    border-color: $danger-color
+    color: var(--mv-danger-color),
+    border-color: var(--mv-danger-color)
   ),
   (
     label: 'default',
-    color: $info-color,
-    border-color: $border-color
+    color: var(--mv-info-color),
+    border-color: var(--mv-border-color)
   );
 
 @each $type in $types {
@@ -116,17 +116,17 @@ $types:
   $color: map-get($type, color);
   $border-color: map-get($type, border-color);
   .mv-tag--#{$label} {
-    color: $white;
+    color: var(--mv-white);
     background-color: $color;
     &::after {
-      border-color: $border-color;
+      border-color: var(--mv-border-color);
     }
   }
   .mv-tag--plain {
     &.mv-tag--#{$label} {
       background-color: transparent;
       color: $color;
-      border: 1px solid $border-color;
+      border: 1px solid var(--mv-border-color);
     }
     &.mv-tag--disabled {
       background-color: #f3f4f6;
@@ -141,7 +141,7 @@ $types:
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  border-radius: $tag-border-radius;
+  border-radius: var(--mv-tag-border-radius);
   font-size: 12px;
   padding: 5px 9px;
   flex: none;

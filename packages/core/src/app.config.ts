@@ -1,8 +1,7 @@
 export default {
   pages: [
     'pages/home/index',
-    'pages/mine/index', // 我的
-    'pages/login/index'
+    'pages/mine/index' // 我的
   ],
   subpackages: [
     {
@@ -13,10 +12,13 @@ export default {
     {
       //sub 用户中心子包
       root: 'pages/sub-home',
-      pages: ['feed-milk/index', 'diapering/index']
+      pages: ['feed-milk/index', 'baby-manage/index', 'diapering/index']
     }
   ],
   preloadRule: {
+    'pages/home/index': {
+      packages: ['pages/sub-home']
+    },
     'pages/mine/index': {
       packages: ['pages/sub-mine']
     }

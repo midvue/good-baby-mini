@@ -55,7 +55,7 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 8px 18px;
-  color: $white;
+  color: var(--mv-white);
   font-size: 14px;
   line-height: 20px;
   position: fixed;
@@ -81,18 +81,18 @@ export default {
   }
 
   &--danger {
-    background: $danger-color;
+    background: var(--mv-danger-color);
   }
 
   &--warning {
-    background: $warning-color;
+    background: var(--mv-warning-color);
   }
   &--success {
-    background: $success-color;
+    background: var(--mv-success-color);
   }
 
   &--primary {
-    background: $primary-color;
+    background: var(--mv-primary-color);
   }
 }
 .notify-fade-enter-from,

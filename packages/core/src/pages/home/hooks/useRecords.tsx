@@ -62,7 +62,7 @@ export const useRecords = () => {
                       <Image src={iconFeedMilk} class='item-logo-img'></Image>
                     </div>
                     <div>
-                      <div class='records-item-title'>{milkTypeMap[type].name}</div>
+                      <div class='records-item-title'>{milkTypeMap[type]?.name}</div>
                       <div class='records-item-content'>
                         <span>总量: {volume} ml</span>
                       </div>

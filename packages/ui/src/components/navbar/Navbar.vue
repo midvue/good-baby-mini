@@ -130,7 +130,7 @@ export default defineComponent({
   z-index: 999;
   padding: 0 8px;
   font-size: 17px;
-  color: $title-color;
+  color: var(--mv-title-color);
   top: 0;
   left: 0;
   transition:

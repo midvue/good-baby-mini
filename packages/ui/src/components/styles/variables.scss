@@ -1,0 +1,63 @@
+:root {
+  --mv-primary-color: #ff5d9e;
+  --mv-success-color: #1aad19;
+  --mv-warning-color: #ebae5b;
+  --mv-danger-color: #ff4a4a;
+  --mv-info-color: #180d41;
+
+  // 标题常规文字
+  --mv-title-color: #180d41;
+  // 副标题
+  --mv-title-color2: #433a51;
+  // 3级副标题
+  --mv-title-color3: #675d78;
+  // 次内容
+  --mv-text-color: #afa8bc;
+
+  // 辅助色
+  --mv-help-color: #f5f5f5;
+
+  // 特殊禁用色
+  --mv-disable-color: #cccccc;
+
+  --mv-hover-color: #f2f3f5;
+
+  --mv-background-color: #f2f2f7;
+
+  --mv-box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.08);
+
+  --mv-white: #ffffff;
+  --mv-black: #000000;
+
+  --mv-placeholder-color: #b5b3be;
+  --mv-border-color: #e1e1ed;
+
+  --mv-font-family: PingFang SC, Microsoft YaHei, Helvetica, Hiragino Sans GB, SimSun, sans-serif;
+
+  // Font
+  --mv-font-size-0: 10px;
+  --mv-font-size-1: 12px;
+  --mv-font-size-2: 14px;
+  --mv-font-size-3: 16px;
+  --mv-font-size-4: 18px;
+  --mv-font-size-5: 20px;
+  --mv-font-weight-bold: 400;
+
+  --mv-padding-w: 16px;
+
+  // button
+  --mv-button-border-radius: 8px;
+  --mv-button-border-width: 1px;
+
+  // tag
+  --mv-tag-border-radius: 4px;
+  --mv-tag-border-width: 1px;
+
+  //input
+  --mv-input-border-bottom: var(--mv-border-color);
+  --mv-input-disabled-color: #c8c9cc;
+
+  --mv-font-size-small: var(--mv-font-size-1);
+  --mv-font-size-base: var(--mv-font-size-2);
+  --mv-font-size-large: var(--mv-font-size-3);
+}

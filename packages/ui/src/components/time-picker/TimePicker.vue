@@ -166,7 +166,7 @@ export default defineComponent({
   }
 
   .placeholder {
-    color: $placeholder-color;
+    color: var(--mv-placeholder-color);
   }
 }
 </style>

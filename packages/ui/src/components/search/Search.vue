@@ -64,6 +64,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import '../styles/hairline';
 .mv-search {
   display: flex;
   align-items: center;
@@ -100,7 +101,7 @@ export default defineComponent({
   .mv-search-action {
     padding-left: 7px;
     padding-right: 10px;
-    color: $primary-color;
+    color: var(--mv-primary-color);
     cursor: pointer;
     user-select: none;
     font-size: 14px;

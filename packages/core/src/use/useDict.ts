@@ -56,5 +56,5 @@ export let useDictList = (code: codeType) => {
  * {'GENDER': { '20': {code: '20', name: '男'}, '10': {code: '10', name: '女'} } }
  */
 export let useDictMap = (code: codeType) => {
-  return dictObjMap[code]
+  return dictObjMap[code] || {}
 }

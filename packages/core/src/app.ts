@@ -1,15 +1,15 @@
 import '@/assets/icon/iconfont.css'
-import { createApp } from 'vue'
-import Taro from '@tarojs/taro'
-import { createPinia } from 'pinia'
 import Http, { defaultInterceptors, type HttpResponse } from '@mid-vue/http-client'
 import { throttle } from '@mid-vue/shared'
 import { useConfigProvider } from '@mid-vue/taro-h5-ui'
-import { EnumEnvVersion } from './dict'
-import { clearStorage, getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
+import Taro from '@tarojs/taro'
+import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 import './app.scss'
+import { EnumEnvVersion } from './dict'
 import { useAppStore } from './stores'
 import { initDict, useUpdateManager } from './use'
+import { getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
 
 if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
   const { miniProgram } = Taro.getAccountInfoSync()
@@ -40,17 +40,15 @@ const App = createApp({
 
 App.use(createPinia())
 
+let appStore = useAppStore()
+
 // 节流,防止多次跳转登录页
-const navigateToLogin = throttle(
-  (res: HttpResponse) => {
-    clearStorage()
+const reLaunch = throttle(
+  async () => {
+    await appStore.logout()
+    await appStore.wxLogin()
     Taro.reLaunch({
-      url: '/pages/login/index'
-    }).then(() => {
-      Taro.showToast({
-        title: res.data.msg || '登录失效，请重新登录',
-        icon: 'none'
-      })
+      url: '/pages/home/index'
     })
   },
   1000 * 5,
@@ -65,7 +63,7 @@ Http.init({
     response: [defaultInterceptors().response],
     rejectResponse: (res: HttpResponse) => {
       if ([401, 403].includes(res?.data?.code)) {
-        navigateToLogin(res)
+        reLaunch()
       }
       return Promise.reject(res)
     }
@@ -76,7 +74,7 @@ Http.init({
       icon: 'none'
     })
 })
-useAppStore().wxLogin()
+appStore.wxLogin()
 initDict()
 
 export default App

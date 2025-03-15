@@ -10,16 +10,21 @@ import {
   Picker
 } from '@mid-vue/taro-h5-ui'
 import Taro from '@tarojs/taro'
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, PropType, reactive, ref } from 'vue'
 import { apiBabyCreate, apiBabyUpdate } from './api'
 import { IBaby } from './types'
 
 export default defineComponent({
   name: 'BabyInfo',
+  props: {
+    data: {
+      type: Object as PropType<IBaby>
+    }
+  },
   emits: ['close'],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const currState = reactive({
-      form: {} as IBaby
+      form: { ...props.data } as IBaby
     })
 
     const formRef = ref<FormInstance>()
@@ -36,13 +41,21 @@ export default defineComponent({
             label: '昵称',
             field: 'nickname',
             attrs: { required: true, border: true },
-            component: () => <Input v-model={currState.form.nickname}></Input>
+            component: () => (
+              <Input v-model={currState.form.nickname} placeholder='请输入宝宝名字'></Input>
+            )
           },
           {
             label: '出生日期',
-            field: 'birthTime',
+            field: 'birthDate',
             attrs: { required: true, border: true },
-            component: () => <Picker v-model={currState.form.birthTime} mode='date'></Picker>
+            component: () => <Picker v-model={currState.form.birthDate} mode='date'></Picker>
+          },
+          {
+            label: '出生时间',
+            field: 'birthTime',
+            attrs: { required: false, border: true },
+            component: () => <Picker v-model={currState.form.birthTime} mode='time'></Picker>
           },
           {
             label: '性别',
@@ -63,7 +76,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <div class='baby-info'>
+        <div class='md-baby-info'>
           <Form ref={formRef} cells={cells} v-model={currState.form}></Form>
           <FooterBar>
             <Button type='warning' size='large' onClick={onSubmit}>

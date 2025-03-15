@@ -298,6 +298,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../styles/hairline';
 .mv-search-picker-list {
   width: 100%;
   flex: 1;
@@ -353,7 +354,7 @@ export default {
       right: 0;
       top: 0;
       left: 0;
-      border-top: 1px solid $border-color;
+      border-top: 1px solid var(--mv-border-color);
       transform: scaleY(0.5);
       transform-origin: top;
       @extend %px-media;
@@ -366,7 +367,7 @@ export default {
       right: 0;
       bottom: 0;
       left: 0;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid var(--mv-border-color);
       transform: scaleY(0.5);
       @extend %px-media;
     }

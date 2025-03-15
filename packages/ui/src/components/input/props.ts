@@ -1,6 +1,5 @@
 import { type PropType } from 'vue'
 import { type CommonEvent, type InputProps } from '@tarojs/components'
-import { type MpEvent } from '@tarojs/runtime'
 export type InputType = keyof InputProps.Type
 
 export const inputProps = {
@@ -47,7 +46,7 @@ export const inputProps = {
     type: String
   },
   onInput: {
-    type: Function as PropType<(value: CommonEvent<MpEvent>) => void>
+    type: Function as PropType<(value: CommonEvent) => void>
   },
   focus: {
     type: Boolean,

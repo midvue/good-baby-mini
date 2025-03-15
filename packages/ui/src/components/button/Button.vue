@@ -52,27 +52,27 @@ export default defineComponent({
 $types:
   (
     label: 'primary',
-    color: $primary-color
+    color: var(--mv-primary-color)
   ),
   (
     label: 'success',
-    color: $success-color
+    color: var(--mv-success-color)
   ),
   (
     label: 'warning',
-    color: $warning-color
+    color: var(--mv-warning-color)
   ),
   (
     label: 'warn',
-    color: $warning-color
+    color: var(--mv-warning-color)
   ),
   (
     label: 'danger',
-    color: $danger-color
+    color: var(--mv-danger-color)
   ),
   (
     label: 'info',
-    color: $info-color
+    color: var(--mv-info-color)
   );
 
 button,
@@ -81,7 +81,7 @@ taro-button-core {
     $label: map-get($type, label);
     $color: map-get($type, color);
     &[type='mv-#{$label}'] {
-      color: $white;
+      color: var(--mv-white);
       background-color: $color;
       &::after {
         border-color: $color;
@@ -119,13 +119,13 @@ taro-button-core {
     opacity: 0.6;
   }
   &[type='mv-default'][disabled] {
-    color: $black;
+    color: var(--mv-black);
   }
 
   &[plain][type='mv-default'] {
-    background-color: $white;
-    color: $title-color;
-    border: 1px solid $border-color;
+    background-color: var(--mv-white);
+    color: var(--mv-title-color);
+    border: 1px solid var(--mv-border-color);
   }
 }
 

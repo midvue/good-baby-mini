@@ -1,5 +1,10 @@
-$popup-close-icon-margin: 9px !default;
-$popup-border-radius: 20px !default;
+@import '../styles/hairline';
+
+:root,
+page {
+  --mv-popup-close-icon-margin: 9px;
+  --mv-popup-border-radius: 20px;
+}
 
 .mv-popup-slide {
   &-center-enter-active,
@@ -39,7 +44,7 @@ $popup-border-radius: 20px !default;
   left: 50%;
   transform: translate(-50%, -50%);
   &.round {
-    border-radius: $popup-border-radius;
+    border-radius: var(--mv-popup-border-radius);
   }
 }
 
@@ -49,7 +54,7 @@ $popup-border-radius: 20px !default;
   right: 0;
   width: 100%;
   &.round {
-    border-radius: $popup-border-radius $popup-border-radius 0 0;
+    border-radius: var(--mv-popup-border-radius) var(--mv-popup-border-radius) 0 0;
   }
 }
 
@@ -58,7 +63,7 @@ $popup-border-radius: 20px !default;
   right: 0;
 
   &.round {
-    border-radius: $popup-border-radius 0 0 $popup-border-radius;
+    border-radius: var(--mv-popup-border-radius) 0 0 var(--mv-popup-border-radius);
   }
 }
 
@@ -67,7 +72,7 @@ $popup-border-radius: 20px !default;
   left: 0;
 
   &.round {
-    border-radius: 0 $popup-border-radius $popup-border-radius 0;
+    border-radius: 0 var(--mv-popup-border-radius) var(--mv-popup-border-radius) 0;
   }
 }
 
@@ -77,7 +82,7 @@ $popup-border-radius: 20px !default;
   width: 100%;
 
   &.round {
-    border-radius: 0 0 $popup-border-radius $popup-border-radius;
+    border-radius: 0 0 var(--mv-popup-border-radius) var(--mv-popup-border-radius);
   }
 }
 
@@ -85,7 +90,7 @@ $popup-border-radius: 20px !default;
   position: fixed;
   max-height: 100%;
   overflow-y: auto;
-  background-color: $white;
+  background-color: var(--mv-white);
   -webkit-overflow-scrolling: touch;
   &__close-icon {
     position: absolute !important;
@@ -103,23 +108,23 @@ $popup-border-radius: 20px !default;
     }
 
     &--top-left {
-      top: $popup-close-icon-margin;
-      left: $popup-close-icon-margin;
+      top: var(--mv-popup-close-icon-margin);
+      left: var(--mv-popup-close-icon-margin);
     }
 
     &--top-right {
-      top: $popup-close-icon-margin;
-      right: $popup-close-icon-margin;
+      top: var(--mv-popup-close-icon-margin);
+      right: var(--mv-popup-close-icon-margin);
     }
 
     &--bottom-left {
-      bottom: $popup-close-icon-margin;
-      left: $popup-close-icon-margin;
+      bottom: var(--mv-popup-close-icon-margin);
+      left: var(--mv-popup-close-icon-margin);
     }
 
     &--bottom-right {
-      right: $popup-close-icon-margin;
-      bottom: $popup-close-icon-margin;
+      right: var(--mv-popup-close-icon-margin);
+      bottom: var(--mv-popup-close-icon-margin);
     }
   }
   &-header {

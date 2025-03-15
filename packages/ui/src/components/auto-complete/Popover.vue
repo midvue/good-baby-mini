@@ -86,7 +86,7 @@ $--el-transition-md-fade:
   word-wrap: break-word;
   -webkit-overflow-scrolling: touch;
   position: absolute;
-  background: $white;
+  background: var(--mv-white);
   transition: $--el-transition-md-fade;
   transform-origin: top;
   box-shadow: 0 0px 6px 0 rgba(0, 0, 0, 0.1);

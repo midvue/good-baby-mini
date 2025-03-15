@@ -202,9 +202,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import '../styles/hairline';
 .mv-form-item {
   font-size: 14px;
-  color: $black;
+  color: var(--mv-black);
   display: flex;
   align-items: center;
   width: 100%;
@@ -212,7 +213,7 @@ export default defineComponent({
 
   .mv-form-item-label {
     width: 114px;
-    color: $title-color;
+    color: var(--mv-title-color);
     flex: none;
     min-height: 34px;
 
@@ -275,7 +276,7 @@ export default defineComponent({
     right: 0;
     bottom: 0;
     left: 0;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid var(--mv-border-color);
     transform: scaleY(0.5);
     z-index: 2;
     @extend %px-media;

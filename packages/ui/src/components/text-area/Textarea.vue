@@ -121,7 +121,7 @@ export default defineComponent({
   }
 
   .mv-textarea-icon {
-    color: $text-color;
+    color: var(--mv-text-color);
     padding: 0px 5px 1px 6px;
     font-size: 20px;
     cursor: pointer;

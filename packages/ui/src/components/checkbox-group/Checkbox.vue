@@ -129,8 +129,8 @@ export default defineComponent({
 
   &.is-checked {
     .mv-checkbox__inner {
-      border-color: $primary-color;
-      background-color: $primary-color;
+      border-color: var(--mv-primary-color);
+      background-color: var(--mv-primary-color);
       &:after {
         transform: rotate(45deg) scaleY(1);
       }
@@ -139,8 +139,8 @@ export default defineComponent({
 
   &.is-disabled {
     .mv-checkbox__inner {
-      border-color: $disable-color;
-      background-color: $disable-color;
+      border-color: var(--mv-disable-color);
+      background-color: var(--mv-disable-color);
     }
   }
 }

@@ -1,4 +1,4 @@
-.feed-milk {
+.baby-manager {
   width: 100%;
   min-height: 100%;
   display: flex;
@@ -6,50 +6,38 @@
   align-items: center;
   position: relative;
 
-  .feed-milk-form {
+  .baby-list {
     width: 100%;
     display: flex;
     flex-direction: column;
+    padding: var(--mv-padding-w) var(--mv-padding-w) 0;
 
-    .feed-milk-records-header {
+    .baby-list-item {
       width: 100%;
+      height: 80px;
+      background: #ffffff;
+      border-radius: 16px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-size: $font-size-2;
-      height: 44px;
-      padding: 0 $padding-w;
+      margin-top: 12px;
+      padding: 0 var(--mv-padding-w);
 
-      .header-title {
-        color: $title-color;
-        font-weight: bold;
+      .baby-avatar {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(326deg, #ffbcc0 0%, #ffcbdc 100%);
+        border-radius: 50%;
+        margin-right: 12px;
       }
-      .header-more {
-        color: $primary-color;
-      }
-    }
-    .form-item-card {
-      box-shadow: $box-shadow;
-      border-radius: 8px;
-      margin: 12px $padding-w 0;
-      padding: 15px;
+      .baby-info {
+        display: flex;
+        flex-direction: column;
 
-      &:last-child {
-        margin-bottom: 12px;
-      }
-      .records-item-title {
-        font-size: $font-size-2;
-        color: $primary-color;
-        font-weight: bold;
-      }
-      .records-item-content {
-        color: $title-color3;
-        font-size: $font-size-2;
-        padding: 5px 0;
-      }
-      .records-item-time {
-        color: $text-color;
-        font-size: $font-size-1;
+        .baby-name {
+          font-weight: bold;
+          font-size: 15px;
+          color: #433a51;
+        }
       }
     }
   }

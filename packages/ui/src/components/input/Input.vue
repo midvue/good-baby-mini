@@ -157,7 +157,7 @@ export default defineComponent({
   }
 
   &-icon {
-    color: $text-color;
+    color: var(--mv-text-color);
     padding: 0px 5px 1px 6px;
     font-size: 14px;
     cursor: pointer;
@@ -200,7 +200,7 @@ export default defineComponent({
     ::-moz-placeholder,
     :-moz-placeholder,
     :-ms-input-placeholder {
-      color: $placeholder-color;
+      color: var(--mv-placeholder-color);
     }
 
     &::-webkit-search-cancel-button {
@@ -209,7 +209,7 @@ export default defineComponent({
   }
 
   .mv-input__placeholder {
-    color: $placeholder-color;
+    color: var(--mv-placeholder-color);
   }
 
   .break-text {

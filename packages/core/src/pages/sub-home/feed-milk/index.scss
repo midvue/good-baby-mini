@@ -12,9 +12,9 @@
     flex-direction: column;
 
     .form-item-card {
-      box-shadow: $box-shadow;
+      box-shadow: var(--mv-box-shadow);
       border-radius: 8px;
-      margin: 12px $padding-w 0;
+      margin: 12px var(--mv-padding-w 0);
       padding: 15px;
 
       &:last-child {

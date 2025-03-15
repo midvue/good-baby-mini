@@ -27,7 +27,10 @@ declare global {
     weight: number
 
     /** '出生日期', type: 'timestamp' }) */
-    birthTime: number
+    birthDate: number
+
+    /** '出生时间' */
+    birthTime: string
 
     /** '头像', length: 128 }) */
     avatar: string
