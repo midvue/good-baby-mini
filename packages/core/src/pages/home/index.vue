@@ -8,7 +8,7 @@ import { type IHomeState } from './types'
 export default defineComponent({
   name: 'Home',
   setup() {
-    const [state, setState] = defineCtxState<IHomeState>({
+    const [state] = defineCtxState<IHomeState>({
       loading: false,
       pagination: {
         current: 1,

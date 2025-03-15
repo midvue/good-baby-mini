@@ -33,8 +33,8 @@ export default defineComponent({
       const prefixCls = 'mv-button'
       return {
         [prefixCls]: true,
-        ['mv-button__round']: props.round,
         [`mv-button__${props.size}`]: true,
+        ['mv-button__round']: props.round,
         [props.class]: true
       }
     })
@@ -82,13 +82,13 @@ taro-button-core {
     $color: map-get($type, color);
     &[type='mv-#{$label}'] {
       color: var(--mv-white);
-      background-color: $color;
+      background: $color;
       &::after {
         border-color: $color;
       }
     }
     &[plain][type='mv-#{$label}'] {
-      background-color: transparent;
+      background: transparent;
       color: $color;
       border: 1px solid $color;
     }
@@ -104,14 +104,8 @@ taro-button-core {
   line-height: inherit;
   overflow: unset;
   flex: none;
-  background-color: #fff;
+  background: #fff;
   border-radius: 8px;
-  &__round {
-    border-radius: 999px;
-  }
-  &__round:after {
-    border-radius: 999px;
-  }
   &:not([disabled]):active {
     opacity: 0.7;
   }
@@ -123,7 +117,7 @@ taro-button-core {
   }
 
   &[plain][type='mv-default'] {
-    background-color: var(--mv-white);
+    background: var(--mv-white);
     color: var(--mv-title-color);
     border: 1px solid var(--mv-border-color);
   }
@@ -151,6 +145,13 @@ taro-button-core {
   & + & {
     margin-left: 8px;
   }
+}
+
+.mv-button__round {
+  border-radius: 999px;
+}
+.mv-button__round:after {
+  border-radius: 999px;
 }
 
 button::after {

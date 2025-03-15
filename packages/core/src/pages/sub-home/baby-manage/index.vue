@@ -75,7 +75,7 @@ export default defineComponent({
             })}
           </div>
           <FooterBar>
-            <Button size='large' type='primary' onClick={() => onBabyClick()}>
+            <Button size='large' type='primary' onClick={() => onBabyClick()} round>
               添加宝宝
             </Button>
           </FooterBar>

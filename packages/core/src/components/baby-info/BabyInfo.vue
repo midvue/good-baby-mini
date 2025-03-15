@@ -79,7 +79,7 @@ export default defineComponent({
         <div class='md-baby-info'>
           <Form ref={formRef} cells={cells} v-model={currState.form}></Form>
           <FooterBar>
-            <Button type='warning' size='large' onClick={onSubmit}>
+            <Button type='primary' size='large' round onClick={onSubmit}>
               保存
             </Button>
           </FooterBar>

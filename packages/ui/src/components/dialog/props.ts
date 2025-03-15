@@ -1,5 +1,6 @@
-import { type ExtractPropTypes } from 'vue'
+import { PropType, type ExtractPropTypes } from 'vue'
 import { popupProps } from '../popup/props'
+import { ButtonProps } from '@tarojs/components'
 
 export const dialogProps = {
   ...popupProps,
@@ -43,6 +44,9 @@ export const dialogProps = {
   confirmText: {
     type: String,
     default: '确定'
+  },
+  confirmOpenType: {
+    type: String as PropType<ButtonProps.OpenType>
   }
 }
 export type DialogPropsType = ExtractPropTypes<typeof dialogProps>

@@ -1,9 +1,19 @@
-import { Form, FormInstance, Icon, IFormItem, Image, showPopup } from '@mid-vue/taro-h5-ui'
+import {
+  Form,
+  FormInstance,
+  Icon,
+  IFormItem,
+  Image,
+  showDialog,
+  showPopup
+} from '@mid-vue/taro-h5-ui'
 import { ref } from 'vue'
 
 import { iconAboutMe, iconAged, iconBaby, iconInvite, iconSetting, iconWeChat } from '../assets'
-import img_wechat from '../assets/img_wechat.jpg'
+import imgWeChat from '../assets/img_we_chat.jpg'
 import { navigateTo } from '@/use'
+import { useShareAppMessage } from '@tarojs/taro'
+import { getBabyInfo } from '@/utils'
 
 /** 菜单列表 */
 export let useList = () => {
@@ -38,7 +48,18 @@ export let useList = () => {
         },
         {
           component: () => renderItem('邀请家人', iconInvite),
-          attrs: { border: true }
+          attrs: {
+            border: true,
+            onClick() {
+              let babyInfo = getBabyInfo()
+              showDialog({
+                confirmOpenType: 'share',
+                render() {
+                  return <div>确定邀请家人一起喂养{babyInfo.nickname}嘛</div>
+                }
+              })
+            }
+          }
         },
         {
           component: () => renderItem('老年人模式', iconAged)
@@ -61,13 +82,14 @@ export let useList = () => {
             onClick() {
               showPopup({
                 round: true,
-                height: '90%',
-                render(scoped) {
+                height: '60%',
+                render() {
                   return (
-                    <>
-                      <div>小程序还在开发中，有需求可以群里反馈</div>
-                      <Image src={img_wechat}></Image>
-                    </>
+                    <div class='flex flex-col items-center'>
+                      <div>小程序还在开发中，欢迎体验!</div>
+                      <div>需要什么功能,可以截图扫码,群里反馈</div>
+                      <Image class='w-[160px] h-[360px]' src={imgWeChat}></Image>
+                    </div>
                   )
                 }
               })
@@ -80,6 +102,17 @@ export let useList = () => {
       ]
     }
   ]
+
+  useShareAppMessage((res) => {
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target)
+    }
+    return {
+      title: '自定义转发标题',
+      path: '/page/user?id=123'
+    }
+  })
 
   return {
     render: () => {

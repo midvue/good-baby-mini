@@ -50,7 +50,6 @@ export default defineComponent({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
   flex: none;
 }
 </style>
