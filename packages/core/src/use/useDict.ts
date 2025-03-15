@@ -11,7 +11,7 @@ type codeType = (typeof codes)[number]
 type DictMap = Record<codeType, Omit<DictItem, 'list'>[]>
 type DictObjMap = Record<codeType, Record<string, DictItem>>
 
-let codes = ['GENDER', 'FEED_TYPE', 'MILK_TYPE'] as const
+let codes = ['GENDER', 'FEED_TYPE', 'MILK_TYPE', 'DIAPER_TYPE', 'POOP_COLOR', 'POOP_TYPE'] as const
 
 let dictListMap = {} as DictMap
 let dictObjMap = {} as DictObjMap
