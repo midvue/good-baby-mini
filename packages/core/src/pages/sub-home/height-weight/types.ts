@@ -1,4 +1,5 @@
-export interface IBMIState {
+export interface IHeightWeightState {
+  feedType: number
   form: IHeightWeight
-  remark: string
+  remark: string | undefined
 }

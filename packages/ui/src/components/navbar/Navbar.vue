@@ -172,7 +172,7 @@ export default defineComponent({
       justify-content: center;
       position: relative;
       .mv-icon {
-        font-weight: 600;
+        font-weight: bold;
       }
       & + .btn-navbar-pill::before {
         content: '';

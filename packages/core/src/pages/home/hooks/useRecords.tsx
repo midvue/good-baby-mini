@@ -11,6 +11,7 @@ import { Image } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import iconFeedMilk from '../assets/icon_feed_milk.png'
 import IconFeedDiaper from '../assets/icon_feed_diaper.png'
+import iconFeedHeight from '../assets/icon_feed_height.png'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -89,11 +90,11 @@ export const useRecords = () => {
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
-              <Image src={iconFeedMilk} class='item-logo-img'></Image>
+              <Image src={iconFeedHeight} class='item-logo-img'></Image>
             </div>
             <div>
-              <div class='records-item-title'>身高: {height}</div>
-              <div class='records-item-content'>体重: {weight}</div>
+              <div class='records-item-title'>身高: {height} cm</div>
+              <div class='records-item-content'>体重: {weight} kg</div>
             </div>
           </div>
         )

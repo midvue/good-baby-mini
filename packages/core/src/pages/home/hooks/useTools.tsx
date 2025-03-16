@@ -1,11 +1,14 @@
 import { EnumFeedType } from '@/dict'
-import { navigateTo, useDictMap } from '@/use'
+import { navigateTo, reLaunch, useDictMap } from '@/use'
 import { dateFromNow } from '@mid-vue/shared'
-import { Image } from '@mid-vue/taro-h5-ui'
+import { Image, showDialog, showPopup } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
 import { type IHomeState } from '../types'
+import { getBabyInfo } from '@/utils'
+import { BabyInfo } from '@/components/baby-info'
+import Taro from '@tarojs/taro'
 
 export const useTools = () => {
   const [state] = useCtxState<IHomeState>()
@@ -32,6 +35,27 @@ export const useTools = () => {
   ]
 
   function onItemClick(index: number) {
+    if (!getBabyInfo().id) {
+      Taro.showToast({ title: '请先添加宝宝', icon: 'none' })
+      // 未绑定宝宝
+      showPopup({
+        round: true,
+        height: '60%',
+        render(scoped) {
+          return (
+            <BabyInfo
+              onClose={() => {
+                scoped.close()
+                reLaunch({
+                  path: '/pages/home/index'
+                })
+              }}
+            ></BabyInfo>
+          )
+        }
+      })
+      return
+    }
     const tool = toolsConfList[index]
     navigateTo({
       path: '/pages/sub-home' + tool.path,

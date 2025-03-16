@@ -4,6 +4,7 @@ import { getBabyInfo } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
+  DateTimePicker,
   FooterBar,
   Form,
   Icon,
@@ -28,7 +29,7 @@ export default defineComponent({
       feedType: query.feedType,
       remark: '',
       form: {
-        feedTime: dateFormat(Date.now(), `HH:mm`),
+        feedTime: dateFormat(Date.now(), `YYYY-MM-DD HH:mm`),
         type: '30',
         poopType: '10',
         poopColor: '10'
@@ -141,7 +142,7 @@ export default defineComponent({
             label: '更换时间',
             field: 'feedTime',
             attrs: { required: true },
-            component: () => <Picker v-model={state.form.feedTime} mode='time'></Picker>
+            component: () => <DateTimePicker v-model={state.form.feedTime}></DateTimePicker>
           }
         ]
       },
@@ -163,8 +164,7 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
-      let feedTime = dateFormat(Date.now(), `YYYY-MM-DD ${state.form.feedTime}`)
-      let content = { ...state.form, feedTime }
+      let content = { ...state.form }
       if (state.form.type === EnumDiaperType.PEE) {
         content.poopType = ''
         content.poopColor = ''
@@ -173,8 +173,8 @@ export default defineComponent({
         babyId: getBabyInfo().id,
         feedType: state.feedType,
         remark: state.remark,
-        feedTime,
-        content
+        feedTime: content.feedTime,
+        content: state.form
       }).catch(() => false)
       if (!res) return
       Taro.showToast({ title: '添加成功' })

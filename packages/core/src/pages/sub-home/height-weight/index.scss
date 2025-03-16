@@ -5,6 +5,22 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  background: linear-gradient( 180deg, #FFF8E5 0%, #F7F7F7 100%);
-  border-radius: 0px 0px 0px 0px;
+  background: linear-gradient(180deg, #fff8e5 0%, #ffffff 100%);
+  padding: 0 var(--mv-padding-w);
+
+  .height-weight-form {
+    width: 100%;
+
+    .form-item-card {
+      box-shadow: var(--mv-box-shadow);
+      border-radius: 8px;
+      margin: 12px var(--mv-padding-w 0);
+      padding: 15px;
+
+      &:last-child {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+      }
+    }
+  }
 }

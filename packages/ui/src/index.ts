@@ -1,6 +1,6 @@
 export * from './components/button'
 export * from './components/config-provider'
-export * from './components/copy-button'
+export * from './components/date-time-picker'
 export * from './components/dialog'
 export * from './components/drag'
 export * from './components/empty'

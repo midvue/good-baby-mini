@@ -12,7 +12,8 @@ import {
   Textarea,
   type FormInstance,
   Image,
-  PickerView
+  PickerView,
+  DateTimePicker
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { navigateBack, useDictList, useRoute } from '@/use'
@@ -31,7 +32,7 @@ export default defineComponent({
       form: {
         type: 10,
         volume: 150,
-        feedTime: dateFormat(Date.now(), 'HH:mm')
+        feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
       } as IMilk
     })
 
@@ -80,7 +81,7 @@ export default defineComponent({
             label: '喂养时间',
             field: 'feedTime',
             attrs: { required: true, border: true },
-            component: () => <Picker v-model={state.form.feedTime} mode='time'></Picker>
+            component: () => <DateTimePicker v-model={state.form.feedTime}></DateTimePicker>
           },
           {
             label: '喂养类型',
@@ -107,13 +108,12 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
-      const feedTime = dateFormat(Date.now(), `YYYY-MM-DD ${state.form.feedTime}`)
       const res = await apiAddFeedRecord({
         babyId: getBabyInfo().id,
         feedType: state.feedType,
         remark: state.remark,
-        feedTime,
-        content: { ...state.form, feedTime }
+        feedTime: state.form.feedTime,
+        content: state.form
       }).catch(() => false)
 
       if (!res) return

@@ -1,25 +1,29 @@
 <script lang="tsx">
-import { defineComponent, ref } from 'vue'
-import Taro from '@tarojs/taro'
+import { navigateBack, useRoute } from '@/use'
+import { getBabyInfo } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
+  DateTimePicker,
   FooterBar,
   Form,
-  type IFormItem,
   Navbar,
   Picker,
   Textarea,
-  type FormInstance
+  type FormInstance,
+  type IFormItem
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
-import { navigateBack } from '@/use'
-// import { getBabyInfo } from '@/utils'
-import { type IBMIState } from './types'
+import Taro from '@tarojs/taro'
+import { defineComponent, ref } from 'vue'
+import { apiAddFeedRecord } from './api'
+import { IHeightWeightState } from './types'
 export default defineComponent({
   name: 'HeightWeight',
   setup() {
-    const [state] = defineCtxState<IBMIState>({
+    const { query } = useRoute<{ feedType: number }>()
+    const [state] = defineCtxState<IHeightWeightState>({
+      feedType: query.feedType,
       remark: '',
       form: {
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
@@ -31,7 +35,6 @@ export default defineComponent({
     })
 
     const formRef = ref<FormInstance>()
-
 
     function initHeightList() {
       const min = 50
@@ -45,42 +48,21 @@ export default defineComponent({
       return heightList
     }
     const heightList = initHeightList()
-    const multiDates = ref([
-      [
-        { code: 1, name: '2025-01-01' },
-        { code: 2, name: '2025-02-01' },
-        { code: 3, name: '2025-03-01' }
-      ],
-      [
-        { code: 11, name: '10' },
-        { code: 12, name: '11' },
-        { code: 13, name: '12' }
-      ],
-      [
-        { code: 1101, name: '10' },
-        { code: 1102, name: '20' },
-        { code: 1103, name: '30' }
-      ]
-    ])
-    const multiIndex = ref([0, 0, 0])
-    const handleMultiChange = (e: { detail: { value: any } }) => {
-    const { value } = e.detail
-    multiIndex.value = value
-  
-    const selected = {
-      date: multiDates.value[0][value[0]],
-      hour: multiDates.value[1][value[0]],
-      minute: multiDates.value[2][value[0]]
-    }
-  
-    state.form.feedTime = [
-      selected.date.name,
-      selected.hour.name,
-      selected.minute.name
-    ].join(' ')
-}
 
-    const cells: IFormItem<IBMIState['form']>[] = [
+    function initWeightList() {
+      const min = 2
+      const max = 20
+      let curr = min
+      const heightList = []
+      while (curr < max) {
+        heightList.push({ code: curr, name: curr + 'kg' })
+        curr += 0.25
+      }
+      return heightList
+    }
+    const weightList = initWeightList()
+
+    const cells: IFormItem<IHeightWeightState['form']>[] = [
       {
         attrs: {
           class: 'form-item-card'
@@ -88,8 +70,7 @@ export default defineComponent({
         children: [
           {
             label: '记录时间',
-            component: () => <Picker v-model={state.form.feedTime} mode='multiSelector' range={multiDates.value}  rangeKey="name"
-            valueKey="code" onChange={handleMultiChange}/>
+            component: () => <DateTimePicker v-model={state.form.feedTime}></DateTimePicker>
           },
           {
             label: '身高',
@@ -101,19 +82,21 @@ export default defineComponent({
             label: '体重',
             field: 'weight',
             attrs: { required: true, border: true },
-            component: () => <Picker v-model={state.form.weight}  range={heightList}></Picker>
+            component: () => <Picker v-model={state.form.weight} range={weightList}></Picker>
           },
           {
             label: '头围',
             field: 'headCircumference',
-            attrs: { required: true, border: true  },
-            component: () => <Picker v-model={state.form.headCircumference}  range={heightList}></Picker>
+            attrs: { required: true, border: true },
+            component: () => (
+              <Picker v-model={state.form.headCircumference} range={heightList}></Picker>
+            )
           },
           {
             label: '脚长',
             field: 'footLength',
             attrs: { required: true },
-            component: () => <Picker v-model={state.form.footLength}  range={heightList}></Picker>
+            component: () => <Picker v-model={state.form.footLength} range={heightList}></Picker>
           }
         ]
       },
@@ -134,15 +117,14 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
-      // const feedTime = dateFormat(Date.now(), `YYYY-MM-DD ${state.form.feedTime}`)
-      // const res = await apiAddFeedRecord({
-      //   babyId: getBabyInfo().id,
-      //   feedType: state.feedType,
-      //   remark: state.remark,
-      //   feedTime,
-      //   content: { ...state.form, feedTime }
-      // }).catch(() => false)
-      // if (!res) return
+      const res = await apiAddFeedRecord({
+        babyId: getBabyInfo().id,
+        feedType: state.feedType,
+        remark: state.remark,
+        feedTime: state.form.feedTime,
+        content: state.form
+      }).catch(() => false)
+      if (!res) return
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }
@@ -154,12 +136,12 @@ export default defineComponent({
             title='身高体重记录'
             defaultConfig={{
               frontColor: '#000000',
-              backgroundColor: 'transparent'
+              backgroundColor: 'fff8e5'
             }}
           ></Navbar>
-          <Form ref={formRef} cells={cells} v-model={state.form}></Form>
+          <Form class='height-weight-form' ref={formRef} cells={cells} v-model={state.form}></Form>
           <FooterBar>
-            <Button type='warning' size='large' onClick={onSubmit}>
+            <Button type='primary' size='large' round onClick={onSubmit}>
               保存
             </Button>
           </FooterBar>
