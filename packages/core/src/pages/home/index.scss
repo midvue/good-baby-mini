@@ -146,7 +146,7 @@
       display: flex;
       flex-direction: column;
       --mv-item-time-color: #ff9aaa;
-      --mv-item-title-color: #835c16;
+      --mv-item-title-color: #f97e92;
       --mv-item-logo-bg: #fff3f3;
 
       .home-records-item {
@@ -223,15 +223,21 @@
           background-color: #e8e8e8;
         }
       }
-
+      .records-item-10 {
+        .content-volume {
+          font-family: DIN;
+          font-size: 14px;
+        }
+      }
       .records-item-20 {
-        --mv-item-time-color: #c4caff;
-        --mv-item-title-color: #9492fc;
+        --mv-item-time-color: #ffda8b;
+        --mv-item-title-color: #ffc118;
         --mv-item-logo-bg: #fff3f3;
       }
       .records-item-30 {
-        --mv-item-time-color: #ffda8b;
-        --mv-item-title-color: #ffc118;
+        --mv-item-time-color: #c4caff;
+        --mv-item-title-color: #9492fc;
+
         --mv-item-logo-bg: #fff3f3;
       }
     }

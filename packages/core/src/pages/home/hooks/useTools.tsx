@@ -60,7 +60,7 @@ export const useTools = () => {
     if (feedType === EnumFeedType.DIAPER) {
       return (
         <div class='card-content'>
-          <span>{poopTypeMap[(record.content as IDiaper).poopType].name}</span>
+          <span>{poopTypeMap[(record.content as IDiaper).poopType]?.name}</span>
         </div>
       )
     }
