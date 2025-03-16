@@ -1,12 +1,12 @@
-import { navigateTo } from '@/use'
+import { reactive } from 'vue'
 import { dateFromNow } from '@mid-vue/shared'
 import { useCtxState } from '@mid-vue/use'
-import { reactive } from 'vue'
+import { Image } from '@mid-vue/taro-h5-ui'
+import { navigateTo } from '@/use'
 import { type IHomeState } from '../types'
 import { EnumFeedType } from '../dict'
 import imgFeedMilk from '../assets/img_feed_milk.png'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
-import { Image } from '@mid-vue/taro-h5-ui'
 
 export const useTools = () => {
   const [state, setState] = useCtxState<IHomeState>()
@@ -28,7 +28,11 @@ export const useTools = () => {
       bgImg: imgFeedDiaper,
       path: '/diapering/index'
     },
-    { feedType: EnumFeedType.HEIGHT_WEIGHT, name: '身高体重' }
+    {
+      feedType: EnumFeedType.HEIGHT_WEIGHT,
+      name: '身高体重',
+      path: '/height-weight/index'
+    }
   ]
 
   function onItemClick(index: number) {
