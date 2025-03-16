@@ -5,11 +5,11 @@
   flex-direction: column;
   align-items: center;
   position: relative;
+  background: linear-gradient(180deg, #ffe0e5 0%, #ffffff 100%);
+  padding: 0 var(--mv-padding-w);
 
   .feed-milk-form {
     width: 100%;
-    display: flex;
-    flex-direction: column;
 
     .form-item-card {
       box-shadow: var(--mv-box-shadow);
@@ -20,6 +20,51 @@
       &:last-child {
         margin-bottom: 12px;
         padding-bottom: 12px;
+      }
+    }
+
+    .form-item-volume {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 3;
+      padding-top: 10px;
+
+      .item-volume-bg {
+        width: 169px;
+        height: 212px;
+        position: relative;
+      }
+
+      .item-volume-picker {
+        width: 116px;
+        height: 118px;
+        position: absolute;
+        top: 58%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        .volume-picker-mask {
+          left: 20px;
+          right: 20px;
+          width: auto;
+        }
+
+        .volume-picker-indicator {
+          color: var(--mv-primary-color);
+          background: #ffdae0;
+          border-radius: 100px;
+          height: 40px;
+          z-index: 0;
+          &::after {
+            display: none;
+          }
+          &::before {
+            display: none;
+          }
+        }
       }
     }
   }

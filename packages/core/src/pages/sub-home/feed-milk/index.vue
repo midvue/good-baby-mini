@@ -10,13 +10,16 @@ import {
   Navbar,
   Picker,
   Textarea,
-  type FormInstance
+  type FormInstance,
+  Image,
+  PickerView
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { navigateBack, useDictList, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { apiAddFeedRecord } from './api'
 import { type IFeedMilkState } from './types'
+import bgMilkVolume from './assets/bg_milk_volume.png'
 
 export default defineComponent({
   name: 'FeedMilk',
@@ -56,6 +59,24 @@ export default defineComponent({
         },
         children: [
           //多层级嵌套
+
+          {
+            field: 'volume',
+            attrs: { required: true, border: true },
+            component: () => (
+              <div class='form-item-volume'>
+                <Image src={bgMilkVolume} class='item-volume-bg'></Image>
+
+                <PickerView
+                  class='item-volume-picker'
+                  maskClass='volume-picker-mask'
+                  indicatorClass='volume-picker-indicator'
+                  v-model={state.form.volume}
+                  range={volumeList}
+                ></PickerView>
+              </div>
+            )
+          },
           {
             label: '喂养时间',
             field: 'feedTime',
@@ -65,14 +86,8 @@ export default defineComponent({
           {
             label: '喂养类型',
             field: 'type',
-            attrs: { required: true, border: true },
-            component: () => <Picker v-model={state.form.type} range={milkList}></Picker>
-          },
-          {
-            label: '喂养容量',
-            field: 'volume',
             attrs: { required: true },
-            component: () => <Picker v-model={state.form.volume} range={volumeList}></Picker>
+            component: () => <Picker v-model={state.form.type} range={milkList}></Picker>
           }
         ]
       },
@@ -111,15 +126,15 @@ export default defineComponent({
       return (
         <div class='feed-milk'>
           <Navbar
-            title='首页'
+            title='奶瓶喂养'
             defaultConfig={{
               frontColor: '#000000',
               backgroundColor: 'transparent'
             }}
           ></Navbar>
-          <Form ref={formRef} cells={cells} v-model={state.form}></Form>
+          <Form class='feed-milk-form' ref={formRef} cells={cells} v-model={state.form}></Form>
           <FooterBar>
-            <Button type='warning' size='large' onClick={onSubmit}>
+            <Button type='primary' size='large' round onClick={onSubmit}>
               保存
             </Button>
           </FooterBar>
