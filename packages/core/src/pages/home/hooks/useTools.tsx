@@ -1,20 +1,16 @@
-import { reactive } from 'vue'
-import { dateFromNow } from '@mid-vue/shared'
-import { useCtxState } from '@mid-vue/use'
-import { Image } from '@mid-vue/taro-h5-ui'
-import { navigateTo } from '@/use'
-import { type IHomeState } from '../types'
 import { EnumFeedType } from '@/dict'
-import imgFeedMilk from '../assets/img_feed_milk.png'
+import { navigateTo, useDictMap } from '@/use'
+import { dateFromNow } from '@mid-vue/shared'
+import { Image } from '@mid-vue/taro-h5-ui'
+import { useCtxState } from '@mid-vue/use'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
+import imgFeedMilk from '../assets/img_feed_milk.png'
+import { type IHomeState } from '../types'
 
 export const useTools = () => {
-  const [state, setState] = useCtxState<IHomeState>()
+  const [state] = useCtxState<IHomeState>()
 
-  const currState = reactive({
-    tools: []
-  })
-
+  let poopTypeMap = useDictMap('POOP_TYPE')
   const toolsConfList = [
     {
       feedType: EnumFeedType.MILK,
@@ -45,27 +41,55 @@ export const useTools = () => {
     })
   }
 
-  const formatFeedTime = (feedType: number) => {
-    const record = state.feedRecords.find((item) => +item.feedType === feedType)
+  const formatFeedTime = (record?: IFeedRecord) => {
     if (!record) return '刚刚'
     return dateFromNow(record.feedTime, {
       today: '${h}小时${m}分钟前'
     })
   }
 
+  let renderToolContent = (feedType: EnumFeedType, record?: IFeedRecord) => {
+    if (!record || !feedType) return null
+    if (feedType === EnumFeedType.MILK) {
+      return (
+        <div class='card-content'>
+          <span>{(record.content as IMilk).volume}</span> ml
+        </div>
+      )
+    }
+    if (feedType === EnumFeedType.DIAPER) {
+      return (
+        <div class='card-content'>
+          <span>{poopTypeMap[(record.content as IDiaper).poopType].name}</span>
+        </div>
+      )
+    }
+    if (feedType === EnumFeedType.HEIGHT_WEIGHT) {
+      let content = record.content as IHeightWeight
+      return (
+        <div class='card-content'>
+          <span>{content.height} cm</span>
+        </div>
+      )
+    }
+    return null
+  }
+
   return {
     render: () => (
       <div class='home-tools'>
         {toolsConfList.map((tool, index) => {
+          const record = state.feedRecords.find((item) => +item.feedType === tool.feedType)
           return (
             <div
               class={['home-tools-card', 'tools-card-' + tool.feedType]}
               key={index}
               onClick={() => onItemClick(index)}
             >
-              <div class='card-time'>{formatFeedTime(tool.feedType)}</div>
+              <div class='card-time'>{formatFeedTime(record)}</div>
               <div class='card-title'>{tool.name}</div>
-              <div class='card-content'>150ml</div>
+              {renderToolContent(tool.feedType, record)}
+
               {tool.bgImg && <Image src={tool.bgImg} class='card-bg-image'></Image>}
             </div>
           )
