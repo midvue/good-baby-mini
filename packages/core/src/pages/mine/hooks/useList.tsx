@@ -13,7 +13,7 @@ import { iconAboutMe, iconAged, iconBaby, iconInvite, iconSetting, iconWeChat } 
 import imgWeChat from '../assets/img_we_chat.jpg'
 import { navigateTo } from '@/use'
 import { useShareAppMessage } from '@tarojs/taro'
-import { getBabyInfo } from '@/utils'
+import { getBabyInfo, getUserInfo } from '@/utils'
 
 /** 菜单列表 */
 export let useList = () => {
@@ -55,7 +55,12 @@ export let useList = () => {
               showDialog({
                 confirmOpenType: 'share',
                 render() {
-                  return <div>确定邀请家人一起喂养{babyInfo.nickname}嘛</div>
+                  return (
+                    <>
+                      <div>当前宝宝：{babyInfo.nickname}</div>
+                      <div>确定邀请家人一起喂养嘛</div>
+                    </>
+                  )
                 }
               })
             }
@@ -105,12 +110,15 @@ export let useList = () => {
 
   useShareAppMessage((res) => {
     if (res.from === 'button') {
-      // 来自页面内转发按钮
-      console.log(res.target)
+      let userInfo = getUserInfo()
+      return {
+        title: `${userInfo.nickname || ''}邀请您加入一起喂养`,
+        path: `pages/home/index?fid=${userInfo.familyId}`
+      }
     }
     return {
-      title: '自定义转发标题',
-      path: '/page/user?id=123'
+      title: '宝宝喂养，生肖，五行，家谱，点开查看！！',
+      path: `pages/home/index`
     }
   })
 

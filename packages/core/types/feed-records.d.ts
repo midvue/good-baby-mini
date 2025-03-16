@@ -1,3 +1,4 @@
+import { EnumFeedType } from '@/dict'
 declare global {
   /** 尿布 */
   interface IDiaper {
@@ -33,16 +34,16 @@ declare global {
   }
 
   /** 喂养记录 */
-  interface IFeedRecord {
+  interface IFeedRecord<T = IMilk | IDiaper | IHeightWeight> {
     id: number
     /** 宝宝id */
     babyId: number
-    feedType: string | number
+    feedType: EnumFeedType
     feedTime: string
-    content: IMilk | IDiaper | IHeightWeight
-    remark: string
-    createTime: number
-    updateTime: number
+    content: T
+    remark: string | undefined
+    createTime?: number
+    updateTime?: number
   }
 }
 export {}

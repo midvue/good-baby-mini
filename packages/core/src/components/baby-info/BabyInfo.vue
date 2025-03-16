@@ -13,6 +13,7 @@ import Taro from '@tarojs/taro'
 import { defineComponent, PropType, reactive, ref } from 'vue'
 import { apiBabyCreate, apiBabyUpdate } from './api'
 import { IBaby } from './types'
+import { useAppStore } from '@/stores'
 
 export default defineComponent({
   name: 'BabyInfo',
@@ -23,8 +24,9 @@ export default defineComponent({
   },
   emits: ['close'],
   setup(props, { emit }) {
+    let appStore = useAppStore()
     const currState = reactive({
-      form: { ...props.data } as IBaby
+      form: { ...props.data, familyId: appStore.familyId } as IBaby
     })
 
     const formRef = ref<FormInstance>()

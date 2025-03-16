@@ -1,9 +1,11 @@
 <script lang="tsx">
-import { defineComponent, watch } from 'vue'
-import { hideLoading, showLoading } from '@mid-vue/taro-h5-ui'
+import { defineComponent, onMounted, watch } from 'vue'
+import { hideLoading, showDialog, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
+import { useRoute } from '@/use'
+import { apiAddBabyFoster } from './api'
 
 export default defineComponent({
   name: 'Home',

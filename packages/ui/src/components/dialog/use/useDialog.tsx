@@ -3,7 +3,7 @@ import { type JSX } from 'vue/jsx-runtime'
 import Dialog from '../Dialog.vue'
 import { type DialogPropsType } from '../props'
 
-type DialogOptionType = Partial<DialogPropsType> & {
+type DialogOptionType = Partial<InstanceType<typeof Dialog>> & {
   id?: string
   header?: (scoped: { show: () => void; close: () => void }) => string | null | JSX.Element
   render: (scoped: { show: () => void; close: () => void }) => string | null | JSX.Element

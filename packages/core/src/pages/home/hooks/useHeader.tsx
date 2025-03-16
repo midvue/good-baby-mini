@@ -1,14 +1,16 @@
 import { useAppStore } from '@/stores'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { computed, reactive, watch } from 'vue'
-import { apiBabyList } from '../api'
+import { apiAddBabyFoster, apiBabyList } from '../api'
 import { useDidShow } from '@tarojs/taro'
 import { setBabyInfo } from '@/utils'
-import { Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { Image, Navbar, showDialog } from '@mid-vue/taro-h5-ui'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
+import { useRoute } from '@/use'
 
 export const useHeader = () => {
   //const [state, setState] = useCtxState<IHomeState>()
+  let query = useRoute<{ fid: number }>().query
 
   const currState = reactive({
     babyInfo: {} as BabyInfo
@@ -19,6 +21,7 @@ export const useHeader = () => {
     () => appStore.isLogin,
     (isLogin) => {
       isLogin && getBabyList()
+      addBabyFoster()
     }
   )
 
@@ -27,6 +30,21 @@ export const useHeader = () => {
     getBabyList()
   })
 
+  /** 添加邀请者一起喂养 */
+  function addBabyFoster() {
+    if (query.fid && appStore.familyId !== +query.fid) {
+      showDialog({
+        title: '提示',
+        render: () => '是否同意加入一起喂养',
+        onConfirm: async () => {
+          await apiAddBabyFoster({
+            familyId: query.fid
+          })
+          getBabyList()
+        }
+      })
+    }
+  }
   function getBabyList() {
     if (!appStore.isLogin) return
     apiBabyList().then((res) => {
