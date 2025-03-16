@@ -145,6 +145,9 @@
       width: 100%;
       display: flex;
       flex-direction: column;
+      --mv-item-time-color: #ff9aaa;
+      --mv-item-title-color: #835c16;
+      --mv-item-logo-bg: #fff3f3;
 
       .home-records-item {
         margin: 0 var(--mv-padding-w);
@@ -170,7 +173,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background-color: #ff9aaa;
+            background-color: var(--mv-item-time-color);
           }
         }
 
@@ -185,7 +188,7 @@
           .record-item-logo {
             width: 48px;
             height: 48px;
-            background: #fff3f3;
+            background: var(--mv-item-logo-bg);
             border-radius: 50%;
             flex: none;
             margin-right: 8px;
@@ -200,7 +203,7 @@
           }
           .records-item-title {
             font-size: var(--mv-font-size-2);
-            color: #835c16;
+            color: var(--mv-item-title-color);
             font-weight: bold;
           }
           .records-item-content {
@@ -219,6 +222,17 @@
           width: 1px;
           background-color: #e8e8e8;
         }
+      }
+
+      .records-item-20 {
+        --mv-item-time-color: #c4caff;
+        --mv-item-title-color: #9492fc;
+        --mv-item-logo-bg: #fff3f3;
+      }
+      .records-item-30 {
+        --mv-item-time-color: #ffda8b;
+        --mv-item-title-color: #ffc118;
+        --mv-item-logo-bg: #fff3f3;
       }
     }
   }

@@ -7,9 +7,10 @@ import { watch } from 'vue'
 import { apiGetFeedRecordList } from '../api'
 import { type IHomeState } from '../types'
 import { useDictMap } from '@/use'
-import iconFeedMilk from '@/assets/images/icon_feed_milk.png'
 import { Image } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
+import iconFeedMilk from '../assets/icon_feed_milk.png'
+import IconFeedDiaper from '../assets/icon_feed_diaper.png'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -56,7 +57,7 @@ export const useRecords = () => {
               <Image src={iconFeedMilk} class='item-logo-img'></Image>
             </div>
             <div>
-              <div class='records-item-title'>{milkTypeMap[type]?.name}</div>
+              <div class='records-item-title '>{milkTypeMap[type]?.name}</div>
               <div class='records-item-content'>
                 <span>总量: {volume} ml</span>
               </div>
@@ -72,7 +73,7 @@ export const useRecords = () => {
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
-              <Image src={iconFeedMilk} class='item-logo-img'></Image>
+              <Image src={IconFeedDiaper} class='item-logo-img'></Image>
             </div>
             <div>
               <div class='records-item-title'>{diaperTypeMap[type]?.name}</div>
@@ -113,7 +114,7 @@ export const useRecords = () => {
             {state.feedRecords.map((record, index) => {
               let strategy = feedTypeStrategy[record.feedType]
               return (
-                <div class='home-records-item' key={index}>
+                <div class={['home-records-item', 'records-item-' + record.feedType]} key={index}>
                   <div class='records-item-time'>
                     {dateFromNow(record.feedTime, {
                       today: '${h}小时${m}分钟前'
