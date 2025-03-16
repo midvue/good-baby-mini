@@ -5,7 +5,7 @@ const USER_INFO_KEY = 'userInfo'
 const USER_INFO_ID_KEY = 'userId'
 const TOKEN_KEY = 'token'
 const ENV_VERSION_KEY = 'envVersion'
-const USER_BABY_KEY = 'BABYInfo'
+const USER_BABY_KEY = 'BabyInfo'
 
 export function isLogin() {
   return !!getToken()

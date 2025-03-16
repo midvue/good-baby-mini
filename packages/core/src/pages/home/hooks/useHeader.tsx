@@ -7,14 +7,12 @@ import { setBabyInfo } from '@/utils'
 import { Image, Navbar, showDialog } from '@mid-vue/taro-h5-ui'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { useRoute } from '@/use'
+import { useCtxState } from '@mid-vue/use'
+import { IHomeState } from '../types'
 
 export const useHeader = () => {
-  //const [state, setState] = useCtxState<IHomeState>()
+  const [state, setState] = useCtxState<IHomeState>()
   let query = useRoute<{ fid: number }>().query
-
-  const currState = reactive({
-    babyInfo: {} as BabyInfo
-  })
 
   let appStore = useAppStore()
   watch(
@@ -26,7 +24,6 @@ export const useHeader = () => {
   )
 
   useDidShow(() => {
-    if (currState.babyInfo.id) return
     getBabyList()
   })
 
@@ -48,13 +45,17 @@ export const useHeader = () => {
   function getBabyList() {
     if (!appStore.isLogin) return
     apiBabyList().then((res) => {
-      currState.babyInfo = res?.[0] || {}
-      setBabyInfo(currState.babyInfo)
+      let babyInfo = res?.[0] || {}
+      setState((state) => {
+        state.babyInfo = babyInfo
+      })
+
+      setBabyInfo(babyInfo)
     })
   }
 
   let birthTimeRef = computed(() => {
-    let { birthDate, birthTime } = currState.babyInfo
+    let { birthDate, birthTime } = state.babyInfo
     if (!birthDate) return ''
     let diffTime = dateDiff(
       Date.now(),
@@ -72,7 +73,7 @@ export const useHeader = () => {
         <div class='home-baby-info'>
           <Image class='baby-info-avatar' src={imgBabyAvatar}></Image>
           <div class='baby-info-content'>
-            <div class='info-name'>{currState.babyInfo.nickname}</div>
+            <div class='info-name'>{state.babyInfo.nickname}</div>
             <div class='info-time'>{birthTimeRef.value}</div>
           </div>
         </div>
