@@ -6,6 +6,12 @@ declare global {
     id: string
     /** 家庭id */
     familyId: string
+    /** '昵称', length: 32 }) */
+    nickname: string
+    /** '性别- 20:男性,10:女性', default: 10 }) */
+    gender: number
+    /** '头像', length: 128 }) */
+    avatar: string
   }
 
   type BabyInfo = {
@@ -20,9 +26,6 @@ declare global {
     /** '年龄', default: 0 }) */
     age: number
 
-    /** '性别- 1:男性,0:女性', default: 0 }) */
-    gender: number
-
     /** '体重', default: 0 }) */
     weight: number
 
@@ -34,6 +37,9 @@ declare global {
 
     /** '头像', length: 128 }) */
     avatar: string
+
+    /** '性别- 20:男性,10:女性', default: 10 }) */
+    gender: string
   }
 }
 export {}

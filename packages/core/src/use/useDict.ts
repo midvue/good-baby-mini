@@ -5,6 +5,7 @@ interface DictItem {
   code: string
   name: string
   sort?: number
+  ext?: string
   list: DictItem[]
 }
 type codeType = (typeof codes)[number]

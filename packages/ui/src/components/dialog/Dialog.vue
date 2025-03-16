@@ -22,13 +22,17 @@
             {{ cancelText }}
           </mv-button>
           <slot name="confirm">
-            <mv-button class="dialog-btn-confirm" @click.stop="handleConfirm">
+            <mv-button
+              class="dialog-btn-confirm"
+              :open-type="confirmOpenType"
+              @click.stop="handleConfirm"
+            >
               {{ confirmText }}
             </mv-button>
           </slot>
         </view>
-      </slot></template
-    >
+      </slot>
+    </template>
   </mv-popup>
 </template>
 <script lang="ts">

@@ -1,5 +1,4 @@
 import {
-  clearStorage,
   clearToken,
   getEnvVersion,
   getMetaEnv,
@@ -16,6 +15,8 @@ import { defineStore } from 'pinia'
 interface IAppStore {
   userInfo: IUserInfo
   token: string
+  /** 家庭id */
+  familyId: number
   /** 是否登录 */
   isLogin: boolean
   nickname?: string
@@ -33,6 +34,7 @@ export const useAppStore = defineStore('app-store', {
       version: '',
       metaEnv: getMetaEnv(),
       userInfo: userInfo,
+      familyId: userInfo.familyId,
       token: getToken(),
       isLogin: !!getToken()
     }
@@ -61,6 +63,7 @@ export const useAppStore = defineStore('app-store', {
       let userInfo = await Http.get<IUserInfo>({
         url: '/app/account/info'
       })
+      this.familyId = userInfo.familyId
       this.userInfo = userInfo
       return setUserInfo(userInfo)
     },
@@ -93,6 +96,7 @@ export const useAppStore = defineStore('app-store', {
       }
       this.isLogin = false
       this.token = ''
+      this.familyId = ''
       this.userInfo = {} as IUserInfo
       const envVersion = getEnvVersion()
       await clearToken()

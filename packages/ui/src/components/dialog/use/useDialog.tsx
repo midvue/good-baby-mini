@@ -3,10 +3,11 @@ import { type JSX } from 'vue/jsx-runtime'
 import Dialog from '../Dialog.vue'
 import { type DialogPropsType } from '../props'
 
-type DialogOptionType = Partial<DialogPropsType> & {
+type DialogOptionType = Partial<InstanceType<typeof Dialog>> & {
   id?: string
   header?: (scoped: { show: () => void; close: () => void }) => string | null | JSX.Element
   render: (scoped: { show: () => void; close: () => void }) => string | null | JSX.Element
+  footer?: (scoped: { show: () => void; close: () => void }) => string | null | JSX.Element
 }
 
 let instance = null // Notify 实例
@@ -24,7 +25,7 @@ export function showDialog(option: DialogOptionType) {
 
 //挂载dom
 function mountComponent(option = {} as DialogOptionType) {
-  const { header, render, id = 'popup', ...attrs } = option
+  const { header, render, footer, id = 'popup', ...attrs } = option
 
   //获取root节点
   let page: HTMLDivElement | null = null
@@ -56,6 +57,7 @@ function mountComponent(option = {} as DialogOptionType) {
       const slots = {} as Record<string, Function>
       if (header) slots.header = () => header(scoped)
       if (render) slots.default = () => render(scoped)
+      if (footer) slots.footer = () => footer(scoped)
 
       return () => (
         <Dialog v-model={show.value} {...attrs} title={option.title}>

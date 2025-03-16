@@ -21,3 +21,13 @@ export enum EnumEventType {
   /**刷新页面 */
   REFRESH = 'Refresh'
 }
+
+/** 喂养类型 */
+export enum EnumFeedType {
+  /**奶粉 */
+  MILK = 10,
+  /** 尿布 */
+  DIAPER = 20,
+  /** 身高体重 */
+  HEIGHT_WEIGHT = 30
+}

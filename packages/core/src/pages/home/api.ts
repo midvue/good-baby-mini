@@ -34,3 +34,14 @@ export const apiBabyList = (data = {}) => {
   }
   return http.post<IBaby[]>(option)
 }
+
+/**
+ * 添加共同喂养人
+ */
+export const apiAddBabyFoster = (data: { familyId: number }) => {
+  const option = {
+    url: '/baby/addFoster',
+    data
+  }
+  return http.post<IBaby[]>(option)
+}

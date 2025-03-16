@@ -4,7 +4,7 @@ import { useCtxState } from '@mid-vue/use'
 import { Image } from '@mid-vue/taro-h5-ui'
 import { navigateTo } from '@/use'
 import { type IHomeState } from '../types'
-import { EnumFeedType } from '../dict'
+import { EnumFeedType } from '@/dict'
 import imgFeedMilk from '../assets/img_feed_milk.png'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 
