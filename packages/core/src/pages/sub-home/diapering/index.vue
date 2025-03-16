@@ -17,7 +17,9 @@ import { defineCtxState } from '@mid-vue/use'
 import Taro from '@tarojs/taro'
 import { defineComponent, ref } from 'vue'
 import { apiAddFeedRecord } from './api'
-import { type IFeedMilkState } from './types'
+import { EnumDiaperType, type IFeedMilkState } from './types'
+import { ScrollView } from '@tarojs/components'
+import { fromJSON } from 'postcss'
 
 export default defineComponent({
   name: 'feed-milk',
@@ -36,10 +38,9 @@ export default defineComponent({
 
     const formRef = ref<FormInstance>()
 
-    let poopTypeList = useDictList('POOP_TYPE')
-    let poopColorList = useDictList('POOP_COLOR')
-    let diaperTypeList = useDictList('DIAPER_TYPE')
-
+    const poopTypeList = useDictList('POOP_TYPE')
+    const poopColorList = useDictList('POOP_COLOR')
+    const diaperTypeList = useDictList('DIAPER_TYPE')
     const cells: IFormItem<IFeedMilkState['form']>[] = [
       {
         attrs: {
@@ -70,13 +71,19 @@ export default defineComponent({
             },
             component: () => {
               return (
-                <div class='grid grid-cols-3 gap-10 size-full'>
+                <div class='grid grid-cols-4 gap-10 size-full'>
                   {diaperTypeList.map((item) => (
                     <div
-                      class={{ 'tag-item': true, active: state.form.type === item.code }}
+                      class={{ 'diaper-type-item': true, active: state.form.type === item.code }}
                       onClick={() => (state.form.type = item.code)}
                     >
-                      {state.form.type === item.code ? <Icon name='mv-icon-checked'></Icon> : <></>}
+                      <div class={'diaper-type-image ' + item.ext}>
+                        {state.form.type === item.code ? (
+                          <Icon name='mv-icon-checked'></Icon>
+                        ) : (
+                          <></>
+                        )}
+                      </div>
                       {item.name}
                     </div>
                   ))}
@@ -99,6 +106,7 @@ export default defineComponent({
               labelAlign: 'top',
               class: 'py-10'
             },
+            show: () => state.form.type !== EnumDiaperType.PEE,
             component: () => (
               <div class='grid grid-cols-3 gap-10 size-full'>
                 {poopTypeList.map((item) => (
@@ -124,10 +132,11 @@ export default defineComponent({
               labelAlign: 'top',
               class: 'py-10'
             },
+            show: () => state.form.type !== EnumDiaperType.PEE,
             component: () => (
               <div class='color-form'>
                 {/* <Icon name='mv-icon-upload' onClick={handlePhoto}></Icon> */}
-                <ul class='color-list'>
+                <ScrollView scrollX class='color-list'>
                   {poopColorList.map((item) => (
                     <div
                       class='color-item'
@@ -142,7 +151,7 @@ export default defineComponent({
                       <p>{item.name}</p>
                     </div>
                   ))}
-                </ul>
+                </ScrollView>
               </div>
             )
           }
@@ -183,12 +192,17 @@ export default defineComponent({
     ]
     const onSubmit = async () => {
       let feedTime = dateFormat(Date.now(), `YYYY-MM-DD ${state.form.feedTime}`)
+      let content = { ...state.form, feedTime }
+      if (state.form.type === EnumDiaperType.PEE) {
+        content.poopType = ''
+        content.poopColor = ''
+      }
       const res = await apiAddFeedRecord({
         babyId: getBabyInfo().id,
         feedType: state.feedType,
         remark: state.remark,
         feedTime,
-        content: { ...state.form, feedTime }
+        content
       }).catch(() => false)
       if (!res) return
       Taro.showToast({ title: '添加成功' })
