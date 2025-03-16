@@ -16,24 +16,29 @@ export const useRecords = () => {
   const [state, setState] = useCtxState<IHomeState>()
 
   let appStore = useAppStore()
+
   watch(
-    () => appStore.isLogin,
-    (isLogin) => {
-      isLogin && init()
+    () => state.babyInfo.id,
+    (id) => {
+      id && getFeedRecordList()
     }
   )
 
-  async function init() {
-    if (!appStore.isLogin) return
+  /** 获取喂养记录 */
+  async function getFeedRecordList() {
+    if (!appStore.isLogin || !state.babyInfo.id) return
 
-    const res = await apiGetFeedRecordList(state.pagination)
+    const res = await apiGetFeedRecordList({
+      babyId: state.babyInfo.id,
+      ...state.pagination
+    })
     setState((state) => {
       state.feedRecords = res.list
     })
   }
 
   useDidShow(() => {
-    init()
+    getFeedRecordList()
   })
 
   let milkTypeMap = useDictMap('MILK_TYPE')
@@ -71,7 +76,7 @@ export const useRecords = () => {
             </div>
             <div>
               <div class='records-item-title'>{diaperTypeMap[type]?.name}</div>
-              <div class='records-item-content'>{poopTypeMap[poopType].name}</div>
+              <div class='records-item-content'>{poopTypeMap[poopType]?.name}</div>
             </div>
           </div>
         )

@@ -59,6 +59,10 @@ export default defineComponent({
               frontColor: '#000000',
               backgroundColor: 'transparent'
             }}
+            scrolledConfig={{
+              frontColor: '#000000',
+              backgroundColor: '#ffffff'
+            }}
           ></Navbar>
           <div class='baby-list'>
             {currState.list.map((baby, index) => {
