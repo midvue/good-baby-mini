@@ -5,23 +5,15 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  background: #fee7dc;
+  background: linear-gradient(180deg, #e8e5fa 0%, #ffffff 100%);
+  padding: 0 var(--mv-padding-w) var(--mv-padding-w);
 
-  .feed-milk-form {
+  .diapering-form {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-
     .form-item-card {
-      // box-shadow: $box-shadow;
+      box-shadow: var(--mv-box-shadow);
       border-radius: 8px;
-      // margin: 12px $padding-w 0;
       padding: 15px;
-
-      &:last-child {
-        margin-bottom: 12px;
-        padding-bottom: 12px;
-      }
     }
   }
   .tag-item {
@@ -82,14 +74,11 @@
       }
     }
   }
-  .color-form {
-    // display: flex;
+  .form-item-color {
     width: 100%;
     .mv-icon-upload {
       width: 70px;
       height: 70px;
-      // color: $warning-color;
-      // border: 1px solid $warning-color;
       font-size: 30px;
       border-radius: 50%;
       text-align: center;

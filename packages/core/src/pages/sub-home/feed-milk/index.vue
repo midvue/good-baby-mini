@@ -59,7 +59,6 @@ export default defineComponent({
         },
         children: [
           //多层级嵌套
-
           {
             field: 'volume',
             attrs: { required: true, border: true },

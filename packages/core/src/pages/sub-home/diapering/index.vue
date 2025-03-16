@@ -19,7 +19,6 @@ import { defineComponent, ref } from 'vue'
 import { apiAddFeedRecord } from './api'
 import { EnumDiaperType, type IFeedMilkState } from './types'
 import { ScrollView } from '@tarojs/components'
-import { fromJSON } from 'postcss'
 
 export default defineComponent({
   name: 'feed-milk',
@@ -49,20 +48,6 @@ export default defineComponent({
         children: [
           //多层级嵌套
           {
-            label: '更换时间',
-            field: 'feedTime',
-            attrs: { required: true, border: true },
-            component: () => <Picker v-model={state.form.feedTime} mode='time'></Picker>
-          }
-        ]
-      },
-      {
-        attrs: {
-          class: 'form-item-card'
-        },
-        children: [
-          //多层级嵌套
-          {
             label: '尿布状态',
             field: 'type',
 
@@ -78,11 +63,7 @@ export default defineComponent({
                       onClick={() => (state.form.type = item.code)}
                     >
                       <div class={'diaper-type-image ' + item.ext}>
-                        {state.form.type === item.code ? (
-                          <Icon name='mv-icon-checked'></Icon>
-                        ) : (
-                          <></>
-                        )}
+                        {state.form.type === item.code && <Icon name='mv-icon-checked'></Icon>}
                       </div>
                       {item.name}
                     </div>
@@ -130,11 +111,12 @@ export default defineComponent({
             field: 'poopColor',
             attrs: {
               labelAlign: 'top',
-              class: 'py-10'
+              class: 'py-10',
+              border: true
             },
             show: () => state.form.type !== EnumDiaperType.PEE,
             component: () => (
-              <div class='color-form'>
+              <div class='form-item-color'>
                 {/* <Icon name='mv-icon-upload' onClick={handlePhoto}></Icon> */}
                 <ScrollView scrollX class='color-list'>
                   {poopColorList.map((item) => (
@@ -154,26 +136,16 @@ export default defineComponent({
                 </ScrollView>
               </div>
             )
+          },
+          {
+            label: '更换时间',
+            field: 'feedTime',
+            attrs: { required: true },
+            component: () => <Picker v-model={state.form.feedTime} mode='time'></Picker>
           }
         ]
       },
-      // {
-      //   attrs: {
-      //     class: 'form-item-card'
-      //   },
-      //   children: [
-      //     //多层级嵌套
-      //     {
-      //       label: '设置提醒',
-      //       component: () => (
-      //         <>
-      //           <Picker v-model={state.form.feedTime} mode='time'></Picker>
-      //           <Switch></Switch>
-      //         </>
-      //       )
-      //     }
-      //   ]
-      // },
+
       {
         attrs: {
           class: 'form-item-card'
@@ -216,10 +188,10 @@ export default defineComponent({
             title='换尿布'
             defaultConfig={{
               frontColor: '#000000',
-              backgroundColor: '#fee7dc'
+              backgroundColor: '#e8e5fa'
             }}
           ></Navbar>
-          <Form ref={formRef} cells={cells} v-model={state.form}></Form>
+          <Form class='diapering-form' ref={formRef} cells={cells} v-model={state.form}></Form>
           <FooterBar>
             <Button type='primary' size='large' round onClick={onSubmit}>
               保存
