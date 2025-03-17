@@ -57,17 +57,19 @@ export default defineComponent({
 
       //处理时间
       let hours = []
+      let startDay = useDate().startOf('day')
       for (let i = 0; i < 24; i++) {
         hours.push({
-          label: useDate().startOf('hour').add(i, 'hour').format(props.labelFormat[1]),
+          label: startDay.add(i, 'hour').format(props.labelFormat[1]),
           value: i * 60 * 60 * 1000
         })
       }
 
       let minutes = []
+      let startHour = useDate().startOf('hour')
       for (let i = 0; i < 60; i++) {
         minutes.push({
-          label: useDate().startOf('minute').add(i, 'minute').format(props.labelFormat[2]),
+          label: startHour.add(i, 'minute').format(props.labelFormat[2]),
           value: i * 60 * 1000
         })
       }
@@ -93,7 +95,6 @@ export default defineComponent({
       //角标换label
 
       let value = index2ModelValue(index)
-      console.log(value, 22)
 
       emit('update:modelValue', value)
       props?.onChange(value)
@@ -124,12 +125,10 @@ export default defineComponent({
     }
 
     function index2ModelValue(arr: number[]) {
-      // let value = arr.reduce((value, num, index) => {
-      //   value += state.range[index][num].value
-      //   return value
-      // }, 0)
-      let value = `${state.range[0][arr[0]].label} ${state.range[1][arr[1]].label}: ${state.range[2][arr[2]].label} `
-
+      let value = arr.reduce((value, num, index) => {
+        value += state.range[index][num].value
+        return value
+      }, 0)
       return useDate(value).format(props.valueFormat)
     }
 

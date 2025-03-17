@@ -1,12 +1,6 @@
 <template>
   <view :class="classes" :style="style" @click="onClick">
     <slot></slot>
-    <image-core
-      v-show="props.checkIcon && props.type === 'primary'"
-      mode="aspectFill"
-      src="order/icon-purple-check-2.png"
-      class="icon-tag-bubble"
-    />
   </view>
 </template>
 

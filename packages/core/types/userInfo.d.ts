@@ -5,7 +5,7 @@ declare global {
     /** 用户id */
     id: string
     /** 家庭id */
-    familyId: string
+    familyId: number
     /** '昵称', length: 32 }) */
     nickname: string
     /** '性别- 20:男性,10:女性', default: 10 }) */

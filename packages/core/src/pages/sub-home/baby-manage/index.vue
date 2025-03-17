@@ -1,19 +1,23 @@
 <script lang="tsx">
 import { useDictMap, useRoute } from '@/use'
-import { Button, FooterBar, Image, Navbar, showPopup } from '@mid-vue/taro-h5-ui'
+import { Button, FooterBar, Image, Navbar, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { defineComponent, reactive } from 'vue'
 import { apiBabyList } from './api'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { BabyInfo, IBaby } from '@/components/baby-info'
+import { useAppStore } from '@/stores'
+import { getBabyInfo } from '@/utils'
 
 export default defineComponent({
   name: 'baby-manage',
   setup() {
-    const { query } = useRoute<{ feedType: number }>()
     let currState = reactive({
       list: [] as BabyInfo[]
     })
+    let appStore = useAppStore()
+
+    let babyInfo = getBabyInfo()
 
     async function getList() {
       currState.list = await apiBabyList()
@@ -55,6 +59,7 @@ export default defineComponent({
         <div class='baby-manager'>
           <Navbar
             title='宝宝管理'
+            autoTheme
             defaultConfig={{
               frontColor: '#000000',
               backgroundColor: 'transparent'
@@ -70,7 +75,16 @@ export default defineComponent({
                 <div class='baby-list-item' key={index} onClick={() => onBabyClick(baby)}>
                   <Image class='baby-avatar' src={imgBabyAvatar}></Image>
                   <div class='baby-info'>
-                    <div class='baby-name'>{baby.nickname}</div>
+                    <div class='baby-name'>
+                      {baby.nickname}
+
+                      <Tag size='mini' type='success' plain>
+                        {appStore.familyId === baby.familyId ? '我创建' : '受邀人'}
+                      </Tag>
+                      <Tag size='mini' type='primary' plain v-show={babyInfo.id === baby.id}>
+                        当前喂养
+                      </Tag>
+                    </div>
                     <div class='gender'>{genderMap[baby.gender]?.name}</div>
                     <div class='age'>{formatBirthTime(baby)}</div>
                   </div>

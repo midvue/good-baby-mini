@@ -3,7 +3,7 @@ import { dateFromNow } from '@mid-vue/shared'
 import { useCtxState } from '@mid-vue/use'
 import { ScrollView } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
-import { watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { apiGetFeedRecordList } from '../api'
 import { type IHomeState } from '../types'
 import { useDictMap } from '@/use'
@@ -18,34 +18,60 @@ export const useRecords = () => {
   const [state, setState] = useCtxState<IHomeState>()
 
   let appStore = useAppStore()
+  let currState = reactive({
+    isRefresher: false
+  })
 
   watch(
     () => state.babyInfo.id,
     (id) => {
-      id && getFeedRecordList()
+      id && getRecordList()
     }
   )
 
   /** 获取喂养记录 */
-  async function getFeedRecordList() {
+  async function getRecordList(isRefresh = true) {
     if (!appStore.isLogin || !state.babyInfo.id) return
-
+    if (isRefresh) {
+      currState.isRefresher = true
+      setState((state) => {
+        state.pagination.current = 1
+      })
+    } else {
+      currState.isRefresher = false
+      setState((state) => {
+        state.loading = true
+        state.pagination.current += 1
+      })
+    }
     const res = await apiGetFeedRecordList({
       babyId: state.babyInfo.id,
       ...state.pagination
     })
     setState((state) => {
-      state.feedRecords = res.list
+      if (isRefresh) {
+        state.feedRecords = res.list
+      } else {
+        state.feedRecords = state.feedRecords.concat(res.list)
+      }
     })
   }
 
   useDidShow(() => {
-    getFeedRecordList()
+    getRecordList()
   })
 
   let milkTypeMap = useDictMap('MILK_TYPE')
   let diaperTypeMap = useDictMap('DIAPER_TYPE')
   let poopTypeMap = useDictMap('POOP_TYPE')
+
+  let onRefresh = async () => {
+    await getRecordList()
+    currState.isRefresher = false
+  }
+  let onLoadMore = () => {
+    getRecordList(false).finally(() => setState((state) => (state.loading = false)))
+  }
 
   let feedTypeStrategy = {
     /** 奶粉 */
@@ -110,7 +136,14 @@ export const useRecords = () => {
           <div class='header-more'>更多</div>
         </div>
 
-        <ScrollView class='home-records-wrapper' scroll-y>
+        <ScrollView
+          class='home-records-wrapper'
+          scroll-y
+          refresher-enabled
+          refresher-triggered={currState.isRefresher}
+          onRefresherrefresh={onRefresh}
+          onScrolltolower={onLoadMore}
+        >
           <div class='home-records-scroll'>
             {state.feedRecords.map((record, index) => {
               let strategy = feedTypeStrategy[record.feedType]
