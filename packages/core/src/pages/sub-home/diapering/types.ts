@@ -1,6 +1,8 @@
 export interface IFeedMilkState {
+  id: number | undefined
+  babyId: number
   feedType: number
-  remark: string
+  remark: string | undefined
   form: IDiaper
 }
 

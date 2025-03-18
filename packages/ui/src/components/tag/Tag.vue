@@ -78,6 +78,7 @@ const onClick = (event: Event) => {
 }
 </script>
 <style lang="scss">
+@import '../styles/hairline';
 $types:
   (
     label: 'primary',
@@ -112,15 +113,17 @@ $types:
   .mv-tag--#{$label} {
     color: var(--mv-white);
     background-color: $color;
-    &::after {
-      border-color: var(--mv-border-color);
+    &::before {
+      border-color: $border-color;
     }
   }
   .mv-tag--plain {
     &.mv-tag--#{$label} {
       background-color: transparent;
       color: $color;
-      border: 1px solid var(--mv-border-color);
+      &::before {
+        border-color: $border-color;
+      }
     }
     &.mv-tag--disabled {
       background-color: #f3f4f6;
@@ -137,12 +140,10 @@ $types:
   align-items: center;
   border-radius: var(--mv-tag-border-radius);
   font-size: 12px;
-  padding: 5px 9px;
+  padding: 3px 8px;
   flex: none;
-  &.mv-tag--primary {
-    font-weight: bold;
-    background-color: #f5f3ff !important;
-  }
+  @extend %hairline--surround;
+
   &--close {
     margin-left: 4px;
     cursor: pointer;
@@ -153,21 +154,21 @@ $types:
     border-radius: 6px;
   }
   &--small {
-    padding: 2px 4px;
+    padding: 2px 6px;
     border-radius: 6px;
   }
   &--mini {
     padding: 1px 3px;
     border-radius: 6px;
-    transform: scale(0.7, 0.7);
+    transform: scale(0.8, 0.8);
   }
 
-  .icon-tag-bubble {
-    position: absolute;
-    right: -1px;
-    bottom: -1px;
-    width: 12px;
-    height: 9px;
+  &--round {
+    border-radius: 999px;
+  }
+  &--round:before {
+    content: '';
+    border-radius: 999px;
   }
 }
 </style>

@@ -17,22 +17,27 @@ import {
 import { defineCtxState } from '@mid-vue/use'
 import Taro from '@tarojs/taro'
 import { defineComponent, ref } from 'vue'
-import { apiAddFeedRecord } from './api'
+import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { EnumDiaperType, type IFeedMilkState } from './types'
 import { ScrollView } from '@tarojs/components'
 
 export default defineComponent({
   name: 'feed-milk',
   setup() {
-    const { query } = useRoute<{ feedType: number }>()
+    const { query } = useRoute<IFeedRecord<IDiaper>>()
     const [state] = defineCtxState<IFeedMilkState>({
+      id: query.id,
+      babyId: query.babyId || getBabyInfo().id,
       feedType: query.feedType,
-      remark: '',
+      remark: query.remark,
       form: {
-        feedTime: dateFormat(Date.now(), `YYYY-MM-DD HH:mm`),
-        type: '30',
-        poopType: '10',
-        poopColor: '10'
+        ...{
+          feedTime: dateFormat(Date.now(), `YYYY-MM-DD HH:mm`),
+          type: '10',
+          poopType: '10',
+          poopColor: '10'
+        },
+        ...query.content
       }
     })
 
@@ -169,8 +174,10 @@ export default defineComponent({
         content.poopType = ''
         content.poopColor = ''
       }
-      const res = await apiAddFeedRecord({
-        babyId: getBabyInfo().id,
+      let apiFunc = state.id ? apiUpdateFeedRecord : apiAddFeedRecord
+      const res = await apiFunc({
+        id: state.id,
+        babyId: state.babyId,
         feedType: state.feedType,
         remark: state.remark,
         feedTime: content.feedTime,

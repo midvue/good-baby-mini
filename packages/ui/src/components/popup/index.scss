@@ -1,7 +1,6 @@
 @import '../styles/hairline';
 
-:root,
-page {
+:root {
   --mv-popup-close-icon-margin: 9px;
   --mv-popup-border-radius: 20px;
 }
@@ -136,7 +135,7 @@ page {
     justify-content: space-between;
     align-items: center;
     &__title {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
     }
   }

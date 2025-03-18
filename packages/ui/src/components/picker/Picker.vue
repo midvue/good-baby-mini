@@ -13,7 +13,8 @@
   >
     <slot></slot>
     <template v-if="!$slots.default">
-      <text>{{ pickerLabel || '请选择' }}</text>
+      <text v-if="pickerLabel">{{ pickerLabel }}</text>
+      <text v-else class="mv-picker-placeholder">{{ placeholder }}</text>
     </template>
   </picker>
 </template>
@@ -40,6 +41,10 @@ export default defineComponent({
     rangeKey: {
       type: String,
       default: 'name'
+    },
+    placeholder: {
+      type: String,
+      default: '请选择'
     },
     valueKey: {
       type: String,
@@ -125,5 +130,8 @@ export default defineComponent({
 <style lang="scss">
 .mv-picker {
   width: 100%;
+  .mv-picker-placeholder {
+    color: var(--mv-placeholder-color);
+  }
 }
 </style>

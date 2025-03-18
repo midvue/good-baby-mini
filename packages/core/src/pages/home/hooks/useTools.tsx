@@ -36,11 +36,11 @@ export const useTools = () => {
 
   function onItemClick(index: number) {
     if (!getBabyInfo().id) {
-      Taro.showToast({ title: '请先添加宝宝', icon: 'none' })
       // 未绑定宝宝
       showPopup({
         round: true,
         height: '60%',
+        title: '添加宝宝',
         render(scoped) {
           return (
             <BabyInfo

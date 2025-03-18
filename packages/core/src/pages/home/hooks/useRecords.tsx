@@ -6,7 +6,7 @@ import { useDidShow } from '@tarojs/taro'
 import { reactive, watch } from 'vue'
 import { apiGetFeedRecordList } from '../api'
 import { type IHomeState } from '../types'
-import { useDictMap } from '@/use'
+import { navigateTo, useDictMap } from '@/use'
 import { Image } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import iconFeedMilk from '../assets/icon_feed_milk.png'
@@ -76,6 +76,7 @@ export const useRecords = () => {
   let feedTypeStrategy = {
     /** 奶粉 */
     [EnumFeedType.MILK]: {
+      path: '/pages/sub-home/feed-milk/index',
       render: (content: IMilk) => {
         let { volume, type } = content
         return (
@@ -95,6 +96,7 @@ export const useRecords = () => {
     },
     /** 尿布 */
     [EnumFeedType.DIAPER]: {
+      path: '/pages/sub-home/diapering/index',
       render: (content: IDiaper) => {
         let { type, poopType } = content
         return (
@@ -111,6 +113,7 @@ export const useRecords = () => {
       }
     },
     [EnumFeedType.HEIGHT_WEIGHT]: {
+      path: '/pages/sub-home/height-weight/index',
       render: (content: IHeightWeight) => {
         let { weight, height } = content
         return (
@@ -126,6 +129,14 @@ export const useRecords = () => {
         )
       }
     }
+  }
+
+  let onRecordsItemClick = (record: IFeedRecord) => {
+    let strategy = feedTypeStrategy[record.feedType]
+    navigateTo({
+      path: strategy.path,
+      query: record
+    })
   }
 
   return {
@@ -148,7 +159,11 @@ export const useRecords = () => {
             {state.feedRecords.map((record, index) => {
               let strategy = feedTypeStrategy[record.feedType]
               return (
-                <div class={['home-records-item', 'records-item-' + record.feedType]} key={index}>
+                <div
+                  class={['home-records-item', 'records-item-' + record.feedType]}
+                  key={index}
+                  onClick={() => onRecordsItemClick(record)}
+                >
                   <div class='records-item-time'>
                     {dateFromNow(record.feedTime, {
                       today: '${h}小时${m}分钟前'

@@ -42,7 +42,10 @@ export const useAppStore = defineStore('app-store', {
   actions: {
     /** 微信授权登录 */
     async wxLogin() {
-      if (this.token) return
+      if (this.token) {
+        this.updateUseInfo()
+        return
+      }
       let { code } = await Taro.login()
       const option = {
         url: '/app/account/wxLogin',
@@ -50,7 +53,7 @@ export const useAppStore = defineStore('app-store', {
       }
       let res = await Http.post<{ token: string }>(option)
       await this.setToken(res.token)
-      this.getUseInfo()
+      this.updateUseInfo()
     },
 
     setToken(this: IAppStore, token: string) {
@@ -59,12 +62,16 @@ export const useAppStore = defineStore('app-store', {
       return setToken(token)
     },
 
-    async getUseInfo() {
+    async updateUseInfo() {
       let userInfo = await Http.get<IUserInfo>({
         url: '/app/account/info'
       })
       this.familyId = userInfo.familyId
       this.userInfo = userInfo
+      if (!userInfo.id) {
+        await this.logout()
+        return await this.wxLogin()
+      }
       return setUserInfo(userInfo)
     },
 
@@ -96,7 +103,7 @@ export const useAppStore = defineStore('app-store', {
       }
       this.isLogin = false
       this.token = ''
-      this.familyId = ''
+      this.familyId = 0
       this.userInfo = {} as IUserInfo
       const envVersion = getEnvVersion()
       await clearToken()

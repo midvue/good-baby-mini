@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
 import { dateFormat } from '@mid-vue/shared'
 import {
@@ -15,25 +15,30 @@ import {
   PickerView,
   DateTimePicker
 } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
 import { navigateBack, useDictList, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
-import { apiAddFeedRecord } from './api'
+import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { type IFeedMilkState } from './types'
 import bgMilkVolume from './assets/bg_milk_volume.png'
+import { EnumFeedType } from '@/dict'
 
 export default defineComponent({
   name: 'FeedMilk',
   setup() {
-    const { query } = useRoute<{ feedType: number }>()
-    const [state] = defineCtxState<IFeedMilkState>({
-      feedType: query.feedType,
+    const { query } = useRoute<IFeedRecord<IMilk>>()
+    let babyInfo = getBabyInfo()
+    let defaultMilk = {
+      feedType: EnumFeedType.MILK,
       remark: '',
-      form: {
+      babyId: babyInfo.id,
+      content: {
         type: 10,
         volume: 150,
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
       } as IMilk
+    }
+    const state = reactive<IFeedMilkState>({
+      form: { ...defaultMilk, ...query }
     })
 
     const formRef = ref<FormInstance>()
@@ -53,7 +58,7 @@ export default defineComponent({
     }
     const volumeList = initVolumeList()
 
-    const cells: IFormItem<IFeedMilkState['form']>[] = [
+    const cells: IFormItem<IMilk>[] = [
       {
         attrs: {
           class: 'form-item-card'
@@ -71,7 +76,7 @@ export default defineComponent({
                   class='item-volume-picker'
                   maskClass='volume-picker-mask'
                   indicatorClass='volume-picker-indicator'
-                  v-model={state.form.volume}
+                  v-model={state.form.content.volume}
                   range={volumeList}
                 ></PickerView>
               </div>
@@ -81,13 +86,13 @@ export default defineComponent({
             label: '喂养时间',
             field: 'feedTime',
             attrs: { required: true, border: true },
-            component: () => <DateTimePicker v-model={state.form.feedTime}></DateTimePicker>
+            component: () => <DateTimePicker v-model={state.form.content.feedTime}></DateTimePicker>
           },
           {
             label: '喂养类型',
             field: 'type',
             attrs: { required: true },
-            component: () => <Picker v-model={state.form.type} range={milkList}></Picker>
+            component: () => <Picker v-model={state.form.content.type} range={milkList}></Picker>
           }
         ]
       },
@@ -102,19 +107,16 @@ export default defineComponent({
             attrs: {
               labelAlign: 'top'
             },
-            component: () => <Textarea v-model={state.remark} placeholder='请输入'></Textarea>
+            component: () => <Textarea v-model={state.form.remark} placeholder='请输入'></Textarea>
           }
         ]
       }
     ]
     const onSubmit = async () => {
-      const res = await apiAddFeedRecord({
-        babyId: getBabyInfo().id,
-        feedType: state.feedType,
-        remark: state.remark,
-        feedTime: state.form.feedTime,
-        content: state.form
-      }).catch(() => false)
+      let apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
+      const res = await apiFunc({ ...state.form, feedTime: state.form.content.feedTime }).catch(
+        () => false
+      )
 
       if (!res) return
       Taro.showToast({ title: '添加成功' })

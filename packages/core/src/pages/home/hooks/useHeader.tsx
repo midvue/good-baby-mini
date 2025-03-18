@@ -1,13 +1,14 @@
-import { useAppStore } from '@/stores'
-import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { computed, reactive, watch } from 'vue'
-import { apiAddBabyFoster, apiBabyList } from '../api'
-import { useDidShow } from '@tarojs/taro'
-import { setBabyInfo } from '@/utils'
-import { Image, Navbar, showDialog } from '@mid-vue/taro-h5-ui'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
+import { BabyInfo } from '@/components/baby-info'
+import { useAppStore } from '@/stores'
 import { useRoute } from '@/use'
+import { setBabyInfo } from '@/utils'
+import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
+import { useDidShow } from '@tarojs/taro'
+import { computed, watch } from 'vue'
+import { apiAddBabyFoster, apiBabyList } from '../api'
 import { IHomeState } from '../types'
 
 export const useHeader = () => {
@@ -54,6 +55,25 @@ export const useHeader = () => {
       setBabyInfo(babyInfo)
     })
   }
+  //点击添加宝宝
+  function onAddBaby() {
+    // 未绑定宝宝
+    showPopup({
+      round: true,
+      height: '60%',
+      title: '添加宝宝',
+      render(scoped) {
+        return (
+          <BabyInfo
+            onClose={() => {
+              scoped.close()
+              getBabyList()
+            }}
+          ></BabyInfo>
+        )
+      }
+    })
+  }
 
   let birthTimeRef = computed(() => {
     let { birthDate, birthTime } = state.babyInfo
@@ -64,7 +84,7 @@ export const useHeader = () => {
         .format('YYYY-MM-DD ' + birthTime)
         .valueOf()
     )
-    return durationFormatNoZero(diffTime, { format: 'Y岁M月D天H小时m分钟' })
+    return durationFormatNoZero(diffTime, { format: 'Y岁M月D天H小时' })
   })
 
   return {
@@ -77,6 +97,11 @@ export const useHeader = () => {
             <div class='info-name'>{state.babyInfo.nickname}</div>
             <div class='info-time'>{birthTimeRef.value}</div>
           </div>
+          {!state.babyInfo.id && (
+            <Tag type='primary' round onClick={onAddBaby}>
+              请添加宝宝
+            </Tag>
+          )}
         </div>
       </div>
     )

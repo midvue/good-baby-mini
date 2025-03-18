@@ -33,7 +33,7 @@ export default defineComponent({
           .format('YYYY-MM-DD ' + baby.birthTime)
           .valueOf()
       )
-      return durationFormatNoZero(diffTime, { format: 'Y岁M月D天H小时m分钟' })
+      return durationFormatNoZero(diffTime, { format: 'Y岁M月D天H小时' })
     }
 
     let onBabyClick = (baby?: IBaby) => {
@@ -77,16 +77,22 @@ export default defineComponent({
                   <div class='baby-info'>
                     <div class='baby-name'>
                       {baby.nickname}
-
-                      <Tag size='mini' type='success' plain>
+                      <Tag class='ml-[5px]' size='small' round type='primary'>
+                        {formatBirthTime(baby)}
+                      </Tag>
+                    </div>
+                    <div class='tags'>
+                      <Tag size='mini' type='success' plain round>
                         {appStore.familyId === baby.familyId ? '我创建' : '受邀人'}
                       </Tag>
-                      <Tag size='mini' type='primary' plain v-show={babyInfo.id === baby.id}>
+                      <Tag size='mini' round type='primary' plain v-show={babyInfo.id === baby.id}>
                         当前喂养
                       </Tag>
                     </div>
-                    <div class='gender'>{genderMap[baby.gender]?.name}</div>
-                    <div class='age'>{formatBirthTime(baby)}</div>
+                    <div class='gender'>
+                      {genderMap[baby.gender]?.name}宝宝 ·&nbsp;
+                      {useDate(baby.birthDate).format('YYYY-MM-DD ' + baby.birthTime)}
+                    </div>
                   </div>
                 </div>
               )

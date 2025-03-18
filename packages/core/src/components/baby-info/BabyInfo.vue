@@ -14,6 +14,7 @@ import { defineComponent, PropType, reactive, ref } from 'vue'
 import { apiBabyCreate, apiBabyUpdate } from './api'
 import { IBaby } from './types'
 import { useAppStore } from '@/stores'
+import { useDate } from '@mid-vue/shared'
 
 export default defineComponent({
   name: 'BabyInfo',
@@ -30,6 +31,7 @@ export default defineComponent({
     })
 
     const formRef = ref<FormInstance>()
+
     let genderList = useDictList('GENDER')
 
     const cells: IFormItem<IBaby>[] = [
@@ -40,18 +42,26 @@ export default defineComponent({
         children: [
           //多层级嵌套
           {
-            label: '昵称',
+            label: '宝宝昵称',
             field: 'nickname',
             attrs: { required: true, border: true },
+            rules: [{ required: true, message: '请输入宝宝昵称' }],
             component: () => (
-              <Input v-model={currState.form.nickname} placeholder='请输入宝宝名字'></Input>
+              <Input v-model={currState.form.nickname} placeholder='请输入宝宝昵称'></Input>
             )
           },
           {
             label: '出生日期',
             field: 'birthDate',
             attrs: { required: true, border: true },
-            component: () => <Picker v-model={currState.form.birthDate} mode='date'></Picker>
+            rules: [{ required: true, message: '请输入宝宝出生日期' }],
+            component: () => (
+              <Picker
+                v-model={currState.form.birthDate}
+                mode='date'
+                end={useDate().format('YYYY-MM-DD')}
+              ></Picker>
+            )
           },
           {
             label: '出生时间',
@@ -60,9 +70,10 @@ export default defineComponent({
             component: () => <Picker v-model={currState.form.birthTime} mode='time'></Picker>
           },
           {
-            label: '性别',
+            label: '宝宝性别',
             field: 'gender',
             attrs: { required: true },
+            rules: [{ required: true, message: '请选择宝宝的性别' }],
             component: () => <Picker v-model={currState.form.gender} range={genderList}></Picker>
           }
         ]
@@ -72,6 +83,7 @@ export default defineComponent({
       let apiFunc = currState.form.id ? apiBabyUpdate : apiBabyCreate
       const res = await apiFunc(currState.form).catch(() => false)
       if (!res) return
+      appStore.updateUseInfo()
       Taro.showToast({ title: '操作成功' })
       emit('close')
     }
