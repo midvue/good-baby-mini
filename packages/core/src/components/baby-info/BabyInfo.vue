@@ -27,7 +27,11 @@ export default defineComponent({
   setup(props, { emit }) {
     let appStore = useAppStore()
     const currState = reactive({
-      form: { ...props.data, familyId: appStore.familyId } as IBaby
+      form: {
+        ...props.data,
+        gender: '' + props.data?.gender || '',
+        familyId: appStore.familyId
+      } as IBaby
     })
 
     const formRef = ref<FormInstance>()

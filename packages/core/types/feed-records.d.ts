@@ -40,6 +40,7 @@ declare global {
     babyId: number
     feedType: EnumFeedType
     feedTime: string
+    feedTimeStr: string | undefined
     content: T
     remark: string | undefined
     createTime?: number

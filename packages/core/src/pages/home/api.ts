@@ -16,10 +16,9 @@ export const apiGetFeedRecordList = (data = {}) => {
 /**
  * 删除喂养记录
  */
-export const apiDeleteFeedRecord = (data = {}) => {
+export const apiDeleteFeedRecord = (id: number) => {
   const option = {
-    url: '/baby/feedRecord/delete/',
-    params: data
+    url: `/baby/feedRecord/delete/?id=${id}`
   }
   return http.delete(option)
 }

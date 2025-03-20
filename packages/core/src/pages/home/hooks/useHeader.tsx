@@ -1,7 +1,7 @@
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { BabyInfo } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
-import { useRoute } from '@/use'
+import { reLaunch, useRoute } from '@/use'
 import { setBabyInfo } from '@/utils'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
@@ -39,7 +39,9 @@ export const useHeader = () => {
           await apiAddBabyFoster({
             familyId: query.fid
           })
-          getBabyList()
+          reLaunch({
+            path: '/pages/home/index'
+          })
         }
       })
     }

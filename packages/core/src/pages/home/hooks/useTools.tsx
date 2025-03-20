@@ -1,6 +1,6 @@
 import { EnumFeedType } from '@/dict'
 import { navigateTo, reLaunch, useDictMap } from '@/use'
-import { dateFromNow } from '@mid-vue/shared'
+import { dateFormat, dateFromNow } from '@mid-vue/shared'
 import { Image, showDialog, showPopup } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
@@ -57,10 +57,15 @@ export const useTools = () => {
       return
     }
     const tool = toolsConfList[index]
+    const record = state.feedRecords.find((item) => +item.feedType === tool.feedType)
+    let feedTime = dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
     navigateTo({
       path: '/pages/sub-home' + tool.path,
       query: {
-        feedType: tool.feedType
+        id: undefined,
+        feedType: tool.feedType,
+        feedTime,
+        content: { ...record?.content, feedTime }
       }
     })
   }

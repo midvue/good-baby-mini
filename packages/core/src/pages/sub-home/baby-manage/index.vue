@@ -3,8 +3,9 @@ import { useDictMap, useRoute } from '@/use'
 import { Button, FooterBar, Image, Navbar, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { defineComponent, reactive } from 'vue'
 import { apiBabyList } from './api'
-import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
-import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import imgAvatarFemale from './assets/img_avatar_female.png'
+import imgAvatarMale from './assets/img_avatar_male.png'
+import { dateDiff, durationFormatNoZero, EnumYesNo, useDate } from '@mid-vue/shared'
 import { BabyInfo, IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
 import { getBabyInfo } from '@/utils'
@@ -40,6 +41,7 @@ export default defineComponent({
       showPopup({
         round: true,
         height: '60%',
+        title: (baby ? '修改' : '添加') + '宝宝',
         render(scoped) {
           return (
             <BabyInfo
@@ -73,7 +75,10 @@ export default defineComponent({
             {currState.list.map((baby, index) => {
               return (
                 <div class='baby-list-item' key={index} onClick={() => onBabyClick(baby)}>
-                  <Image class='baby-avatar' src={imgBabyAvatar}></Image>
+                  <Image
+                    class='baby-avatar'
+                    src={baby.gender === '10' ? imgAvatarFemale : imgAvatarMale}
+                  ></Image>
                   <div class='baby-info'>
                     <div class='baby-name'>
                       {baby.nickname}

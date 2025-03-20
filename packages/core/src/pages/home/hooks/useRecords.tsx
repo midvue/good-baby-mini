@@ -1,17 +1,17 @@
+import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
-import { dateFromNow } from '@mid-vue/shared'
+import { navigateTo, useDictMap } from '@/use'
+import { dateDiff, dateFormat, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { Image, showDialog } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { ScrollView } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
 import { reactive, watch } from 'vue'
-import { apiGetFeedRecordList } from '../api'
-import { type IHomeState } from '../types'
-import { navigateTo, useDictMap } from '@/use'
-import { Image } from '@mid-vue/taro-h5-ui'
-import { EnumFeedType } from '@/dict'
-import iconFeedMilk from '../assets/icon_feed_milk.png'
+import { apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
 import IconFeedDiaper from '../assets/icon_feed_diaper.png'
 import iconFeedHeight from '../assets/icon_feed_height.png'
+import iconFeedMilk from '../assets/icon_feed_milk.png'
+import { type IHomeState } from '../types'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -33,7 +33,6 @@ export const useRecords = () => {
   async function getRecordList(isRefresh = true) {
     if (!appStore.isLogin || !state.babyInfo.id) return
     if (isRefresh) {
-      currState.isRefresher = true
       setState((state) => {
         state.pagination.current = 1
       })
@@ -48,11 +47,29 @@ export const useRecords = () => {
       babyId: state.babyInfo.id,
       ...state.pagination
     })
+    let list = res.list || []
+    let now = Date.now()
+    //格式化时间
+    list = list.map((record) => {
+      let duration = dateDiff(now, record.feedTime)
+      let feedDay = useDate(record.feedTime)
+      let isToday = feedDay.isSame(useDate(), 'day')
+      let yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
+      let feedTimeStr = `${
+        duration < 60000
+          ? '刚刚'
+          : durationFormatNoZero(duration, {
+              format: isToday ? 'H小时m分前' : 'D天H小时m分前'
+            })
+      } (${feedDay.format(isToday ? 'HH:mm' : yesterday ? '昨天 HH:mm' : 'MM月DD日 HH:mm')})`
+      return { ...record, feedTimeStr }
+    })
+
     setState((state) => {
       if (isRefresh) {
-        state.feedRecords = res.list
+        state.feedRecords = list
       } else {
-        state.feedRecords = state.feedRecords.concat(res.list)
+        state.feedRecords = state.feedRecords.concat(list)
       }
     })
   }
@@ -66,6 +83,7 @@ export const useRecords = () => {
   let poopTypeMap = useDictMap('POOP_TYPE')
 
   let onRefresh = async () => {
+    currState.isRefresher = true
     await getRecordList()
     currState.isRefresher = false
   }
@@ -98,7 +116,7 @@ export const useRecords = () => {
     [EnumFeedType.DIAPER]: {
       path: '/pages/sub-home/diapering/index',
       render: (content: IDiaper) => {
-        let { type, poopType } = content
+        let { type } = content
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
@@ -106,7 +124,7 @@ export const useRecords = () => {
             </div>
             <div>
               <div class='records-item-title'>{diaperTypeMap[type]?.name}</div>
-              <div class='records-item-content'>{poopTypeMap[poopType]?.name}</div>
+              <div class='records-item-content'>{poopTypeMap[type]?.name}</div>
             </div>
           </div>
         )
@@ -129,7 +147,7 @@ export const useRecords = () => {
         )
       }
     }
-  }
+  } as const
 
   let onRecordsItemClick = (record: IFeedRecord) => {
     let strategy = feedTypeStrategy[record.feedType]
@@ -138,44 +156,54 @@ export const useRecords = () => {
       query: record
     })
   }
+  let onDeleteRecord = (record: IFeedRecord) => {
+    showDialog({
+      title: '删除记录',
+      render: () => '确认删除 \n' + record.feedTimeStr + ' 的记录吗？',
+      onConfirm: async () => {
+        await apiDeleteFeedRecord(record.id)
+        getRecordList()
+      }
+    })
+  }
 
   return {
-    render: () => (
-      <div class='home-records'>
-        <div class='home-records-header'>
-          <div class='header-title'>喂养记录</div>
-          <div class='header-more'>更多</div>
-        </div>
-
-        <ScrollView
-          class='home-records-wrapper'
-          scroll-y
-          refresher-enabled
-          refresher-triggered={currState.isRefresher}
-          onRefresherrefresh={onRefresh}
-          onScrolltolower={onLoadMore}
-        >
-          <div class='home-records-scroll'>
-            {state.feedRecords.map((record, index) => {
-              let strategy = feedTypeStrategy[record.feedType]
-              return (
-                <div
-                  class={['home-records-item', 'records-item-' + record.feedType]}
-                  key={index}
-                  onClick={() => onRecordsItemClick(record)}
-                >
-                  <div class='records-item-time'>
-                    {dateFromNow(record.feedTime, {
-                      today: '${h}小时${m}分钟前'
-                    })}
-                  </div>
-                  {strategy.render(record.content)}
-                </div>
-              )
-            })}
+    render: () => {
+      return (
+        <div class='home-records'>
+          <div class='home-records-header'>
+            <div class='header-title'>喂养记录</div>
+            <div class='header-more'>更多</div>
           </div>
-        </ScrollView>
-      </div>
-    )
+
+          <ScrollView
+            class='home-records-wrapper'
+            scroll-y
+            refresher-enabled
+            refresher-triggered={currState.isRefresher}
+            onRefresherrefresh={onRefresh}
+            onScrolltolower={onLoadMore}
+          >
+            <div class='home-records-scroll'>
+              {state.feedRecords.map((record, index) => {
+                let strategy = feedTypeStrategy[record.feedType]
+                return (
+                  <div
+                    class={['home-records-item', 'records-item-' + record.feedType]}
+                    key={index}
+                    //@ts-ignore
+                    onLongpress={() => onDeleteRecord(record)}
+                    onClick={() => onRecordsItemClick(record)}
+                  >
+                    <div class='records-item-time'>{record.feedTimeStr}</div>
+                    {strategy.render(record.content)}
+                  </div>
+                )
+              })}
+            </div>
+          </ScrollView>
+        </div>
+      )
+    }
   }
 }
