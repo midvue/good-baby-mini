@@ -13,7 +13,8 @@ import {
   type FormInstance,
   Image,
   PickerView,
-  DateTimePicker
+  DateTimePicker,
+  Tag
 } from '@mid-vue/taro-h5-ui'
 import { navigateBack, useDictList, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
@@ -110,6 +111,13 @@ export default defineComponent({
             component: () => <Textarea v-model={state.form.remark} placeholder='请输入'></Textarea>
           }
         ]
+      },
+      {
+        render: () => (
+          <Tag plain type='primary' size='small' round class='mt-[8px]'>
+            喂养记录列表,可以点击修改,长按删除记录哦!
+          </Tag>
+        )
       }
     ]
     const onSubmit = async () => {

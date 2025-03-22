@@ -1,9 +1,11 @@
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
+import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
+import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { BabyInfo } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
 import { reLaunch, useRoute } from '@/use'
 import { setBabyInfo } from '@/utils'
-import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { dateDiff, dateMonthDays, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { useDidShow } from '@tarojs/taro'
@@ -80,13 +82,13 @@ export const useHeader = () => {
   let birthTimeRef = computed(() => {
     let { birthDate, birthTime } = state.babyInfo
     if (!birthDate) return ''
-    let diffTime = dateDiff(
-      Date.now(),
-      useDate(birthDate)
-        .format('YYYY-MM-DD ' + birthTime)
-        .valueOf()
-    )
-    return durationFormatNoZero(diffTime, { format: 'Y岁M月D天H小时' })
+    let now = useDate()
+    let targetDate = useDate(birthDate)
+    const months = now.diff(targetDate, 'month')
+    const days = now.diff(useDate(targetDate, 'YYYY-MM-DD').add(months, 'month'), 'day').toString()
+    let diff = now.diff(targetDate.format('YYYY-MM-DD ' + birthTime), 'millisecond')
+
+    return `${months}个月 ${days.padStart(2, '0')}天 (${durationFormatNoZero(diff, { format: birthTime ? 'D天H小时' : '第D天' })})`
   })
 
   return {
@@ -94,7 +96,10 @@ export const useHeader = () => {
       <div class='home-header'>
         <Navbar leftArrow={false} showHome={false}></Navbar>
         <div class='home-baby-info'>
-          <Image class='baby-info-avatar' src={imgBabyAvatar}></Image>
+          <Image
+            class='baby-info-avatar'
+            src={state.babyInfo.gender === '20' ? imgAvatarMale : imgAvatarFemale}
+          ></Image>
           <div class='baby-info-content'>
             <div class='info-name'>{state.babyInfo.nickname}</div>
             <div class='info-time'>{birthTimeRef.value}</div>

@@ -1,14 +1,13 @@
+import { BabyInfo } from '@/components/baby-info'
 import { EnumFeedType } from '@/dict'
 import { navigateTo, reLaunch, useDictMap } from '@/use'
-import { dateFormat, dateFromNow } from '@mid-vue/shared'
-import { Image, showDialog, showPopup } from '@mid-vue/taro-h5-ui'
+import { getBabyInfo } from '@/utils'
+import { dateFormat } from '@mid-vue/shared'
+import { Image, showPopup } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
 import { type IHomeState } from '../types'
-import { getBabyInfo } from '@/utils'
-import { BabyInfo } from '@/components/baby-info'
-import Taro from '@tarojs/taro'
 
 export const useTools = () => {
   const [state] = useCtxState<IHomeState>()
@@ -72,9 +71,7 @@ export const useTools = () => {
 
   const formatFeedTime = (record?: IFeedRecord) => {
     if (!record) return '刚刚'
-    return dateFromNow(record.feedTime, {
-      today: '${h}小时${m}分钟前'
-    })
+    return record.feedTimeStr?.replace(/.*\((.*)\)/, '$1')
   }
 
   let renderToolContent = (feedType: EnumFeedType, record?: IFeedRecord) => {
@@ -97,7 +94,8 @@ export const useTools = () => {
       let content = record.content as IHeightWeight
       return (
         <div class='card-content'>
-          <span>{content.height} cm</span>
+          <span>{content.height}cm </span>
+          <span>{content.weight}kg</span>
         </div>
       )
     }

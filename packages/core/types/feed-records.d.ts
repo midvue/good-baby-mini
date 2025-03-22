@@ -28,9 +28,9 @@ declare global {
     /** 体重 */
     weight: number
     /** 头尾 */
-    headCircumference: number
+    headCircumference: number | undefined
     /** 脚长 */
-    footLength: number
+    footLength: number | undefined
   }
 
   /** 喂养记录 */

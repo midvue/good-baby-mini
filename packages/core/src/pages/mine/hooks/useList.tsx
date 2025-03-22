@@ -100,10 +100,10 @@ export let useList = () => {
               })
             }
           }
-        },
-        {
-          component: () => renderItem('退出登录', iconSetting)
         }
+        // {
+        //   component: () => renderItem('退出登录', iconSetting)
+        // }
       ]
     }
   ]

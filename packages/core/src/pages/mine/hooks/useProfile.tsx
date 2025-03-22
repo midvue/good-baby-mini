@@ -2,6 +2,7 @@ import { Image, Navbar } from '@mid-vue/taro-h5-ui'
 import { getUserInfo } from '@/utils'
 import { bgMineHeader, iconAchieve, iconFamily } from '../assets'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
+import { durationFormat, durationFormatNoZero, useDate } from '@mid-vue/shared'
 
 /** 用户信息 */
 export let useProfile = () => {
@@ -45,7 +46,9 @@ export let useProfile = () => {
           <Image class='image-avatar' src={imgBabyAvatar}></Image>
           <div class='profile-info'>
             <div class='username'>微信用户 {userInfo.id}</div>
-            <div class='register-time'>加入好宝宝喂养1天了</div>
+            <div class='register-time'>
+              加入好宝宝喂养{useDate().diff(userInfo.createTime, 'day')}天了
+            </div>
           </div>
         </div>
         {renderMenuPanels()}

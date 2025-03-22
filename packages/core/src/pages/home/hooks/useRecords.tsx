@@ -95,8 +95,8 @@ export const useRecords = () => {
     /** 奶粉 */
     [EnumFeedType.MILK]: {
       path: '/pages/sub-home/feed-milk/index',
-      render: (content: IMilk) => {
-        let { volume, type } = content
+      render: (content: IFeedRecord['content']) => {
+        let { volume, type } = content as IMilk
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
@@ -115,8 +115,8 @@ export const useRecords = () => {
     /** 尿布 */
     [EnumFeedType.DIAPER]: {
       path: '/pages/sub-home/diapering/index',
-      render: (content: IDiaper) => {
-        let { type } = content
+      render: (content: IFeedRecord['content']) => {
+        let { type } = content as IDiaper
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
@@ -132,8 +132,8 @@ export const useRecords = () => {
     },
     [EnumFeedType.HEIGHT_WEIGHT]: {
       path: '/pages/sub-home/height-weight/index',
-      render: (content: IHeightWeight) => {
-        let { weight, height } = content
+      render: (content: IFeedRecord['content']) => {
+        let { weight, height } = content as IHeightWeight
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
@@ -183,6 +183,7 @@ export const useRecords = () => {
             refresher-triggered={currState.isRefresher}
             onRefresherrefresh={onRefresh}
             onScrolltolower={onLoadMore}
+            scrollTop={0}
           >
             <div class='home-records-scroll'>
               {state.feedRecords.map((record, index) => {

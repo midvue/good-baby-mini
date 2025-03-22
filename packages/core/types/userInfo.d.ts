@@ -12,6 +12,7 @@ declare global {
     gender: number
     /** '头像', length: 128 }) */
     avatar: string
+    createTime: number
   }
 
   type BabyInfo = {

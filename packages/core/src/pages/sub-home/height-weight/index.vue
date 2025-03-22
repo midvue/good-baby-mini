@@ -7,62 +7,45 @@ import {
   DateTimePicker,
   FooterBar,
   Form,
+  Input,
   Navbar,
   Picker,
+  Tag,
   Textarea,
   type FormInstance,
   type IFormItem
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import Taro from '@tarojs/taro'
-import { defineComponent, ref } from 'vue'
-import { apiAddFeedRecord } from './api'
+import { defineComponent, reactive, ref } from 'vue'
+import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { IHeightWeightState } from './types'
+import { EnumFeedType } from '@/dict'
 export default defineComponent({
   name: 'HeightWeight',
   setup() {
-    const { query } = useRoute<{ feedType: number }>()
-    const [state] = defineCtxState<IHeightWeightState>({
-      feedType: query.feedType,
+    const { query } = useRoute<IFeedRecord<IHeightWeight>>()
+    let babyInfo = getBabyInfo()
+
+    let defaultHeightWeight = {
+      feedType: EnumFeedType.HEIGHT_WEIGHT,
       remark: '',
-      form: {
+      babyId: babyInfo.id,
+      content: {
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
         height: 50,
-        weight: 50,
-        headCircumference: 60,
-        footLength: 70
+        weight: 5,
+        headCircumference: undefined,
+        footLength: undefined
       } as IHeightWeight
+    }
+    const state = reactive<IHeightWeightState>({
+      form: { ...defaultHeightWeight, ...query }
     })
 
     const formRef = ref<FormInstance>()
 
-    function initHeightList() {
-      const min = 50
-      const max = 140
-      let curr = min
-      const heightList = []
-      while (curr < max) {
-        heightList.push({ code: curr, name: curr + 'cm' })
-        curr += 1
-      }
-      return heightList
-    }
-    const heightList = initHeightList()
-
-    function initWeightList() {
-      const min = 2
-      const max = 20
-      let curr = min
-      const heightList = []
-      while (curr < max) {
-        heightList.push({ code: curr, name: curr + 'kg' })
-        curr += 0.25
-      }
-      return heightList
-    }
-    const weightList = initWeightList()
-
-    const cells: IFormItem<IHeightWeightState['form']>[] = [
+    const cells: IFormItem<IHeightWeight>[] = [
       {
         attrs: {
           class: 'form-item-card'
@@ -70,33 +53,55 @@ export default defineComponent({
         children: [
           {
             label: '记录时间',
+            attrs: { required: true, border: true },
             component: () => <DateTimePicker v-model={state.form.feedTime}></DateTimePicker>
           },
           {
             label: '身高',
             field: 'height',
             attrs: { required: true, border: true },
-            component: () => <Picker v-model={state.form.height} range={heightList}></Picker>
+            component: () => (
+              <Input v-model={state.form.content.height} placeholder='请输入身高'></Input>
+            ),
+            slots: { append: () => 'cm' }
           },
           {
             label: '体重',
             field: 'weight',
-            attrs: { required: true, border: true },
-            component: () => <Picker v-model={state.form.weight} range={weightList}></Picker>
-          },
+            attrs: { required: true },
+            component: () => (
+              <Input v-model={state.form.content.weight} placeholder='请输入体重'></Input>
+            ),
+            slots: { append: () => 'kg' }
+          }
+        ]
+      },
+      {
+        attrs: {
+          class: 'form-item-card'
+        },
+        children: [
           {
             label: '头围',
             field: 'headCircumference',
-            attrs: { required: true, border: true },
+            attrs: { required: false, border: true },
             component: () => (
-              <Picker v-model={state.form.headCircumference} range={heightList}></Picker>
+              <Input
+                v-model={state.form.content.headCircumference}
+                placeholder='(可选) 请输入头围'
+              ></Input>
             )
           },
           {
             label: '脚长',
             field: 'footLength',
-            attrs: { required: true },
-            component: () => <Picker v-model={state.form.footLength} range={heightList}></Picker>
+            attrs: { required: false },
+            component: () => (
+              <Input
+                v-model={state.form.content.footLength}
+                placeholder='(可选) 请输入脚长'
+              ></Input>
+            )
           }
         ]
       },
@@ -111,21 +116,19 @@ export default defineComponent({
             attrs: {
               labelAlign: 'top'
             },
-            component: () => <Textarea v-model={state.remark} placeholder='请输入'></Textarea>
+            component: () => (
+              <Textarea v-model={state.form.remark} placeholder='(可选) 请输入备注'></Textarea>
+            )
           }
         ]
       }
     ]
     const onSubmit = async () => {
-      const res = await apiAddFeedRecord({
-        babyId: getBabyInfo().id,
-        feedType: state.feedType,
-        remark: state.remark,
-        feedTime: state.form.feedTime,
-        content: state.form
-      }).catch(() => false)
+      let apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
+      const res = await apiFunc({ ...state.form, feedTime: state.form.content.feedTime }).catch(
+        () => false
+      )
       if (!res) return
-      Taro.showToast({ title: '添加成功' })
       navigateBack()
     }
 

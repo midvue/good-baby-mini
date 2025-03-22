@@ -2,56 +2,36 @@
 import { useDictMap } from '@/use'
 import { Button, FooterBar, Image, Navbar, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { defineComponent, reactive } from 'vue'
-import { apiBabyList } from './api'
+import { apiFamilyList } from './api'
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { BabyInfo, IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
-import { getBabyInfo } from '@/utils'
+import { FamilyInfo } from './types'
 
 export default defineComponent({
-  name: 'baby-manage',
+  name: 'family-manage',
   setup() {
-    let currState = reactive({
-      list: [] as BabyInfo[]
+    let state = reactive({
+      list: [] as FamilyInfo[]
     })
     let appStore = useAppStore()
 
-    let babyInfo = getBabyInfo()
-
     async function getList() {
-      currState.list = await apiBabyList()
+      state.list = await apiFamilyList()
     }
     getList()
 
     let genderMap = useDictMap('GENDER')
 
-    let formatBirthTime = (baby: BabyInfo) => {
+    let formatBirthTime = (baby: FamilyInfo) => {
       let now = useDate()
       let targetDate = useDate(baby.birthDate)
       let diff = now.diff(targetDate.format('YYYY-MM-DD ' + baby.birthTime), 'millisecond')
       return `${durationFormatNoZero(diff, { format: baby.birthTime ? 'D天H小时' : '第D天' })}`
     }
 
-    let onBabyClick = (baby?: IBaby) => {
-      showPopup({
-        round: true,
-        height: '60%',
-        title: (baby ? '修改' : '添加') + '宝宝',
-        render(scoped) {
-          return (
-            <BabyInfo
-              data={baby}
-              onClose={() => {
-                scoped.close()
-                getList()
-              }}
-            ></BabyInfo>
-          )
-        }
-      })
-    }
+    let onFamilyClick = (baby?: IFamily) => {}
 
     return () => {
       return (
@@ -69,9 +49,9 @@ export default defineComponent({
             }}
           ></Navbar>
           <div class='baby-list'>
-            {currState.list.map((baby, index) => {
+            {state.list.map((baby, index) => {
               return (
-                <div class='baby-list-item' key={index} onClick={() => onBabyClick(baby)}>
+                <div class='baby-list-item' key={index} onClick={() => onFamilyClick(baby)}>
                   <Image
                     class='baby-avatar'
                     src={baby.gender === '10' ? imgAvatarFemale : imgAvatarMale}
@@ -88,7 +68,7 @@ export default defineComponent({
                         {appStore.familyId === baby.familyId ? '我创建' : '受邀人'}
                       </Tag>
                       <Tag size='mini' round type='primary' plain v-show={babyInfo.id === baby.id}>
-                        当前喂养
+                        当前家庭
                       </Tag>
                     </div>
                     <div class='gender'>
@@ -100,11 +80,6 @@ export default defineComponent({
               )
             })}
           </div>
-          <FooterBar>
-            <Button size='large' type='primary' onClick={() => onBabyClick()} round>
-              添加宝宝
-            </Button>
-          </FooterBar>
         </div>
       )
     }
