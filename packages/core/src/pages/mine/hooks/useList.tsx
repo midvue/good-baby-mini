@@ -9,12 +9,11 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { ref } from 'vue'
 
-import { iconAboutMe, iconAged, iconBaby, iconInvite, iconSetting, iconWeChat } from '../assets'
-import imgWeChat from '../assets/img_we_chat.jpg'
 import { navigateTo } from '@/use'
-import { useShareAppMessage } from '@tarojs/taro'
 import { getBabyInfo, getUserInfo } from '@/utils'
-import Taro from '@tarojs/taro'
+import Taro, { useShareAppMessage } from '@tarojs/taro'
+import { iconAboutMe, iconAged, iconBaby, iconInvite, iconWeChat } from '../assets'
+import imgWeChat from '../assets/img_we_chat.png'
 
 /** 菜单列表 */
 export let useList = () => {

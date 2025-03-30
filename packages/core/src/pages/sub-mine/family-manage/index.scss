@@ -6,13 +6,13 @@
   align-items: center;
   position: relative;
 
-  .baby-list {
+  .family-list {
     width: 100%;
     display: flex;
     flex-direction: column;
     padding: var(--mv-padding-w);
 
-    .baby-list-item {
+    .family-list-item {
       width: 100%;
       height: 88px;
       background: #ffffff;
@@ -22,19 +22,19 @@
       margin-top: 12px;
       padding: 0 var(--mv-padding-w);
 
-      .baby-avatar {
+      .family-avatar {
         width: 64px;
         height: 64px;
         background: linear-gradient(326deg, #ffbcc0 0%, #ffcbdc 100%);
         border-radius: 50%;
         margin-right: 12px;
       }
-      .baby-info {
+      .family-info {
         display: flex;
         flex-direction: column;
         color: var(--mv-text-color);
         font-size: 12px;
-        .baby-name {
+        .family-name {
           font-weight: bold;
           font-size: 15px;
           color: #433a51;

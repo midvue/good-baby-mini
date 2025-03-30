@@ -5,7 +5,7 @@ import http from '@mid-vue/http-client'
  */
 export const apiFamilyList = () => {
   const option = {
-    url: '/baby/list'
+    url: '/babyFamily/list'
   }
   return http.post<BabyInfo[]>(option)
 }

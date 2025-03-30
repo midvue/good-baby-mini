@@ -10,16 +10,15 @@ import {
   Icon,
   IFormItem,
   Navbar,
-  Picker,
   Textarea,
   type FormInstance
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
+import { ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { defineComponent, ref } from 'vue'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { EnumDiaperType, type IFeedMilkState } from './types'
-import { ScrollView } from '@tarojs/components'
 
 export default defineComponent({
   name: 'feed-milk',

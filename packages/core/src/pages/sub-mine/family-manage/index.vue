@@ -1,34 +1,32 @@
 <script lang="tsx">
-import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
-import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { useAppStore } from '@/stores'
 import { useDictMap } from '@/use'
-import { durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { Image, Navbar, Tag } from '@mid-vue/taro-h5-ui'
+import { Navbar, Tag } from '@mid-vue/taro-h5-ui'
 import { defineComponent, reactive } from 'vue'
 import { apiFamilyList } from './api'
-import { FamilyInfo } from './types'
+import { IFamily } from './types'
 
 export default defineComponent({
   name: 'family-manage',
   setup() {
     let state = reactive({
-      list: [] as FamilyInfo[]
+      list: [] as IFamily[]
     })
     let appStore = useAppStore()
 
     async function getList() {
-      state.list = await apiFamilyList()
+      let list = await apiFamilyList()
+      state.list = list || []
     }
     getList()
 
     let genderMap = useDictMap('GENDER')
 
-    let onFamilyClick = (baby?: IFamily) => {}
+    let onFamilyClick = (family?: IFamily) => {}
 
     return () => {
       return (
-        <div class='baby-manager'>
+        <div class='family-manager'>
           <Navbar
             title='家庭管理'
             autoTheme
@@ -41,14 +39,16 @@ export default defineComponent({
               backgroundColor: '#ffffff'
             }}
           ></Navbar>
-          <div class='baby-list'>
-            {state.list.map((baby, index) => {
+          <div class='family-list'>
+            {state.list.map((family, index) => {
               return (
-                <div class='baby-list-item' key={index} onClick={() => onFamilyClick(baby)}>
-                  <div class='baby-info'>
-                    <div class='baby-name'></div>
+                <div class='family-list-item' key={index} onClick={() => onFamilyClick(family)}>
+                  <div class='family-info'>
+                    <div class='family-name'>{family.name}</div>
                     <div class='tags'>
-                      <Tag size='mini' type='success' plain round></Tag>
+                      <Tag size='mini' type='success' plain round>
+                        {family.id === appStore.familyId ? '我创建' : '我加入的'}
+                      </Tag>
                       <Tag size='mini' round type='primary' plain>
                         当前家庭
                       </Tag>
