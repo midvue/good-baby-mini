@@ -91,6 +91,7 @@
   overflow-y: auto;
   background-color: var(--mv-white);
   -webkit-overflow-scrolling: touch;
+  z-index: 3333;
   &__close-icon {
     position: absolute !important;
     z-index: 1;

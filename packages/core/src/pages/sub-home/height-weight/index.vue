@@ -1,4 +1,5 @@
 <script lang="tsx">
+import { EnumFeedType } from '@/dict'
 import { navigateBack, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
@@ -9,18 +10,13 @@ import {
   Form,
   Input,
   Navbar,
-  Picker,
-  Tag,
   Textarea,
   type FormInstance,
   type IFormItem
 } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
-import Taro from '@tarojs/taro'
 import { defineComponent, reactive, ref } from 'vue'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { IHeightWeightState } from './types'
-import { EnumFeedType } from '@/dict'
 export default defineComponent({
   name: 'HeightWeight',
   setup() {
@@ -54,16 +50,7 @@ export default defineComponent({
           {
             label: '记录时间',
             attrs: { required: true, border: true },
-            component: () => <DateTimePicker v-model={state.form.feedTime}></DateTimePicker>
-          },
-          {
-            label: '身高',
-            field: 'height',
-            attrs: { required: true, border: true },
-            component: () => (
-              <Input v-model={state.form.content.height} placeholder='请输入身高'></Input>
-            ),
-            slots: { append: () => 'cm' }
+            component: () => <DateTimePicker v-model={state.form.content.feedTime}></DateTimePicker>
           },
           {
             label: '体重',
@@ -73,6 +60,15 @@ export default defineComponent({
               <Input v-model={state.form.content.weight} placeholder='请输入体重'></Input>
             ),
             slots: { append: () => 'kg' }
+          },
+          {
+            label: '身高',
+            field: 'height',
+            attrs: { required: true, border: true },
+            component: () => (
+              <Input v-model={state.form.content.height} placeholder='请输入身高'></Input>
+            ),
+            slots: { append: () => 'cm' }
           }
         ]
       },
@@ -90,7 +86,8 @@ export default defineComponent({
                 v-model={state.form.content.headCircumference}
                 placeholder='(可选) 请输入头围'
               ></Input>
-            )
+            ),
+            slots: { append: () => 'cm' }
           },
           {
             label: '脚长',
@@ -101,7 +98,8 @@ export default defineComponent({
                 v-model={state.form.content.footLength}
                 placeholder='(可选) 请输入脚长'
               ></Input>
-            )
+            ),
+            slots: { append: () => 'cm' }
           }
         ]
       },

@@ -14,6 +14,7 @@ import imgWeChat from '../assets/img_we_chat.jpg'
 import { navigateTo } from '@/use'
 import { useShareAppMessage } from '@tarojs/taro'
 import { getBabyInfo, getUserInfo } from '@/utils'
+import Taro from '@tarojs/taro'
 
 /** 菜单列表 */
 export let useList = () => {
@@ -39,6 +40,7 @@ export let useList = () => {
           component: () => renderItem('宝宝管理', iconBaby),
           attrs: {
             border: true,
+            clickable: true,
             onClick() {
               navigateTo({
                 path: '/pages/sub-home/baby-manage/index'
@@ -52,14 +54,21 @@ export let useList = () => {
             border: true,
             onClick() {
               let babyInfo = getBabyInfo()
+              if (!babyInfo.id) {
+                Taro.showToast({
+                  title: '请先添加宝宝',
+                  icon: 'none'
+                })
+                return
+              }
               showDialog({
                 confirmOpenType: 'share',
                 render() {
                   return (
-                    <>
+                    <div class='mv-dialog-content'>
                       <div>当前宝宝：{babyInfo.nickname}</div>
                       <div>确定邀请家人一起喂养嘛</div>
-                    </>
+                    </div>
                   )
                 }
               })

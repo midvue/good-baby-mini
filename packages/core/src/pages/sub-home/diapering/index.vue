@@ -123,7 +123,6 @@ export default defineComponent({
             show: () => state.form.type !== EnumDiaperType.PEE,
             component: () => (
               <div class='form-item-color'>
-                {/* <Icon name='mv-icon-upload' onClick={handlePhoto}></Icon> */}
                 <ScrollView scrollX class='color-list'>
                   {poopColorList.map((item) => (
                     <div

@@ -1,7 +1,6 @@
-import { createApp, onMounted, provide, ref } from 'vue'
+import { ComponentPublicInstance, createApp, onMounted, provide, ref } from 'vue'
 import { type JSX } from 'vue/jsx-runtime'
 import Dialog from '../Dialog.vue'
-import { type DialogPropsType } from '../props'
 
 type DialogOptionType = Partial<InstanceType<typeof Dialog>> & {
   id?: string
@@ -10,7 +9,7 @@ type DialogOptionType = Partial<InstanceType<typeof Dialog>> & {
   footer?: (scoped: { show: () => void; close: () => void }) => string | null | JSX.Element
 }
 
-let instance = null // Notify 实例
+let instance: ComponentPublicInstance | null = null //Notify 实例
 let unmount: Function | null = null
 
 export function showDialog(option: DialogOptionType) {
@@ -32,10 +31,9 @@ function mountComponent(option = {} as DialogOptionType) {
   let uid = ''
   const childNodes = document.getElementById('app')!.childNodes
   for (let length = childNodes.length, i = length - 1; i >= 0; i--) {
-    const elt = childNodes[i]
-    if (elt.nodeType === 1) {
+    const elt = childNodes[i] as ChildNode & { uid: string }
+    if (elt.nodeType === 1 && !elt.uid.startsWith('custom-tab-bar/index')) {
       page = elt.lastChild! as HTMLDivElement
-      //@ts-ignore
       uid = elt.uid
       break
     }
@@ -67,11 +65,8 @@ function mountComponent(option = {} as DialogOptionType) {
     }
   })
 
-  console.log(page, 2)
-
   //mount挂载
   const root = document.createElement('view', { is: id })
-  console.log(root)
 
   const instance = app.mount(root)
   page!.appendChild(instance.$el)
@@ -79,9 +74,9 @@ function mountComponent(option = {} as DialogOptionType) {
   return {
     instance,
     unmount() {
-      page.removeChild(instance.$el)
+      page!.removeChild(instance.$el)
       app.unmount()
-      app = null
+      page = null
     }
   }
 }

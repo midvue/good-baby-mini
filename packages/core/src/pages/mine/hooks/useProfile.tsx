@@ -3,6 +3,7 @@ import { getUserInfo } from '@/utils'
 import { bgMineHeader, iconAchieve, iconFamily } from '../assets'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { durationFormat, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { navigateTo } from '@/use'
 
 /** 用户信息 */
 export let useProfile = () => {
@@ -11,7 +12,12 @@ export let useProfile = () => {
   let panels = [
     {
       icon: iconFamily,
-      title: '家庭成员'
+      title: '家庭成员',
+      click: () => {
+        navigateTo({
+          path: '/pages/sub-mine/family-manage/index'
+        })
+      }
     },
     {
       icon: iconAchieve,
@@ -28,7 +34,7 @@ export let useProfile = () => {
       <div class='profile-panel'>
         {panels.map((panel, index) => {
           return (
-            <div class='profile-panel-item' key={index}>
+            <div class='profile-panel-item' key={index} onClick={() => panel.click?.()}>
               <Image class='panel-item-icon' src={panel.icon}></Image>
               <div class='panel-item-title'>{panel.title}</div>
             </div>

@@ -30,7 +30,7 @@ export type OverlayProps = Partial<{
 
 const props = withDefaults(defineProps<OverlayProps>(), {
   visible: false,
-  zIndex: 2000,
+  zIndex: 10000,
   duration: 0.3,
   lockScroll: true,
   overlayClass: '',

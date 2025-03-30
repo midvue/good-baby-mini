@@ -13,6 +13,7 @@ import Taro from '@tarojs/taro'
 import { defineStore } from 'pinia'
 
 interface IAppStore {
+  tabBarPath: string
   userInfo: IUserInfo
   token: string
   /** 家庭id */
@@ -30,6 +31,7 @@ export const useAppStore = defineStore('app-store', {
     const userInfo = getUserInfo()
 
     return {
+      tabBarPath: '',
       appId: '',
       version: '',
       metaEnv: getMetaEnv(),
@@ -64,7 +66,8 @@ export const useAppStore = defineStore('app-store', {
 
     async updateUseInfo() {
       let userInfo = await Http.get<IUserInfo>({
-        url: '/app/account/info'
+        url: '/app/account/info',
+        ignoreToast: true
       })
       this.familyId = userInfo.familyId
       this.userInfo = userInfo

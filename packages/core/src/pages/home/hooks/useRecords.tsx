@@ -81,6 +81,7 @@ export const useRecords = () => {
   let milkTypeMap = useDictMap('MILK_TYPE')
   let diaperTypeMap = useDictMap('DIAPER_TYPE')
   let poopTypeMap = useDictMap('POOP_TYPE')
+  const poopColorMap = useDictMap('POOP_COLOR')
 
   let onRefresh = async () => {
     currState.isRefresher = true
@@ -116,7 +117,7 @@ export const useRecords = () => {
     [EnumFeedType.DIAPER]: {
       path: '/pages/sub-home/diapering/index',
       render: (content: IFeedRecord['content']) => {
-        let { type } = content as IDiaper
+        let { type, poopType, poopColor } = content as IDiaper
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
@@ -124,7 +125,13 @@ export const useRecords = () => {
             </div>
             <div>
               <div class='records-item-title'>{diaperTypeMap[type]?.name}</div>
-              <div class='records-item-content'>{poopTypeMap[type]?.name}</div>
+              <div class='records-item-content content-diaper'>
+                {poopTypeMap[poopType]?.name}{' '}
+                <span
+                  class='diaper-color'
+                  style={{ background: poopColorMap[poopColor]?.ext }}
+                ></span>
+              </div>
             </div>
           </div>
         )

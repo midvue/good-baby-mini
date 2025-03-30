@@ -82,7 +82,7 @@ $--el-transition-md-fade:
   opacity 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 
 .mv-popover {
-  z-index: 2001;
+  z-index: 10001;
   word-wrap: break-word;
   -webkit-overflow-scrolling: touch;
   position: absolute;

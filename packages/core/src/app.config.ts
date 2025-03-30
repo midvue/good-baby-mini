@@ -37,6 +37,7 @@ export default {
     backgroundColor: '#FFFFFF',
     borderStyle: 'white',
     position: 'bottom',
+    custom: true,
     list: [
       {
         pagePath: 'pages/home/index',
@@ -51,5 +52,6 @@ export default {
         iconPath: 'assets/images/icon_mine.png'
       }
     ]
-  }
+  },
+  usingComponents: {}
 }

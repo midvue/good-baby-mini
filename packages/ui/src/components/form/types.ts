@@ -73,6 +73,8 @@ export interface IFormItem<T = Record<string, any>> {
     rightArrow?: boolean
     /** label对齐,top顶部对齐 */
     labelAlign?: EnumLabelAlignType
+    /** 点击回馈效果 */
+    clickable?: true
     onClick?: (event: ItemClickEvent) => any
     [key: string]: string | boolean | undefined | Function
   }

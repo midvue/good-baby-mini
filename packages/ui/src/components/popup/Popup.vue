@@ -32,15 +32,13 @@
   </view>
 </template>
 <script lang="ts">
-import { computed, defineComponent, inject, reactive, toRefs, watch } from 'vue'
-import Taro from '@tarojs/taro'
-import { CONFIG_PROVIDER } from '../../constants'
+import { computed, defineComponent, reactive, toRefs, watch } from 'vue'
 import Icon from '../icon/Icon.vue'
 import mvOverlay from '../overlay'
 import SafeBottom from '../safe-bottom'
 import { popupProps } from './props'
 
-const initIndex = 2000
+const initIndex = 10000
 let _zIndex = initIndex
 
 export default defineComponent({
@@ -143,54 +141,13 @@ export default defineComponent({
     }
 
     const onClosed = (el: Element) => {
-      if (props.hideTabBar && isTabBarPage()) {
-        Taro.showTabBar({
-          animation: false
-        })
-        configProvider.setBottomVisible?.(false)
-      }
       emit('closed', el)
     }
-
-    /** 判断当前页面是否存在TabBar */
-    const isTabBarPage = () => {
-      try {
-        const { tabBar } = Taro.getApp().config
-        // 获取当前页面的路径
-        const currentPagePath = Taro.getCurrentPages().slice(-1)[0].route
-        // 判断当前页面是否为tabBar页面
-        return (
-          tabBar &&
-          tabBar.list.some((item: Record<string, any>) => item.pagePath === currentPagePath)
-        )
-      } catch (error) {
-        return false
-      }
-    }
-
-    // 处理全局点击事件
-    const configProvider = inject(CONFIG_PROVIDER, {} as Record<string, Function>)
 
     watch(
       () => props.modelValue,
       () => {
         if (props.modelValue && !opened) {
-          if (props.hideTabBar && isTabBarPage()) {
-            if (configProvider.setBottomVisible) {
-              configProvider.setBottomVisible?.(true)
-              Taro.nextTick(() => {
-                //  隐藏底部tabBar
-                Taro.hideTabBar({
-                  animation: false
-                })
-              })
-            } else {
-              //  隐藏底部tabBar
-              Taro.hideTabBar({
-                animation: false
-              })
-            }
-          }
           open()
         }
         if (!props.modelValue && opened) {

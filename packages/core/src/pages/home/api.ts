@@ -8,7 +8,8 @@ import { type FeedRecordResp } from './types'
 export const apiGetFeedRecordList = (data = {}) => {
   const option = {
     url: '/baby/feedRecord/page',
-    data: data
+    data: data,
+    ignoreToast: [401]
   }
   return http.post<FeedRecordResp>(option)
 }
@@ -29,7 +30,8 @@ export const apiDeleteFeedRecord = (id: number) => {
 export const apiBabyList = (data = {}) => {
   const option = {
     url: '/baby/list',
-    data
+    data,
+    ignoreToast: true
   }
   return http.post<IBaby[]>(option)
 }

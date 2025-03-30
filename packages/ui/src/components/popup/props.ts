@@ -7,7 +7,7 @@ export const popupProps = {
   },
   zIndex: {
     type: Number,
-    default: 2000
+    default: 10000
   },
   position: {
     type: String as PropType<'top' | 'bottom' | 'right' | 'left' | 'center'>,

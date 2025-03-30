@@ -1,12 +1,12 @@
 <script lang="tsx">
-import { useDictMap } from '@/use'
-import { Button, FooterBar, Image, Navbar, showPopup, Tag } from '@mid-vue/taro-h5-ui'
-import { defineComponent, reactive } from 'vue'
-import { apiFamilyList } from './api'
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
-import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { useAppStore } from '@/stores'
+import { useDictMap } from '@/use'
+import { durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { Image, Navbar, Tag } from '@mid-vue/taro-h5-ui'
+import { defineComponent, reactive } from 'vue'
+import { apiFamilyList } from './api'
 import { FamilyInfo } from './types'
 
 export default defineComponent({
@@ -24,20 +24,13 @@ export default defineComponent({
 
     let genderMap = useDictMap('GENDER')
 
-    let formatBirthTime = (baby: FamilyInfo) => {
-      let now = useDate()
-      let targetDate = useDate(baby.birthDate)
-      let diff = now.diff(targetDate.format('YYYY-MM-DD ' + baby.birthTime), 'millisecond')
-      return `${durationFormatNoZero(diff, { format: baby.birthTime ? 'D天H小时' : '第D天' })}`
-    }
-
     let onFamilyClick = (baby?: IFamily) => {}
 
     return () => {
       return (
         <div class='baby-manager'>
           <Navbar
-            title='宝宝管理'
+            title='家庭管理'
             autoTheme
             defaultConfig={{
               frontColor: '#000000',
@@ -52,29 +45,15 @@ export default defineComponent({
             {state.list.map((baby, index) => {
               return (
                 <div class='baby-list-item' key={index} onClick={() => onFamilyClick(baby)}>
-                  <Image
-                    class='baby-avatar'
-                    src={baby.gender === '10' ? imgAvatarFemale : imgAvatarMale}
-                  ></Image>
                   <div class='baby-info'>
-                    <div class='baby-name'>
-                      {baby.nickname}
-                      <Tag class='ml-[5px]' size='small' round type='primary'>
-                        {formatBirthTime(baby)}
-                      </Tag>
-                    </div>
+                    <div class='baby-name'></div>
                     <div class='tags'>
-                      <Tag size='mini' type='success' plain round>
-                        {appStore.familyId === baby.familyId ? '我创建' : '受邀人'}
-                      </Tag>
-                      <Tag size='mini' round type='primary' plain v-show={babyInfo.id === baby.id}>
+                      <Tag size='mini' type='success' plain round></Tag>
+                      <Tag size='mini' round type='primary' plain>
                         当前家庭
                       </Tag>
                     </div>
-                    <div class='gender'>
-                      {genderMap[baby.gender]?.name}宝宝 ·&nbsp;
-                      {useDate(baby.birthDate).format('YYYY-MM-DD ' + baby.birthTime)}
-                    </div>
+                    <div class='gender'></div>
                   </div>
                 </div>
               )

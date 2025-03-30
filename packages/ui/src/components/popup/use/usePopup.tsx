@@ -31,8 +31,8 @@ function mountComponent(option = {} as PopupOptionType) {
   let uid = ''
   const childNodes = document.getElementById('app')!.childNodes
   for (let length = childNodes.length, i = length - 1; i >= 0; i--) {
-    const elt = childNodes[i]
-    if (elt.nodeType === 1) {
+    const elt = childNodes[i] as ChildNode & { uid: string }
+    if (elt.nodeType === 1 && !elt.uid.startsWith('custom-tab-bar/index')) {
       page = elt.lastChild! as HTMLDivElement
       //@ts-ignore
       uid = elt.uid
@@ -64,11 +64,11 @@ function mountComponent(option = {} as PopupOptionType) {
       )
     }
   })
-
   //mount挂载
   const root = document.createElement('view', { is: id })
 
   const instance = app.mount(root)
+
   page!.appendChild(instance.$el)
 
   return {
