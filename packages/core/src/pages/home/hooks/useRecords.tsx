@@ -1,7 +1,7 @@
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
-import { navigateTo, useDictMap } from '@/use'
-import { dateDiff, dateFormat, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { navigateTo, useDictList, useDictMap } from '@/use'
+import { dateDiff, durationFormatNoZero, minute, useDate } from '@mid-vue/shared'
 import { Image, showDialog } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { ScrollView } from '@tarojs/components'
@@ -11,7 +11,7 @@ import { apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
 import IconFeedDiaper from '../assets/icon_feed_diaper.png'
 import iconFeedHeight from '../assets/icon_feed_height.png'
 import iconFeedMilk from '../assets/icon_feed_milk.png'
-import { type IHomeState } from '../types'
+import { SummaryFeedRecord, type IHomeState } from '../types'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -28,13 +28,16 @@ export const useRecords = () => {
       id && getRecordList()
     }
   )
-
+  let startFeedTime = useDate().subtract(4, 'day').format('YYYY-MM-DD 00:00:00')
+  let endFeedTime = useDate().format('YYYY-MM-DD 23:59:59')
+  let dayMap = {} as Record<string, SummaryFeedRecord>
   /** 获取喂养记录 */
   async function getRecordList(isRefresh = true) {
     if (!appStore.isLogin || !state.babyInfo.id) return
     if (isRefresh) {
       setState((state) => {
         state.pagination.current = 1
+        dayMap = {}
       })
     } else {
       currState.isRefresher = false
@@ -44,45 +47,100 @@ export const useRecords = () => {
       })
     }
     const res = await apiGetFeedRecordList({
+      startFeedTime,
+      endFeedTime,
       babyId: state.babyInfo.id,
       ...state.pagination
     })
     let list = res.list || []
     let now = Date.now()
+
     //格式化时间
-    list = list.map((record) => {
-      let duration = dateDiff(now, record.feedTime)
-      let feedDay = useDate(record.feedTime)
-      let isToday = feedDay.isSame(useDate(), 'day')
-      let yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
-      let feedTimeStr = `${
-        duration < 60000
-          ? '刚刚'
-          : durationFormatNoZero(duration, {
-              format: isToday ? 'H小时m分前' : 'D天H小时m分前'
-            })
-      } (${feedDay.format(isToday ? 'HH:mm' : yesterday ? '昨天 HH:mm' : 'MM月DD日 HH:mm')})`
-      return { ...record, feedTimeStr }
-    })
+    let feedRecords = list.reduce(
+      (records, record) => {
+        /** 喂养类型 */
+        let duration = dateDiff(now, record.feedTime)
+        let feedDay = useDate(record.feedTime)
+        let isToday = feedDay.isSame(useDate(), 'day')
+        let yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
+        let key = isToday ? '今天' : yesterday ? '昨天' : feedDay.format('MM月DD日')
+        /** 处理汇总 */
+        let { isAdd, summary } = formatSummary(key, record)
+        if (isAdd) {
+          records.push(summary)
+        }
+        //普通Record明细
+        let feedTimeStr = `${
+          duration < 60000
+            ? '刚刚'
+            : durationFormatNoZero(duration, {
+                format: isToday ? 'H小时m分前' : 'D天H小时m分前'
+              })
+        } (${feedDay.format(isToday ? 'HH:mm' : yesterday ? '昨天 HH:mm' : 'MM月DD日 HH:mm')})`
+
+        records.push({ ...record, feedTimeStr })
+
+        return records
+      },
+      [] as (IFeedRecord | SummaryFeedRecord)[]
+    )
 
     setState((state) => {
       if (isRefresh) {
-        state.feedRecords = list
+        state.feedRecords = feedRecords
       } else {
-        state.feedRecords = state.feedRecords.concat(list)
+        state.feedRecords = state.feedRecords.concat(feedRecords)
       }
     })
   }
 
-  useDidShow(() => {
-    getRecordList()
-  })
+  /** 格式化每日汇总 */
+  function formatSummary(key: string, record: IFeedRecord) {
+    let feedType = record.feedType
+    let isAdd = false
+    /** 每日汇总 */
+    let summary = dayMap[key] as SummaryFeedRecord
+    if (!summary) {
+      summary = {
+        feedTime: record.feedTime,
+        feedTimeStr: key
+      } as SummaryFeedRecord
+      dayMap[key] = summary
+      isAdd = true
+    }
+    // 按照喂养类型分类
+    let feedTypeItem = summary[feedType]
+    if (!feedTypeItem) {
+      feedTypeItem = {
+        content: {
+          label: '',
+          volume: 0
+        },
+        count: 0,
+        label: feedType
+      }
+      summary[feedType] = feedTypeItem
+    }
+    feedTypeItem.count += 1
+    /** 奶粉喂养,计算容量 */
+    if (feedType === EnumFeedType.MILK) {
+      let { volume, type } = record.content as IMilk
+      feedTypeItem.content.label = milkTypeMap[type]?.name || ''
+      feedTypeItem.content.volume += volume
+    }
+    return { isAdd, summary }
+  }
 
+  let feedTypeMap = useDictMap('FEED_TYPE')
+  const feedTypeList = useDictList('FEED_TYPE')
   let milkTypeMap = useDictMap('MILK_TYPE')
   let diaperTypeMap = useDictMap('DIAPER_TYPE')
   let poopTypeMap = useDictMap('POOP_TYPE')
   const poopColorMap = useDictMap('POOP_COLOR')
 
+  useDidShow(() => {
+    getRecordList()
+  })
   let onRefresh = async () => {
     currState.isRefresher = true
     await getRecordList()
@@ -194,17 +252,44 @@ export const useRecords = () => {
           >
             <div class='home-records-scroll'>
               {state.feedRecords.map((record, index) => {
-                let strategy = feedTypeStrategy[record.feedType]
+                if ('feedType' in record) {
+                  let feedType = record.feedType
+                  let strategy = feedTypeStrategy[feedType]
+                  return (
+                    <div
+                      class={['home-records-item', 'records-item-' + feedType]}
+                      key={index}
+                      //@ts-ignore
+                      onLongpress={() => onDeleteRecord(record)}
+                      onClick={() => onRecordsItemClick(record)}
+                    >
+                      <div class='records-item-time'>{record.feedTimeStr}</div>
+                      {strategy.render(record.content)}
+                    </div>
+                  )
+                }
                 return (
-                  <div
-                    class={['home-records-item', 'records-item-' + record.feedType]}
-                    key={index}
-                    //@ts-ignore
-                    onLongpress={() => onDeleteRecord(record)}
-                    onClick={() => onRecordsItemClick(record)}
-                  >
-                    <div class='records-item-time'>{record.feedTimeStr}</div>
-                    {strategy.render(record.content)}
+                  <div class='home-records-summary'>
+                    <span class='records-summary-time'>{record.feedTimeStr}</span>
+                    <div class='home-records-summary-wrapper '>
+                      {feedTypeList.map((dict) => {
+                        let code = dict.code as `${EnumFeedType}`
+                        let summary = record[code]
+                        if (!summary) return null
+                        return (
+                          <div class='summary-item'>
+                            <span class='summary-item-label'>{feedTypeMap[code].name} </span>
+                            <span class='content-number'>{summary.count}</span>次
+                            {!!summary.content.volume && (
+                              <>
+                                <span class='ml-[5px]'>({summary.content.label}: </span>
+                                <span class='content-number'>{summary.content.volume}</span>ml)
+                              </>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 )
               })}

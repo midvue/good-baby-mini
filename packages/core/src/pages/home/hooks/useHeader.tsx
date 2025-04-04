@@ -1,11 +1,10 @@
-import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { BabyInfo } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
 import { reLaunch, useRoute } from '@/use'
 import { setBabyInfo } from '@/utils'
-import { dateDiff, dateMonthDays, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { useDidShow } from '@tarojs/taro'
@@ -42,7 +41,7 @@ export const useHeader = () => {
             familyId: query.fid
           })
           reLaunch({
-            path: '/pages/home/index'
+            path: ENV_HOME_URL
           })
         }
       })
@@ -88,7 +87,7 @@ export const useHeader = () => {
     const days = now.diff(useDate(targetDate, 'YYYY-MM-DD').add(months, 'month'), 'day').toString()
     let diff = now.diff(targetDate.format('YYYY-MM-DD ' + birthTime), 'millisecond')
 
-    return `${months}个月 ${days.padStart(2, '0')}天 (${durationFormatNoZero(diff, { format: birthTime ? 'D天H小时' : '第D天' })})`
+    return `${months}个月${days.padStart(2, '0')}天 (${durationFormatNoZero(diff, { format: birthTime ? 'D天H小时' : '第D天' })})`
   })
 
   return {

@@ -15,14 +15,14 @@ importers:
         specifier: ^0.0.3
         version: 0.0.3
       '@mid-vue/shared':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.2
+        version: 0.0.2
       '@mid-vue/taro-h5-ui':
         specifier: workspace:*
         version: link:packages/ui
       '@mid-vue/use':
         specifier: ^0.0.1
-        version: 0.0.1(@mid-vue/shared@0.0.1)(vue@3.5.13(typescript@5.8.2))
+        version: 0.0.1(@mid-vue/shared@0.0.2)(vue@3.5.13(typescript@5.8.2))
       '@tarojs/components':
         specifier: 4.0.9
         version: 4.0.9(@tarojs/helper@4.0.9)(html-webpack-plugin@5.6.3(webpack@5.91.0(@swc/core@1.3.96)))(postcss@8.5.3)(react@19.0.0)(rollup@3.29.5)(vue@3.5.13(typescript@5.8.2))(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(webpack@5.91.0(@swc/core@1.3.96)))(webpack@5.91.0(@swc/core@1.3.96))
@@ -1855,8 +1855,8 @@ packages:
   '@mid-vue/http-client@0.0.3':
     resolution: {integrity: sha512-TYV64NHJVlXVy5D+Z3QM7qegHOB3cu0EjhXUeqjiAjMWa0JRtO1FpwO5Id2o7C+QTUyjD2osJbJy90pUGHr7Tw==}
 
-  '@mid-vue/shared@0.0.1':
-    resolution: {integrity: sha512-K/hN2oGwLu0PCNqlUy8krnrR5+PcxbD+EnMGYDE3Fl5sPN1Q1VNEdnCzHENyC5uCquLTb9/MstpuieasT7iIpA==}
+  '@mid-vue/shared@0.0.2':
+    resolution: {integrity: sha512-EjbA5emLTTLcgGSrOoDmYVs0hV8xWrgNkZhD4G9X4Ed2ajAEPSuBAirg5aoid6A0Kh0ljhpiBGThJ5591v7Gxg==}
 
   '@mid-vue/tsconfig@0.0.1':
     resolution: {integrity: sha512-ZbTLitas7UdaqcbWqYWl20v//w9I4HzH/0m36QHauxiPULxNdgVOsMvuxnGKYYFwu7cLMepuglzxRZKK443mWA==}
@@ -10805,7 +10805,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@mid-vue/shared@0.0.1':
+  '@mid-vue/shared@0.0.2':
     dependencies:
       '@types/big.js': 6.2.2
       '@types/js-cookie': 3.0.6
@@ -10817,9 +10817,9 @@ snapshots:
     dependencies:
       '@types/node': 22.13.9
 
-  '@mid-vue/use@0.0.1(@mid-vue/shared@0.0.1)(vue@3.5.13(typescript@5.8.2))':
+  '@mid-vue/use@0.0.1(@mid-vue/shared@0.0.2)(vue@3.5.13(typescript@5.8.2))':
     dependencies:
-      '@mid-vue/shared': 0.0.1
+      '@mid-vue/shared': 0.0.2
       vue: 3.5.13(typescript@5.8.2)
 
   '@napi-rs/triples@1.2.0': {}

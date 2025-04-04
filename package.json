@@ -26,7 +26,7 @@
   "dependencies": {
     "@babel/runtime": "^7.7.7",
     "@mid-vue/http-client": "^0.0.3",
-    "@mid-vue/shared": "^0.0.1",
+    "@mid-vue/shared": "^0.0.2",
     "@mid-vue/taro-h5-ui": "workspace:*",
     "@mid-vue/use": "^0.0.1",
     "@tarojs/components": "4.0.9",

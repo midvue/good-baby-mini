@@ -97,14 +97,14 @@
         inset 0px 4px 4px 0px rgba(255, 255, 255, 0.25);
       border-radius: 12px;
     }
-    .tools-card-20 {
+    .tools-card-30 {
       background: linear-gradient(134deg, #9492fc 0%, #c4caff 90%);
       box-shadow:
         0px 4px 8px 0px rgba(161, 161, 253, 0.63),
         inset 0px 4px 4px 0px rgba(255, 255, 255, 0.25);
       border-radius: 12px;
     }
-    .tools-card-30 {
+    .tools-card-40 {
       background: linear-gradient(134deg, #ffc118 47%, #ffda8b 99%);
       box-shadow:
         0px 4px 8px 0px rgba(255, 193, 25, 0.49),
@@ -152,15 +152,55 @@
       --mv-item-title-color: #f97e92;
       --mv-item-logo-bg: #fff3f3;
 
+      .content-number {
+        font-family: DIN;
+        font-size: 13px;
+      }
+
+      .home-records-summary {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        flex: none;
+        margin: 0 var(--mv-padding-w);
+
+        .records-summary-time {
+          color: var(--mv-title-color2);
+          font-size: var(--mv-font-size-2);
+          font-weight: bold;
+          margin-bottom: 8px;
+          position: relative;
+        }
+        & + .home-records-item::before {
+          top: 4px;
+        }
+      }
+
+      .home-records-summary-wrapper {
+        padding: 8px var(--mv-padding-w);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: var(--mv-font-size-1);
+        color: var(--mv-title-color3);
+        margin-bottom: 8px;
+        margin-right: var(--mv-padding-w);
+        background: var(--mv-background-color);
+
+        .summary-item {
+          margin-top: 4px;
+
+          &:first-child {
+            margin-top: 0;
+          }
+        }
+      }
+
       .home-records-item {
         margin: 0 var(--mv-padding-w);
         padding: 0 var(--mv-padding-w);
         flex: none;
         position: relative;
-
-        &:first-child {
-          margin-top: 12px;
-        }
 
         .records-item-time {
           color: var(--mv-title-color3);
@@ -231,12 +271,13 @@
           content: '';
           position: absolute;
           left: 0;
-          top: 4px;
-          bottom: 0px;
+          top: -22px;
+          bottom: 22px;
           width: 1px;
           background-color: #e8e8e8;
         }
       }
+
       .records-item-10 {
         .content-volume {
           font-family: DIN;
