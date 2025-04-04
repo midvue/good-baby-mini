@@ -164,6 +164,10 @@
         flex: none;
         margin: 0 var(--mv-padding-w);
 
+        &:first-child {
+          margin-top: 8px;
+        }
+
         .records-summary-time {
           color: var(--mv-title-color2);
           font-size: var(--mv-font-size-2);
@@ -284,12 +288,12 @@
           font-size: 14px;
         }
       }
-      .records-item-20 {
+      .records-item-30 {
         --mv-item-time-color: #ffda8b;
         --mv-item-title-color: #ffc118;
         --mv-item-logo-bg: #fff3f3;
       }
-      .records-item-30 {
+      .records-item-40 {
         --mv-item-time-color: #c4caff;
         --mv-item-title-color: #9492fc;
 

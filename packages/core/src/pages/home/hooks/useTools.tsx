@@ -1,17 +1,13 @@
 import { BabyInfo } from '@/components/baby-info'
 import { EnumFeedType } from '@/dict'
 import { navigateTo, reLaunch, useDictMap } from '@/use'
-import { getBabyInfo } from '@/utils'
+import { FEED_RECORD, getBabyInfo, getStorage } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
 import { Image, showPopup } from '@mid-vue/taro-h5-ui'
-import { useCtxState } from '@mid-vue/use'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
-import { type IHomeState } from '../types'
 
 export const useTools = () => {
-  const [state] = useCtxState<IHomeState>()
-
   let poopTypeMap = useDictMap('POOP_TYPE')
   const toolsConfList = [
     {
@@ -56,25 +52,28 @@ export const useTools = () => {
       return
     }
     const tool = toolsConfList[index]
-    const record = state.feedRecords.find((item) => +item.feedType === tool.feedType)
+    const record = getStorage<IFeedRecord>(FEED_RECORD + tool.feedType)
     let feedTime = dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+    let query = {
+      id: undefined,
+      feedType: tool.feedType,
+      feedTime
+    } as Record<string, any>
+    if (record) {
+      query.content = record.content
+    }
     navigateTo({
       path: '/pages/sub-home' + tool.path,
-      query: {
-        id: undefined,
-        feedType: tool.feedType,
-        feedTime,
-        content: { ...record?.content, feedTime }
-      }
+      query
     })
   }
 
-  const formatFeedTime = (record?: IFeedRecord) => {
+  const formatFeedTime = (record: IFeedRecord | null) => {
     if (!record) return '刚刚'
     return record.feedTimeStr?.replace(/.*\((.*)\)/, '$1')
   }
 
-  let renderToolContent = (feedType: EnumFeedType, record?: IFeedRecord) => {
+  let renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | null) => {
     if (!record || !feedType) return null
     if (feedType === EnumFeedType.MILK) {
       return (
@@ -106,7 +105,7 @@ export const useTools = () => {
     render: () => (
       <div class='home-tools'>
         {toolsConfList.map((tool, index) => {
-          const record = state.feedRecords.find((item) => +item.feedType === tool.feedType)
+          const record = getStorage<IFeedRecord>(FEED_RECORD + tool.feedType)
           return (
             <div
               class={['home-tools-card', 'tools-card-' + tool.feedType]}

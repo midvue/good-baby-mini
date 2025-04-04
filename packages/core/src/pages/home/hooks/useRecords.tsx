@@ -1,6 +1,6 @@
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
-import { navigateTo, useDictList, useDictMap } from '@/use'
+import { navigateTo, reLaunch, useDictList, useDictMap } from '@/use'
 import { dateDiff, durationFormatNoZero, minute, useDate } from '@mid-vue/shared'
 import { Image, showDialog } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
@@ -12,6 +12,7 @@ import IconFeedDiaper from '../assets/icon_feed_diaper.png'
 import iconFeedHeight from '../assets/icon_feed_height.png'
 import iconFeedMilk from '../assets/icon_feed_milk.png'
 import { SummaryFeedRecord, type IHomeState } from '../types'
+import { FEED_RECORD, setStorage } from '@/utils'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -22,12 +23,27 @@ export const useRecords = () => {
     isRefresher: false
   })
 
+  const feedTypeList = useDictList('FEED_TYPE')
+  let feedTypeMap = useDictMap('FEED_TYPE')
+  let milkTypeMap = useDictMap('MILK_TYPE')
+  let diaperTypeMap = useDictMap('DIAPER_TYPE')
+  let poopTypeMap = useDictMap('POOP_TYPE')
+  const poopColorMap = useDictMap('POOP_COLOR')
+
   watch(
     () => state.babyInfo.id,
     (id) => {
-      id && getRecordList()
+      if (!id) return
+      if (!feedTypeList) {
+        reLaunch({
+          path: ENV_HOME_URL
+        })
+        return
+      }
+      getRecordList()
     }
   )
+
   let startFeedTime = useDate().subtract(4, 'day').format('YYYY-MM-DD 00:00:00')
   let endFeedTime = useDate().format('YYYY-MM-DD 23:59:59')
   let dayMap = {} as Record<string, SummaryFeedRecord>
@@ -87,6 +103,11 @@ export const useRecords = () => {
 
     setState((state) => {
       if (isRefresh) {
+        //保存最后一次记录
+        if (feedRecords.length) {
+          let record = feedRecords[1] as IFeedRecord
+          setStorage(FEED_RECORD + record.feedType, record)
+        }
         state.feedRecords = feedRecords
       } else {
         state.feedRecords = state.feedRecords.concat(feedRecords)
@@ -130,13 +151,6 @@ export const useRecords = () => {
     }
     return { isAdd, summary }
   }
-
-  let feedTypeMap = useDictMap('FEED_TYPE')
-  const feedTypeList = useDictList('FEED_TYPE')
-  let milkTypeMap = useDictMap('MILK_TYPE')
-  let diaperTypeMap = useDictMap('DIAPER_TYPE')
-  let poopTypeMap = useDictMap('POOP_TYPE')
-  const poopColorMap = useDictMap('POOP_COLOR')
 
   useDidShow(() => {
     getRecordList()
@@ -238,7 +252,9 @@ export const useRecords = () => {
         <div class='home-records'>
           <div class='home-records-header'>
             <div class='header-title'>喂养记录</div>
-            <div class='header-more'>更多</div>
+            <div class='header-more' v-show={state.feedRecords.length}>
+              更多
+            </div>
           </div>
 
           <ScrollView
@@ -252,6 +268,7 @@ export const useRecords = () => {
           >
             <div class='home-records-scroll'>
               {state.feedRecords.map((record, index) => {
+                if (!feedTypeList) return null
                 if ('feedType' in record) {
                   let feedType = record.feedType
                   let strategy = feedTypeStrategy[feedType]
@@ -272,13 +289,13 @@ export const useRecords = () => {
                   <div class='home-records-summary'>
                     <span class='records-summary-time'>{record.feedTimeStr}</span>
                     <div class='home-records-summary-wrapper '>
-                      {feedTypeList.map((dict) => {
+                      {feedTypeList.map((dict, index) => {
                         let code = dict.code as `${EnumFeedType}`
                         let summary = record[code]
                         if (!summary) return null
                         return (
-                          <div class='summary-item'>
-                            <span class='summary-item-label'>{feedTypeMap[code].name} </span>
+                          <div class='summary-item' key={code + index}>
+                            <span class='summary-item-label'>{feedTypeMap[code]?.name} </span>
                             <span class='content-number'>{summary.count}</span>次
                             {!!summary.content.volume && (
                               <>

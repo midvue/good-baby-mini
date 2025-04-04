@@ -1,27 +1,27 @@
 <script lang="tsx">
-import { defineComponent, reactive, ref } from 'vue'
-import Taro from '@tarojs/taro'
+import { EnumFeedType } from '@/dict'
+import { navigateBack, useDictList, useRoute } from '@/use'
+import { getBabyInfo } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
+  DateTimePicker,
   FooterBar,
   Form,
+  type FormInstance,
   type IFormItem,
+  Image,
   Navbar,
   Picker,
-  Textarea,
-  type FormInstance,
-  Image,
   PickerView,
-  DateTimePicker,
-  Tag
+  Tag,
+  Textarea
 } from '@mid-vue/taro-h5-ui'
-import { navigateBack, useDictList, useRoute } from '@/use'
-import { getBabyInfo } from '@/utils'
+import Taro from '@tarojs/taro'
+import { defineComponent, reactive, ref } from 'vue'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
-import { type IFeedMilkState } from './types'
 import bgMilkVolume from './assets/bg_milk_volume.png'
-import { EnumFeedType } from '@/dict'
+import { type IFeedMilkState } from './types'
 
 export default defineComponent({
   name: 'FeedMilk',
@@ -125,7 +125,6 @@ export default defineComponent({
       const res = await apiFunc({ ...state.form, feedTime: state.form.content.feedTime }).catch(
         () => false
       )
-
       if (!res) return
       Taro.showToast({ title: '添加成功' })
       navigateBack()

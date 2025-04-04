@@ -7,6 +7,9 @@ const TOKEN_KEY = 'token'
 const ENV_VERSION_KEY = 'envVersion'
 const USER_BABY_KEY = 'babyInfo'
 
+/** 喂养类型 */
+export const FEED_RECORD = 'feedRecord'
+
 export function isLogin() {
   return !!getToken()
 }

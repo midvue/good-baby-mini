@@ -1,4 +1,5 @@
 <script lang="tsx">
+import { EnumFeedType } from '@/dict'
 import { navigateBack, useDictList, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
@@ -27,7 +28,7 @@ export default defineComponent({
     const [state] = defineCtxState<IFeedMilkState>({
       id: query.id,
       babyId: query.babyId || getBabyInfo().id,
-      feedType: query.feedType,
+      feedType: EnumFeedType.DIAPER,
       remark: query.remark,
       form: {
         ...{

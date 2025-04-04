@@ -14,6 +14,7 @@ import {
   type FormInstance,
   type IFormItem
 } from '@mid-vue/taro-h5-ui'
+import Taro from '@tarojs/taro'
 import { defineComponent, reactive, ref } from 'vue'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { IHeightWeightState } from './types'
@@ -35,6 +36,8 @@ export default defineComponent({
         footLength: undefined
       } as IHeightWeight
     }
+    console.log(query, 22)
+
     const state = reactive<IHeightWeightState>({
       form: { ...defaultHeightWeight, ...query }
     })
@@ -127,6 +130,7 @@ export default defineComponent({
         () => false
       )
       if (!res) return
+      Taro.showToast({ title: '添加成功' })
       navigateBack()
     }
 
