@@ -1,10 +1,10 @@
 <script lang="tsx">
+import { getBabyInfo } from '@/utils'
 import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { defineComponent, watch } from 'vue'
 import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
-import { getBabyInfo } from '@/utils'
 
 export default defineComponent({
   name: 'Home',

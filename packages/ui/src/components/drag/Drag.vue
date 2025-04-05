@@ -13,7 +13,7 @@ import { View, type CommonEvent, type ITouchEvent } from '@tarojs/components'
 
 import Taro from '@tarojs/taro'
 import { useRect } from '../../use/useRect'
-
+import { getConfigProvider } from '../../use/useConfigProvider'
 // Types
 import {
   type FloatingBubbleAxis,
@@ -137,7 +137,7 @@ export default defineComponent({
     const rootRef = ref<HTMLDivElement>()
     const refRandomId = Math.random().toString(36).slice(-8)
 
-    const domElem = Taro.getSystemInfoSync()
+    const domElem = getConfigProvider()
     const state = ref({
       x: domElem.screenWidth - props.gap.x,
       y: domElem.screenHeight - props.gap.y,

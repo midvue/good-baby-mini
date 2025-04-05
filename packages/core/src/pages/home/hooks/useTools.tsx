@@ -1,11 +1,13 @@
 import { BabyInfo } from '@/components/baby-info'
 import { EnumFeedType } from '@/dict'
 import { navigateTo, reLaunch, useDictMap } from '@/use'
-import { FEED_RECORD, getBabyInfo, getStorage } from '@/utils'
+import { FEED_RECORD, getBabyInfo, getStorage, HOME_DRAG_OFFSET, setStorage } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
-import { Image, showPopup } from '@mid-vue/taro-h5-ui'
+import { Drag, Image, showPopup } from '@mid-vue/taro-h5-ui'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
+import imgHomeAdd from '../assets/img_home_add.png'
+import { ref } from 'vue'
 
 export const useTools = () => {
   let poopTypeMap = useDictMap('POOP_TYPE')
@@ -100,7 +102,7 @@ export const useTools = () => {
     }
     return null
   }
-
+  const offset = ref(getStorage<{ x: number; y: number }>(HOME_DRAG_OFFSET) || { x: -1, y: -1 })
   return {
     render: () => (
       <div class='home-tools'>
@@ -120,6 +122,15 @@ export const useTools = () => {
             </div>
           )
         })}
+        <Drag
+          gap={{ x: 6, y: 60 }}
+          offset={offset.value}
+          onOffsetChange={(offset) => {
+            setStorage(HOME_DRAG_OFFSET, offset)
+          }}
+        >
+          <Image class='w-[80px] h-[80px]' src={imgHomeAdd} onClick={() => onItemClick(0)}></Image>
+        </Drag>
       </div>
     )
   }

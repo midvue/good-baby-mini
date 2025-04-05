@@ -12,6 +12,7 @@ interface IConfigProvide {
   /** 可使用窗口宽度 */
   windowWidth: number
   windowHeight: number
+  screenWidth: number
   screenHeight: number
   model: string
   homeUrl?: string
@@ -29,6 +30,7 @@ export const useConfigProvider = (homeUrl?: string) => {
     const {
       statusBarHeight = 20,
       windowHeight,
+      screenWidth,
       screenHeight,
       model,
       windowWidth
@@ -36,6 +38,7 @@ export const useConfigProvider = (homeUrl?: string) => {
     const navBarHeight = statusBarHeight + height + (top - statusBarHeight) * 2
 
     provide(CONFIG_PROVIDER_KEY, {
+      screenWidth,
       screenHeight,
       model,
       statusBarHeight,
@@ -55,6 +58,7 @@ export const useConfigProvider = (homeUrl?: string) => {
       navBarWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       windowWidth: window.innerWidth,
+      screenWidth: window.screen.width,
       screenHeight: window.screen.height,
       model: window.navigator.userAgent,
       homeUrl,
@@ -73,6 +77,7 @@ export const getConfigProvider = () => {
     model: '',
     windowWidth: 0,
     windowHeight: 0,
+    screenWidth: 0,
     screenHeight: 0,
     boundingWidth: 0
   })

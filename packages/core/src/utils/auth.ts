@@ -9,6 +9,8 @@ const USER_BABY_KEY = 'babyInfo'
 
 /** 喂养类型 */
 export const FEED_RECORD = 'feedRecord'
+/** 首页drag位置 */
+export const HOME_DRAG_OFFSET = 'home_drag_offset'
 
 export function isLogin() {
   return !!getToken()
