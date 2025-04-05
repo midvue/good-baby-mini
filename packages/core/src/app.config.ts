@@ -17,7 +17,8 @@ export default {
   ],
   preloadRule: {
     'pages/home/index': {
-      packages: ['pages/sub-home']
+      packages: ['pages/sub-home'],
+      network: 'all'
     },
     'pages/mine/index': {
       packages: ['pages/sub-mine']
