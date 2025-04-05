@@ -65,6 +65,9 @@ export default defineConfig<'webpack5'>(async (merge) => {
     },
 
     mini: {
+      imageUrlLoaderOption: {
+        limit: 1024
+      },
       postcss: {
         pxtransform: {
           enable: true,
@@ -120,6 +123,9 @@ export default defineConfig<'webpack5'>(async (merge) => {
         filename: 'css/[name].[hash].css',
         chunkFilename: 'css/[name].[chunkhash].css'
       },
+      imageUrlLoaderOption: {
+        limit: 1024
+      },
       postcss: {
         autoprefixer: {
           enable: true,
@@ -141,6 +147,7 @@ export default defineConfig<'webpack5'>(async (merge) => {
           (modulePath: string) => modulePath.indexOf(`${path.sep}birpc`) >= 0
         ]
       },
+
       webpackChain(chain: any) {
         chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
       }

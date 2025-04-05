@@ -5,13 +5,12 @@ import { useRoute } from '@/use'
 import { getConfigProvider } from '@mid-vue/taro-h5-ui'
 import { Image, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const { model, screenHeight } = getConfigProvider()
 //判断是否是iphone x 以上手机
 
 let isIphoneX = model.includes('iPhone') && screenHeight >= 750
-console.log(isIphoneX)
 
 let appStore = useAppStore()
 
