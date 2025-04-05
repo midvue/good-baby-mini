@@ -44,7 +44,7 @@ export const useRecords = () => {
     }
   )
 
-  let startFeedTime = useDate().subtract(4, 'day').format('YYYY-MM-DD 00:00:00')
+  let startFeedTime = useDate().subtract(3, 'day').format('YYYY-MM-DD 00:00:00')
   let endFeedTime = useDate().format('YYYY-MM-DD 23:59:59')
   let dayMap = {} as Record<string, SummaryFeedRecord>
   /** 获取喂养记录 */

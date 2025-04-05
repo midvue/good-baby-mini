@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { hideLoading, showLoading } from '@mid-vue/taro-h5-ui'
+import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { defineComponent, watch } from 'vue'
 import { useHeader, useRecords, useTools } from './hooks'
@@ -34,12 +34,14 @@ export default defineComponent({
     const { render: renderHeader } = useHeader()
     const { render: renderTools } = useTools()
     const { render: renderRecords } = useRecords()
+
     return () => {
       return (
         <div class='home'>
           {renderHeader()}
           {renderTools()}
           {renderRecords()}
+          <SafeBottom></SafeBottom>
         </div>
       )
     }

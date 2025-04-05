@@ -52,6 +52,5 @@ export default {
         iconPath: 'assets/images/icon_mine.png'
       }
     ]
-  },
-  usingComponents: {}
+  }
 }

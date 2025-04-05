@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 
 import { useList, useProfile } from './hooks'
+import { SafeBottom } from '@mid-vue/taro-h5-ui'
 
 export default defineComponent({
   name: 'Mine',
@@ -14,6 +15,7 @@ export default defineComponent({
         <div class='mine'>
           {renderProfile()}
           {renderList()}
+          <SafeBottom></SafeBottom>
         </div>
       )
     }

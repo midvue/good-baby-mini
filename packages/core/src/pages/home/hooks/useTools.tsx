@@ -60,7 +60,7 @@ export const useTools = () => {
       feedTime
     } as Record<string, any>
     if (record) {
-      query.content = record.content
+      query.content = { ...record.content, feedTime }
     }
     navigateTo({
       path: '/pages/sub-home' + tool.path,

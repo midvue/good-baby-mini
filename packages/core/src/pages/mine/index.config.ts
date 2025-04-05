@@ -1,5 +1,6 @@
 export default {
   navigationStyle: 'custom',
   navigationBarTextStyle: 'black',
-  enableShareAppMessage: true
+  enableShareAppMessage: true,
+  usingComponents: {}
 }
