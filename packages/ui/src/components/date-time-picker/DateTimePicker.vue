@@ -21,7 +21,7 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { type IPickerState, props } from './props'
-import { useDate } from '@mid-vue/shared'
+import { deepClone, useDate } from '@mid-vue/shared'
 import { BaseEventOrig, Picker, PickerMultiSelectorProps } from '@tarojs/components'
 
 export default defineComponent({
@@ -40,8 +40,6 @@ export default defineComponent({
       range: []
     })
 
-    //  multiArray: [['无脊柱动物', '脊柱动物'], ['扁性动物', '线形动物', '环节动物', '软体动物', '节肢动物'], ['猪肉绦虫', '吸血虫']],
-
     function initRange() {
       //处理日期
       let currTime = state.start
@@ -54,27 +52,38 @@ export default defineComponent({
         })
         currTime += 24 * 60 * 60 * 1000
       }
+      let endDate = useDate(state.end)
+      let hours = initHours(endDate.hour())
+      let minutes = initMinutes(endDate.minute())
 
+      state.range = [dateList, hours, minutes]
+    }
+
+    /** 处理小时 */
+    function initHours(end: number = 23) {
       //处理时间
       let hours = []
       let startDay = useDate().startOf('day')
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i <= end; i++) {
         hours.push({
           label: startDay.add(i, 'hour').format(props.labelFormat[1]),
           value: i * 60 * 60 * 1000
         })
       }
+      return hours
+    }
 
+    /** 处理分钟 */
+    function initMinutes(end = 59) {
       let minutes = []
       let startHour = useDate().startOf('hour')
-      for (let i = 0; i < 60; i++) {
+      for (let i = 0; i <= end; i++) {
         minutes.push({
           label: startHour.add(i, 'minute').format(props.labelFormat[2]),
           value: i * 60 * 1000
         })
       }
-
-      state.range = [dateList, hours, minutes]
+      return minutes
     }
 
     initRange()
@@ -93,7 +102,6 @@ export default defineComponent({
       const index = e.detail.value
 
       //角标换label
-
       let value = index2ModelValue(index)
 
       emit('update:modelValue', value)
@@ -105,10 +113,27 @@ export default defineComponent({
       e: BaseEventOrig<PickerMultiSelectorProps.ColumnChangeEventDetail>
     ) => {
       const col = e.detail.column
-      const row = e.detail.value
-      state.multiIndex[col] = row
+      const rowIndex = e.detail.value
+      state.multiIndex[col] = rowIndex
+      let endDate = useDate(state.end)
+
+      if (col === 0) {
+        let dayLabel = endDate.format(props.labelFormat[col])
+        // 如果选中的日期是今天
+        const isToday = dayLabel === state.range[col][state.multiIndex[col]].label
+        state.range[1] = isToday ? initHours(endDate.hour()) : initHours()
+        state.range[2] = isToday ? initMinutes(endDate.minute()) : initMinutes()
+      } else if (col === 1) {
+        // 如果选中的是当前小时
+        let hourLabel = endDate.format(props.labelFormat[col])
+        const isCurrentHour = hourLabel === state.range[col][state.multiIndex[col]].label
+        state.range[2] = isCurrentHour ? initMinutes(endDate.minute()) : initMinutes()
+      }
+
+      state.range = deepClone(state.range)
     }
 
+    /** 时间转选中的下标 */
     function modelValue2Index(val: string | number) {
       if (!val) return [0, 0, 0]
 
@@ -124,6 +149,7 @@ export default defineComponent({
       )
     }
 
+    /** 下标转时间 */
     function index2ModelValue(arr: number[]) {
       let value = arr.reduce((value, num, index) => {
         value += state.range[index][num].value
