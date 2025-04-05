@@ -99,9 +99,9 @@ export let useList = () => {
                 render() {
                   return (
                     <div class='flex flex-col items-center'>
-                      <div>小程序还在开发中，欢迎体验!</div>
+                      <div class='mt-[30px]'>小程序还在开发中，欢迎体验!</div>
                       <div>需要什么功能,可以截图扫码,群里反馈</div>
-                      <Image class='w-[160px] h-[360px]' src={imgWeChat}></Image>
+                      <Image class='w-[160px] h-[280px]' src={imgWeChat}></Image>
                     </div>
                   )
                 }
