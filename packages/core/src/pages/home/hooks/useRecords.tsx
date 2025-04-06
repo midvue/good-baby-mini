@@ -185,6 +185,43 @@ export const useRecords = () => {
         )
       }
     },
+    /** 母乳亲喂 */
+    [EnumFeedType.BREAST_FEED_DIRECT]: {
+      path: '/pages/sub-home/feed-milk/index',
+      render: (content: IFeedRecord['content']) => {
+        let { duration, leftDuration, rightDuration } = content as IBreastMilk
+        return (
+          <div class='home-records-item-wrapper'>
+            <div class='record-item-logo'>
+              <Image src={iconFeedMilk} class='item-logo-img'></Image>
+            </div>
+            <div>
+              <div class='records-item-title'>
+                母乳亲喂
+                <span class='item-title-duration'>
+                  (总时长:
+                  {durationFormatNoZero(duration, { unit: 's', format: 'm分钟s秒' })})
+                </span>
+              </div>
+              <div class='records-item-content'>
+                <div v-show={leftDuration} class='mr-[5px]'>
+                  左侧:
+                  <span>
+                    {durationFormatNoZero(leftDuration, { unit: 's', format: 'm分钟s秒' })}
+                  </span>
+                </div>
+                <div v-show={rightDuration}>
+                  右侧:
+                  <span>
+                    {durationFormatNoZero(rightDuration, { unit: 's', format: 'm分钟s秒' })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    },
     /** 尿布 */
     [EnumFeedType.DIAPER]: {
       path: '/pages/sub-home/diapering/index',
@@ -281,7 +318,7 @@ export const useRecords = () => {
                       onClick={() => onRecordsItemClick(record)}
                     >
                       <div class='records-item-time'>{record.feedTimeStr}</div>
-                      {strategy.render(record.content)}
+                      {strategy?.render(record.content)}
                     </div>
                   )
                 }
@@ -296,11 +333,11 @@ export const useRecords = () => {
                         return (
                           <div class='summary-item' key={code + index}>
                             <span class='summary-item-label'>{feedTypeMap[code]?.name} </span>
-                            <span class='content-number'>{summary.count}</span>次
+                            <span class='content-number'>{summary.count}</span> 次
                             {!!summary.content.volume && (
                               <>
                                 <span class='ml-[5px]'>({summary.content.label}: </span>
-                                <span class='content-number'>{summary.content.volume}</span>ml)
+                                <span class='content-number'>{summary.content.volume}</span> ml)
                               </>
                             )}
                           </div>

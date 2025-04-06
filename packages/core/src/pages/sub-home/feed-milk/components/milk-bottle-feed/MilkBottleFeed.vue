@@ -29,7 +29,7 @@ export default defineComponent({
     }
   },
   emits: ['close'],
-  setup(props, { emit }) {
+  setup(props) {
     /** 奶瓶喂养 */
 
     let babyInfo = getBabyInfo()
@@ -39,12 +39,13 @@ export default defineComponent({
       babyId: babyInfo.id,
       content: {
         type: 10,
-        volume: 150,
-        feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm:ss')
+        volume: 90,
+        feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
       } as IMilkBottle
     }
-    const state: { form: IFeedRecord<IMilkBottle> } = reactive({
-      form: { ...defaultMilk, ...props.data }
+
+    const state = reactive({
+      form: { ...defaultMilk, ...props.data } as IFeedRecord<IMilkBottle>
     })
 
     const formRef = ref<FormInstance>()

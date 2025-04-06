@@ -17,7 +17,7 @@
     <mv-text v-else class="break-text">{{ modelValue }}</mv-text>
     <mv-icon v-if="suffixIcon" class="suffix-icon" :name="suffixIcon"></mv-icon>
     <mv-text v-if="showWordLimit" class="show-word-limit">{{
-      `${modelValue.length}/${maxLength}`
+      `${modelValue.toString().length}/${maxLength}`
     }}</mv-text>
     <mv-icon
       v-if="canClearable"
@@ -105,7 +105,7 @@ export default defineComponent({
   background: #f6f6fd;
   border-radius: 6px;
   padding: 14px 14px 0;
-  height: 90px;
+  height: 70px;
   &__clear {
     display: flex;
     align-items: center;

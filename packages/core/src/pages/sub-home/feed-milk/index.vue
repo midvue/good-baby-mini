@@ -2,7 +2,7 @@
 import { useRoute } from '@/use'
 
 import { Navbar, Tag } from '@mid-vue/taro-h5-ui'
-import { defineComponent, reactive } from 'vue'
+import { computed, defineComponent, reactive } from 'vue'
 import { MilkBottleFeed } from './components/milk-bottle-feed'
 import { EnumFeedType } from '@/dict'
 import { BreastMilkFeed } from './components/breast-milk-feed'
@@ -11,9 +11,9 @@ export default defineComponent({
   name: 'FeedMilk',
   setup() {
     const { query } = useRoute<IFeedRecord<IMilkBottle | IBreastMilk>>()
-
+    let feedType = +query.feedType ? +query.feedType : EnumFeedType.MILK_BOTTLE
     let state = reactive({
-      feedType: EnumFeedType.BREAST_FEED_DIRECT
+      feedType
     })
 
     let feedTypeList = [
@@ -28,6 +28,13 @@ export default defineComponent({
         className: 'ml-[10px]'
       }
     ]
+
+    let milkData = computed(() => {
+      if (state.feedType === feedType) {
+        return query
+      }
+      return undefined
+    })
 
     return () => {
       return (
@@ -59,9 +66,9 @@ export default defineComponent({
             })}
           </div>
           {state.feedType === EnumFeedType.MILK_BOTTLE ? (
-            <MilkBottleFeed></MilkBottleFeed>
+            <MilkBottleFeed data={milkData.value as IFeedRecord<IMilkBottle>}></MilkBottleFeed>
           ) : (
-            <BreastMilkFeed></BreastMilkFeed>
+            <BreastMilkFeed data={milkData.value as IFeedRecord<IBreastMilk>}></BreastMilkFeed>
           )}
         </div>
       )

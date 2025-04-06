@@ -1,4 +1,4 @@
-.feed-milk-form {
+.breast-milk-feed {
   width: 100%;
 
   .form-item-card {
@@ -12,49 +12,38 @@
       padding-bottom: 12px;
     }
   }
-
-  .form-item-volume {
-    position: relative;
+  .breast-milk-player {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 3;
-    padding-top: 10px;
+    justify-content: space-between;
+    padding: 32px;
 
-    .item-volume-bg {
-      width: 169px;
-      height: 212px;
-      position: relative;
+    .milk-player-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 110px;
+      flex: none;
+
+      .player-img {
+        width: 104px;
+        height: 104px;
+        flex: none;
+        margin: 20px 0;
+      }
+      .player-label {
+        font-size: 15px;
+        color: var(--mv-black);
+      }
     }
-
-    .item-volume-picker {
-      width: 116px;
-      height: 118px;
-      position: absolute;
-      top: 58%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-
-      .volume-picker-mask {
-        left: 20px;
-        right: 20px;
-        width: auto;
-      }
-
-      .volume-picker-indicator {
-        color: var(--mv-primary-color);
-        background: #ffdae0;
-        border-radius: 100px;
-        height: 40px;
-        z-index: 0;
-        &::after {
-          display: none;
-        }
-        &::before {
-          display: none;
-        }
-      }
+    .milk-player-time {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      font-size: 40px;
+      color: var(--mv-black);
     }
   }
 }

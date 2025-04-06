@@ -22,6 +22,10 @@ declare global {
   /** 母乳亲喂 */
   interface IBreastMilk {
     type: string | number
+    /** 持续时间 */
+    duration: number
+    leftDuration: number
+    rightDuration: number
     feedTime: string
   }
 

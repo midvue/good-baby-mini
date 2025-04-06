@@ -288,6 +288,16 @@
           font-size: 14px;
         }
       }
+      .records-item-20 {
+        .records-item-content {
+          display: flex;
+        }
+        .item-title-duration {
+          font-size: var(--mv-font-size-1);
+          color: var(--mv-title-color3);
+          margin-left: 2px;
+        }
+      }
       .records-item-30 {
         --mv-item-time-color: #ffda8b;
         --mv-item-title-color: #ffc118;
