@@ -24,8 +24,10 @@ export enum EnumEventType {
 
 /** 喂养类型 */
 export enum EnumFeedType {
-  /**奶粉 */
-  MILK = 10,
+  /**奶瓶喂养 */
+  MILK_BOTTLE = 10,
+  /** 母乳亲喂 */
+  BREAST_FEED_DIRECT = 20,
   /** 尿布 */
   DIAPER = 30,
   /** 身高体重 */

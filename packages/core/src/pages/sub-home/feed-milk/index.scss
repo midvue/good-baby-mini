@@ -8,64 +8,11 @@
   background: linear-gradient(180deg, #ffe0e5 0%, #ffffff 100%);
   padding: 0 var(--mv-padding-w);
 
-  .feed-milk-form {
+  .feed-milk-header {
     width: 100%;
-
-    .form-item-card {
-      box-shadow: var(--mv-box-shadow);
-      border-radius: 8px;
-      margin: 12px var(--mv-padding-w 0);
-      padding: 15px;
-
-      &:last-child {
-        margin-bottom: 12px;
-        padding-bottom: 12px;
-      }
-    }
-
-    .form-item-volume {
-      position: relative;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 3;
-      padding-top: 10px;
-
-      .item-volume-bg {
-        width: 169px;
-        height: 212px;
-        position: relative;
-      }
-
-      .item-volume-picker {
-        width: 116px;
-        height: 118px;
-        position: absolute;
-        top: 58%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-        .volume-picker-mask {
-          left: 20px;
-          right: 20px;
-          width: auto;
-        }
-
-        .volume-picker-indicator {
-          color: var(--mv-primary-color);
-          background: #ffdae0;
-          border-radius: 100px;
-          height: 40px;
-          z-index: 0;
-          &::after {
-            display: none;
-          }
-          &::before {
-            display: none;
-          }
-        }
-      }
-    }
+    height: 44px;
+    flex: none;
+    display: flex;
+    align-items: center;
   }
 }

@@ -1,14 +1,14 @@
 <script lang="tsx">
+import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
+import imgAvatarMale from '@/assets/images/img_avatar_male.png'
+import { BabyInfo, IBaby } from '@/components/baby-info'
+import { useAppStore } from '@/stores'
 import { useDictMap } from '@/use'
+import { getBabyInfo } from '@/utils'
+import { durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { Button, FooterBar, Image, Navbar, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { defineComponent, reactive } from 'vue'
 import { apiBabyList } from './api'
-import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
-import imgAvatarMale from '@/assets/images/img_avatar_male.png'
-import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { BabyInfo, IBaby } from '@/components/baby-info'
-import { useAppStore } from '@/stores'
-import { getBabyInfo } from '@/utils'
 
 export default defineComponent({
   name: 'baby-manage',

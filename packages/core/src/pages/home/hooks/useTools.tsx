@@ -13,7 +13,7 @@ export const useTools = () => {
   let poopTypeMap = useDictMap('POOP_TYPE')
   const toolsConfList = [
     {
-      feedType: EnumFeedType.MILK,
+      feedType: EnumFeedType.MILK_BOTTLE,
       name: '奶粉',
       bgImg: imgFeedMilk,
       path: '/feed-milk/index'
@@ -64,6 +64,7 @@ export const useTools = () => {
     if (record) {
       query.content = { ...record.content, feedTime }
     }
+
     navigateTo({
       path: '/pages/sub-home' + tool.path,
       query
@@ -77,10 +78,10 @@ export const useTools = () => {
 
   let renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | null) => {
     if (!record || !feedType) return null
-    if (feedType === EnumFeedType.MILK) {
+    if (feedType === EnumFeedType.MILK_BOTTLE) {
       return (
         <div class='card-content'>
-          <span>{(record.content as IMilk).volume}</span> ml
+          <span>{(record.content as IMilkBottle).volume}</span> ml
         </div>
       )
     }
@@ -123,13 +124,13 @@ export const useTools = () => {
           )
         })}
         <Drag
-          gap={{ x: 6, y: 60 }}
+          gap={{ x: 5, y: 60 }}
           offset={offset.value}
           onOffsetChange={(offset) => {
             setStorage(HOME_DRAG_OFFSET, offset)
           }}
         >
-          <Image class='w-[80px] h-[80px]' src={imgHomeAdd} onClick={() => onItemClick(0)}></Image>
+          <Image class='w-[75px] h-[75px]' src={imgHomeAdd} onClick={() => onItemClick(0)}></Image>
         </Drag>
       </div>
     )

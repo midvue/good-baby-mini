@@ -1,3 +1,3 @@
 export interface IFeedMilkState {
-  form: IFeedRecord<IMilk>
+  form: IFeedRecord<IMilkBottle>
 }

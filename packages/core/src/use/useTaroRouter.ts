@@ -143,7 +143,7 @@ export const navigateToOrBack = (option = {} as Partial<INavOption>) => {
 }
 
 /** 获取当前页面参数 */
-export const useRoute = <T = Record<string, string | Record<string, any>>>() => {
+export const useRoute = <T = Record<string, string | Record<string, string>>>() => {
   const { params, path } = useRouter()
   const cPath = path.split('?')[0].substring(1)
   return { path: cPath, query: decodeObj(params) as T }

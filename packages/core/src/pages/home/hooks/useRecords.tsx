@@ -144,8 +144,8 @@ export const useRecords = () => {
     }
     feedTypeItem.count += 1
     /** 奶粉喂养,计算容量 */
-    if (feedType === EnumFeedType.MILK) {
-      let { volume, type } = record.content as IMilk
+    if (feedType === EnumFeedType.MILK_BOTTLE) {
+      let { volume, type } = record.content as IMilkBottle
       feedTypeItem.content.label = milkTypeMap[type]?.name || ''
       feedTypeItem.content.volume += volume
     }
@@ -166,10 +166,10 @@ export const useRecords = () => {
 
   let feedTypeStrategy = {
     /** 奶粉 */
-    [EnumFeedType.MILK]: {
+    [EnumFeedType.MILK_BOTTLE]: {
       path: '/pages/sub-home/feed-milk/index',
       render: (content: IFeedRecord['content']) => {
-        let { volume, type } = content as IMilk
+        let { volume, type } = content as IMilkBottle
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>

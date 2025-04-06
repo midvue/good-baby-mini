@@ -12,11 +12,17 @@ declare global {
     feedTime: string
   }
 
-  /** 奶粉 */
-  interface IMilk {
+  /** 奶瓶喂养 */
+  interface IMilkBottle {
     type: string | number
     feedTime: string
     volume: number
+  }
+
+  /** 母乳亲喂 */
+  interface IBreastMilk {
+    type: string | number
+    feedTime: string
   }
 
   /** 身高体重 */
@@ -34,7 +40,7 @@ declare global {
   }
 
   /** 喂养记录 */
-  interface IFeedRecord<T = IMilk | IDiaper | IHeightWeight> {
+  interface IFeedRecord<T = IMilkBottle | IBreastMilk | IDiaper | IHeightWeight> {
     id: number
     /** 宝宝id */
     babyId: number
