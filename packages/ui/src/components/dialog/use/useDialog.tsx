@@ -1,6 +1,7 @@
 import { ComponentPublicInstance, createApp, onMounted, provide, ref } from 'vue'
 import { type JSX } from 'vue/jsx-runtime'
 import Dialog from '../Dialog.vue'
+import Taro, { useRouter } from '@tarojs/taro'
 
 type DialogOptionType = Partial<InstanceType<typeof Dialog>> & {
   id?: string
@@ -30,9 +31,10 @@ function mountComponent(option = {} as DialogOptionType) {
   let page: HTMLDivElement | null = null
   let uid = ''
   const childNodes = document.getElementById('app')!.childNodes
+  let path = useRouter().$taroPath
   for (let length = childNodes.length, i = length - 1; i >= 0; i--) {
     const elt = childNodes[i] as ChildNode & { uid: string }
-    if (elt.nodeType === 1 && !elt.uid.startsWith('custom-tab-bar/index')) {
+    if (elt.nodeType === 1 && elt.uid === path) {
       page = elt.lastChild! as HTMLDivElement
       uid = elt.uid
       break

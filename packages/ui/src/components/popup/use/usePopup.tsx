@@ -2,6 +2,7 @@ import { type ComponentPublicInstance, createApp, onMounted, provide, ref } from
 import { type JSX } from 'vue/jsx-runtime'
 import Popup from '../Popup.vue'
 import { type PopupPropsType } from '../props'
+import { useRouter } from '@tarojs/taro'
 
 type PopupOptionType = Partial<PopupPropsType> & {
   id?: string
@@ -30,9 +31,11 @@ function mountComponent(option = {} as PopupOptionType) {
   let page: HTMLDivElement | null = null
   let uid = ''
   const childNodes = document.getElementById('app')!.childNodes
+  let path = useRouter().$taroPath
+
   for (let length = childNodes.length, i = length - 1; i >= 0; i--) {
     const elt = childNodes[i] as ChildNode & { uid: string }
-    if (elt.nodeType === 1 && !elt.uid.startsWith('custom-tab-bar/index')) {
+    if (elt.nodeType === 1 && elt.uid === path) {
       page = elt.lastChild! as HTMLDivElement
       //@ts-ignore
       uid = elt.uid
