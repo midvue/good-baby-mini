@@ -56,9 +56,10 @@ export default defineComponent({
           {
             label: '尿布状态',
             field: 'type',
-
             attrs: {
-              labelAlign: 'top'
+              labelAlign: 'top',
+              border: true,
+              class: 'pb-[10px]'
             },
             component: () => {
               return (
@@ -74,14 +75,6 @@ export default defineComponent({
                       {item.name}
                     </div>
                   ))}
-                  {/* <p class='py-8'>尿布重量</p>
-                  <div class='flex justify-between size-full'>
-                    {['很轻', '正常', '很重'].map((item) => (
-                      <Button class='tag-item' size='small' round type='warning'>
-                        {item}
-                      </Button>
-                    ))}
-                  </div> */}
                 </div>
               )
             }
@@ -91,7 +84,7 @@ export default defineComponent({
             field: 'poopType',
             attrs: {
               labelAlign: 'top',
-              class: 'py-10'
+              class: 'pb-[10px]'
             },
             show: () => state.form.type !== EnumDiaperType.PEE,
             component: () => (
@@ -101,11 +94,6 @@ export default defineComponent({
                     class={{ 'tag-item': true, active: state.form.poopType === item.code }}
                     onClick={() => (state.form.poopType = item.code)}
                   >
-                    {state.form.poopType === item.code ? (
-                      <Icon name='mv-icon-checked'></Icon>
-                    ) : (
-                      <></>
-                    )}
                     {item.name}
                   </div>
                 ))}
@@ -117,7 +105,7 @@ export default defineComponent({
             field: 'poopColor',
             attrs: {
               labelAlign: 'top',
-              class: 'py-10',
+              class: 'pb-[10px]',
               border: true
             },
             show: () => state.form.type !== EnumDiaperType.PEE,

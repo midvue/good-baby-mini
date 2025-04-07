@@ -1,8 +1,9 @@
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictList, useDictMap } from '@/use'
-import { dateDiff, durationFormatNoZero, minute, useDate } from '@mid-vue/shared'
-import { Image, showDialog } from '@mid-vue/taro-h5-ui'
+import { FEED_RECORD, setStorage } from '@/utils'
+import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { Empty, Image, showDialog } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { ScrollView } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
@@ -12,7 +13,6 @@ import IconFeedDiaper from '../assets/icon_feed_diaper.png'
 import iconFeedHeight from '../assets/icon_feed_height.png'
 import iconFeedMilk from '../assets/icon_feed_milk.png'
 import { SummaryFeedRecord, type IHomeState } from '../types'
-import { FEED_RECORD, setStorage } from '@/utils'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -304,6 +304,7 @@ export const useRecords = () => {
             scrollTop={0}
           >
             <div class='home-records-scroll'>
+              {!state.feedRecords.length && <Empty message='暂无喂养记录'></Empty>}
               {state.feedRecords.map((record, index) => {
                 if (!feedTypeList) return null
                 if ('feedType' in record) {

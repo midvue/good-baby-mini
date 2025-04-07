@@ -31,7 +31,7 @@ declare global {
     weight: number
 
     /** '出生日期', type: 'timestamp' }) */
-    birthDate: number
+    birthDate: string
 
     /** '出生时间' */
     birthTime: string

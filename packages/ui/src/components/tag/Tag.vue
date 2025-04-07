@@ -140,7 +140,7 @@ $types:
   align-items: center;
   border-radius: var(--mv-tag-border-radius);
   font-size: 12px;
-  padding: 3px 8px;
+  padding: 5px 8px;
   flex: none;
   @extend %hairline--surround;
 

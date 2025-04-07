@@ -7,20 +7,22 @@ import {
   type FormInstance,
   IFormItem,
   Input,
-  Picker
+  Picker,
+  Tag
 } from '@mid-vue/taro-h5-ui'
 import Taro from '@tarojs/taro'
 import { defineComponent, PropType, reactive, ref } from 'vue'
 import { apiBabyCreate, apiBabyUpdate } from './api'
 import { IBaby } from './types'
 import { useAppStore } from '@/stores'
-import { useDate } from '@mid-vue/shared'
+import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 
 export default defineComponent({
   name: 'BabyInfo',
   props: {
     data: {
-      type: Object as PropType<IBaby>
+      type: Object as PropType<IBaby>,
+      default: () => ({})
     }
   },
   emits: ['close'],
@@ -29,8 +31,8 @@ export default defineComponent({
     const currState = reactive({
       form: {
         ...props.data,
-        gender: '' + props.data?.gender || '',
-        familyId: appStore.familyId
+        gender: props.data.gender ? props.data.gender.toString() : '10',
+        birthDate: props.data.birthDate ? useDate(props.data.birthDate).format('YYYY-MM-DD') : ''
       } as IBaby
     })
 
@@ -76,9 +78,29 @@ export default defineComponent({
           {
             label: '宝宝性别',
             field: 'gender',
-            attrs: { required: true },
+            attrs: { required: true, border: true },
             rules: [{ required: true, message: '请选择宝宝的性别' }],
-            component: () => <Picker v-model={currState.form.gender} range={genderList}></Picker>
+            component: () => {
+              return (
+                <>
+                  {genderList.map((gender) => {
+                    return (
+                      <Tag
+                        class='w-[60px] mr-[8px]'
+                        round
+                        type='primary'
+                        plain={currState.form.gender !== gender.code}
+                        onClick={() => {
+                          currState.form.gender = gender.code
+                        }}
+                      >
+                        {gender.name}宝宝
+                      </Tag>
+                    )
+                  })}
+                </>
+              )
+            }
           }
         ]
       }

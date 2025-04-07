@@ -7,7 +7,7 @@ export default defineComponent({
   props: {
     src: {
       type: String,
-      default: 'order/img-empty-2.png'
+      default: ''
     },
     message: {
       type: [String, Object, Function] as PropType<string | VNode | Function>,
