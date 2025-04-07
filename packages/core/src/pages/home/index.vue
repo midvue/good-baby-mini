@@ -1,5 +1,4 @@
 <script lang="tsx">
-import { getBabyInfo } from '@/utils'
 import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { defineComponent, watch } from 'vue'
@@ -16,7 +15,6 @@ export default defineComponent({
         size: 16,
         total: 0
       },
-      babyInfo: getBabyInfo() || ({} as BabyInfo),
       feedRecords: []
     })
 

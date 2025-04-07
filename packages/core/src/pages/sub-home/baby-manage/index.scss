@@ -21,6 +21,7 @@
       align-items: center;
       margin-top: 12px;
       padding: 0 var(--mv-padding-w);
+      position: relative;
 
       .baby-avatar {
         width: 64px;
@@ -46,6 +47,14 @@
           align-items: center;
           margin: 4px 0;
         }
+      }
+      .item-tag-selected {
+        position: absolute;
+        z-index: 3;
+        right: 16px;
+        top: calc(50% - 13px);
+        min-width: 50px;
+        flex: none;
       }
     }
   }

@@ -1,5 +1,6 @@
 import {
   clearToken,
+  getBabyInfo,
   getEnvVersion,
   getMetaEnv,
   getToken,
@@ -15,6 +16,7 @@ import { defineStore } from 'pinia'
 interface IAppStore {
   tabBarPath: string
   userInfo: IUserInfo
+  babyInfo: BabyInfo
   token: string
   /** 家庭id */
   familyId: number
@@ -29,6 +31,7 @@ interface IAppStore {
 export const useAppStore = defineStore('app-store', {
   state: (): IAppStore => {
     const userInfo = getUserInfo()
+    const babyInfo = getBabyInfo()
 
     return {
       tabBarPath: '',
@@ -36,6 +39,7 @@ export const useAppStore = defineStore('app-store', {
       version: '',
       metaEnv: getMetaEnv(),
       userInfo: userInfo,
+      babyInfo: babyInfo,
       familyId: userInfo.familyId,
       token: getToken(),
       isLogin: !!getToken()
@@ -76,6 +80,9 @@ export const useAppStore = defineStore('app-store', {
         return await this.wxLogin()
       }
       return setUserInfo(userInfo)
+    },
+    async setBabyInfo(this: IAppStore, babyInfo: BabyInfo) {
+      this.babyInfo = babyInfo
     },
 
     /**

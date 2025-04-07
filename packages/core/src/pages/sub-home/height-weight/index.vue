@@ -31,7 +31,7 @@ export default defineComponent({
       content: {
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
         height: 50,
-        weight: 5,
+        weight: 3,
         headCircumference: undefined,
         footLength: undefined
       } as IHeightWeight

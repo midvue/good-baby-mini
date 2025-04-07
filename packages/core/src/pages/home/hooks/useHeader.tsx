@@ -1,22 +1,24 @@
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
-import { BabyInfo } from '@/components/baby-info'
+import { BabyInfo, IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
-import { reLaunch, useRoute } from '@/use'
+import { navigateTo, reLaunch, useRoute } from '@/use'
 import { setBabyInfo } from '@/utils'
-import { durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { useDidShow } from '@tarojs/taro'
-import { computed, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { apiAddBabyFoster, apiBabyList } from '../api'
 import { IHomeState } from '../types'
 
 export const useHeader = () => {
-  const [state, setState] = useCtxState<IHomeState>()
+  const [state] = useCtxState<IHomeState>()
   let query = useRoute<{ fid: number }>().query
 
   let appStore = useAppStore()
+
+  let currState = reactive({ babyList: [] as IBaby[] })
   watch(
     () => appStore.isLogin,
     (isLogin) => {
@@ -49,13 +51,14 @@ export const useHeader = () => {
   }
   function getBabyList() {
     if (!appStore.isLogin) return
-    apiBabyList().then((res) => {
-      let babyInfo = res?.[0] || {}
-      setState((state) => {
-        state.babyInfo = babyInfo
-      })
 
-      setBabyInfo(babyInfo)
+    apiBabyList().then((list) => {
+      currState.babyList = list || []
+      if (!appStore.babyInfo) {
+        let babyInfo = list?.[0] || {}
+        appStore.setBabyInfo(babyInfo)
+        setBabyInfo(babyInfo)
+      }
     })
   }
   //点击添加宝宝
@@ -78,8 +81,18 @@ export const useHeader = () => {
     })
   }
 
+  /** 切换宝宝 */
+  function onChangeBaby() {
+    navigateTo({
+      path: '/pages/sub-home/baby-manage/index',
+      query: {
+        isChange: EnumYesNoPlus.YES
+      }
+    })
+  }
+
   let birthTimeRef = computed(() => {
-    let { birthDate, birthTime } = state.babyInfo
+    let { birthDate, birthTime } = appStore.babyInfo
     if (!birthDate) return ''
     let now = useDate()
     let targetDate = useDate(birthDate)
@@ -97,15 +110,20 @@ export const useHeader = () => {
         <div class='home-baby-info'>
           <Image
             class='baby-info-avatar'
-            src={state.babyInfo.gender === '20' ? imgAvatarMale : imgAvatarFemale}
+            src={appStore.babyInfo.gender === '20' ? imgAvatarMale : imgAvatarFemale}
           ></Image>
           <div class='baby-info-content'>
-            <div class='info-name'>{state.babyInfo.nickname}</div>
+            <div class='info-name'>{appStore.babyInfo.nickname}</div>
             <div class='info-time'>{birthTimeRef.value}</div>
           </div>
-          {!state.babyInfo.id && (
+          {!appStore.babyInfo.id && (
             <Tag type='primary' round onClick={onAddBaby}>
               请添加宝宝
+            </Tag>
+          )}
+          {currState.babyList.length > 1 && (
+            <Tag class='ml-[20px]' type='primary' round onClick={onChangeBaby}>
+              切换宝宝
             </Tag>
           )}
         </div>

@@ -8,7 +8,6 @@ export interface FeedRecordResp {
 export interface IHomeState {
   loading: boolean
   feedRecords: (IFeedRecord | SummaryFeedRecord)[]
-  babyInfo: BabyInfo
   pagination: {
     current: number
     size: number

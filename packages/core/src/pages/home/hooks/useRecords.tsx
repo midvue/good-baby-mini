@@ -31,7 +31,7 @@ export const useRecords = () => {
   const poopColorMap = useDictMap('POOP_COLOR')
 
   watch(
-    () => state.babyInfo.id,
+    () => appStore.babyInfo.id,
     (id) => {
       if (!id) return
       if (!feedTypeList) {
@@ -49,7 +49,7 @@ export const useRecords = () => {
   let dayMap = {} as Record<string, SummaryFeedRecord>
   /** 获取喂养记录 */
   async function getRecordList(isRefresh = true) {
-    if (!appStore.isLogin || !state.babyInfo.id) return
+    if (!appStore.isLogin || !appStore.babyInfo.id) return
     if (isRefresh) {
       setState((state) => {
         state.pagination.current = 1
@@ -65,7 +65,7 @@ export const useRecords = () => {
     const res = await apiGetFeedRecordList({
       startFeedTime,
       endFeedTime,
-      babyId: state.babyInfo.id,
+      babyId: appStore.babyInfo.id,
       ...state.pagination
     })
     let list = res.list || []
@@ -104,7 +104,7 @@ export const useRecords = () => {
     setState((state) => {
       if (isRefresh) {
         //保存最后一次记录
-        if (feedRecords.length) {
+        if (feedRecords.length > 1) {
           let record = feedRecords[1] as IFeedRecord
           setStorage(FEED_RECORD + record.feedType, record)
         }
