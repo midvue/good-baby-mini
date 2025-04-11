@@ -12,7 +12,5 @@
     "./variables.scss": "./src/components/styles/variables.scss"
   },
   "scripts": {},
-  "dependencies": {
-    "async-validator": "^4.2.5"
-  }
+  "dependencies": {}
 }
