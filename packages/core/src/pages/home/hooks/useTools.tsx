@@ -2,7 +2,7 @@ import { BabyInfo } from '@/components/baby-info'
 import { EnumFeedType } from '@/dict'
 import { navigateTo, reLaunch, useDictMap } from '@/use'
 import { FEED_RECORD, getBabyInfo, getStorage, HOME_DRAG_OFFSET, setStorage } from '@/utils'
-import { dateFormat } from '@mid-vue/shared'
+import { dateFormat, useDate } from '@mid-vue/shared'
 import { Drag, Image, showPopup } from '@mid-vue/taro-h5-ui'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
@@ -14,7 +14,7 @@ export const useTools = () => {
   const toolsConfList = [
     {
       feedType: EnumFeedType.MILK_BOTTLE,
-      name: '奶粉',
+      name: '喂养',
       bgImg: imgFeedMilk,
       path: '/feed-milk/index'
     },
@@ -73,7 +73,10 @@ export const useTools = () => {
 
   const formatFeedTime = (record: IFeedRecord | null) => {
     if (!record) return '刚刚'
-    return record.feedTimeStr?.replace(/.*\((.*)\)/, '$1')
+    let feedDay = useDate(record.feedTime)
+    let isToday = feedDay.isSame(useDate(), 'day')
+    let yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
+    return feedDay.format(isToday ? 'HH:mm' : yesterday ? '昨天 HH:mm' : 'MM月DD日 HH:mm')
   }
 
   let renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | null) => {

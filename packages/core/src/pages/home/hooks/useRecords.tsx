@@ -1,7 +1,6 @@
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictList, useDictMap } from '@/use'
-import { FEED_RECORD, setStorage } from '@/utils'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { Empty, Image, showDialog } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
@@ -12,6 +11,7 @@ import { apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
 import IconFeedDiaper from '../assets/icon_feed_diaper.png'
 import iconFeedHeight from '../assets/icon_feed_height.png'
 import iconFeedMilk from '../assets/icon_feed_milk.png'
+import iconFeedBreast from '../assets/icon_feed_breast.png'
 import { SummaryFeedRecord, type IHomeState } from '../types'
 
 /**  喂养记录 */
@@ -189,7 +189,7 @@ export const useRecords = () => {
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
-              <Image src={iconFeedMilk} class='item-logo-img'></Image>
+              <Image src={iconFeedBreast} class='item-logo-img'></Image>
             </div>
             <div>
               <div class='records-item-title'>
