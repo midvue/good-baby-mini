@@ -3,17 +3,13 @@ import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { BabyInfo, IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useRoute } from '@/use'
-import { setBabyInfo } from '@/utils'
 import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
-import { useCtxState } from '@mid-vue/use'
 import { useDidShow } from '@tarojs/taro'
 import { computed, reactive, watch } from 'vue'
 import { apiAddBabyFoster, apiBabyList } from '../api'
-import { IHomeState } from '../types'
 
 export const useHeader = () => {
-  const [state] = useCtxState<IHomeState>()
   let query = useRoute<{ fid: number }>().query
 
   let appStore = useAppStore()
@@ -54,10 +50,9 @@ export const useHeader = () => {
 
     apiBabyList().then((list) => {
       currState.babyList = list || []
-      if (!appStore.babyInfo) {
+      if (!appStore.babyInfo.id) {
         let babyInfo = list?.[0] || {}
         appStore.setBabyInfo(babyInfo)
-        setBabyInfo(babyInfo)
       }
     })
   }

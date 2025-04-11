@@ -1,16 +1,19 @@
 <script lang="tsx">
 import { EnumFeedType } from '@/dict'
 import { navigateBack } from '@/use'
-import { getBabyInfo } from '@/utils'
-import { dateFormat, durationFormat, durationFormatNoZero } from '@mid-vue/shared'
+import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { dateFormat, durationFormat, durationFormatNoZero, useNumber } from '@mid-vue/shared'
 import {
   Button,
   DateTimePicker,
+  Drag,
   FooterBar,
   Form,
   FormInstance,
   IFormItem,
-  Image
+  Image,
+  Input,
+  Textarea
 } from '@mid-vue/taro-h5-ui'
 import Taro from '@tarojs/taro'
 import { defineComponent, onUnmounted, PropType, reactive, ref, watch } from 'vue'
@@ -42,6 +45,7 @@ export default defineComponent({
     }
 
     const state = reactive({
+      isManual: !!props.data?.id, //是否手动录入
       isLeftStart: false,
       isRightStat: false,
       form: { ...defaultMilk, ...props.data } as IFeedRecord<IBreastMilk>
@@ -88,6 +92,13 @@ export default defineComponent({
       }, 1000)
     }
 
+    let onClickManual = () => {
+      clearInterval(timer)
+      state.isRightStat = false
+      state.isLeftStart = false
+      state.isManual = true
+    }
+
     onUnmounted(() => {
       clearInterval(timer)
     })
@@ -111,13 +122,91 @@ export default defineComponent({
             component: () => (
               <span>
                 {durationFormatNoZero(state.form.content.duration, {
-                  format: 'm分种s秒',
+                  format: 'm分钟s秒',
                   unit: 's'
                 })}
               </span>
             )
           },
           {
+            label: '左侧时长',
+            field: 'leftDuration',
+            attrs: { required: true, border: true },
+            show: () => state.isManual,
+            component: () => {
+              let num = useNumber(state.form.content.leftDuration)
+              let minute = Number(num.div(60).toFixed(0, 0))
+              let second = num.mod(60).toNumber()
+              return (
+                <div class='flex items-center'>
+                  <Input
+                    modelValue={minute}
+                    append='分'
+                    type='number'
+                    onInput={(e) => {
+                      let value = e.detail.value
+                      if (!value) {
+                        state.form.content.leftDuration = second
+                        return
+                      }
+                      state.form.content.leftDuration = value * 60 + second
+                    }}
+                  ></Input>
+                  <Input
+                    modelValue={second}
+                    append='秒'
+                    type='number'
+                    class='ml-[10px]'
+                    onInput={(e) => {
+                      let value = e.detail.value
+                      state.form.content.leftDuration = minute * 60 + (value || 0)
+                    }}
+                  ></Input>
+                </div>
+              )
+            }
+          },
+          {
+            label: '右侧时长',
+            field: 'rightDuration',
+            attrs: { required: true },
+            show: () => state.isManual,
+            component: () => {
+              let num = useNumber(state.form.content.rightDuration)
+              let minute = Number(num.div(60).toFixed(0, 0))
+              let second = num.mod(60).toNumber()
+              return (
+                <div class='flex items-center'>
+                  <Input
+                    modelValue={minute}
+                    append='分'
+                    type='number'
+                    onInput={(e) => {
+                      let value = e.detail.value
+                      if (!value) {
+                        state.form.content.rightDuration = second
+                        return
+                      }
+                      state.form.content.rightDuration = value * 60 + second
+                    }}
+                  ></Input>
+                  <Input
+                    modelValue={second}
+                    append='秒'
+                    type='number'
+                    class='ml-[10px]'
+                    onInput={(e) => {
+                      let value = e.detail.value
+                      state.form.content.rightDuration = minute * 60 + (value || 0)
+                    }}
+                  ></Input>
+                </div>
+              )
+            }
+          },
+
+          {
+            show: () => !state.isManual,
             render: () => {
               return (
                 <div class='breast-milk-player'>
@@ -148,6 +237,21 @@ export default defineComponent({
             }
           }
         ]
+      },
+      {
+        attrs: {
+          class: 'form-item-card'
+        },
+        children: [
+          //多层级嵌套
+          {
+            label: '备注',
+            attrs: {
+              labelAlign: 'top'
+            },
+            component: () => <Textarea v-model={state.form.remark} placeholder='请输入'></Textarea>
+          }
+        ]
       }
     ]
     const onSubmit = async () => {
@@ -160,23 +264,28 @@ export default defineComponent({
       }
 
       let apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
-      const res = await apiFunc({ ...state.form, feedTime: state.form.content.feedTime }).catch(
-        () => false
-      )
+      let record = { ...state.form, feedTime: state.form.content.feedTime }
+      const res = await apiFunc(record).catch(() => false)
       if (!res) return
+      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }
 
     return () => (
-      <>
-        <Form class='breast-milk-feed' ref={formRef} cells={cells} v-model={state.form}></Form>
+      <div class='breast-milk-feed'>
+        <Form ref={formRef} cells={cells} v-model={state.form}></Form>
         <FooterBar>
           <Button type='primary' size='large' round onClick={onSubmit}>
             保存
           </Button>
         </FooterBar>
-      </>
+        <Drag gap={{ x: 1, y: 80 }} offset={{ x: -1, y: 430 }}>
+          <div class='breast-drag-content' onClick={onClickManual}>
+            <span>手动输入</span>
+          </div>
+        </Drag>
+      </div>
     )
   }
 })

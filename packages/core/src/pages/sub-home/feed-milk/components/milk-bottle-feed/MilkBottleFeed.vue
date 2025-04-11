@@ -17,7 +17,7 @@ import Taro from '@tarojs/taro'
 import { defineComponent, PropType, reactive, ref } from 'vue'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import bgMilkVolume from './assets/bg_milk_volume.png'
-import { getBabyInfo } from '@/utils'
+import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
 import { EnumFeedType } from '@/dict'
 import { dateFormat } from '@mid-vue/shared'
 
@@ -128,10 +128,10 @@ export default defineComponent({
     ]
     const onSubmit = async () => {
       let apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
-      const res = await apiFunc({ ...state.form, feedTime: state.form.content.feedTime }).catch(
-        () => false
-      )
+      let record = { ...state.form, feedTime: state.form.content.feedTime }
+      const res = await apiFunc(record).catch(() => false)
       if (!res) return
+      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }

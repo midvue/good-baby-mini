@@ -104,10 +104,6 @@ export const useRecords = () => {
     setState((state) => {
       if (isRefresh) {
         //保存最后一次记录
-        if (feedRecords.length > 1) {
-          let record = feedRecords[1] as IFeedRecord
-          setStorage(FEED_RECORD + record.feedType, record)
-        }
         state.feedRecords = feedRecords
       } else {
         state.feedRecords = state.feedRecords.concat(feedRecords)

@@ -16,7 +16,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 32px;
+    padding: 8px 32px;
 
     .milk-player-item {
       display: flex;
@@ -45,5 +45,20 @@
       font-size: 40px;
       color: var(--mv-black);
     }
+  }
+
+  .breast-drag-content {
+    width: 72px;
+    height: 40px;
+    background: #ffffff;
+    box-shadow: 0px 0px 3px 0px rgba(255, 93, 158, 0.22);
+    border-radius: 88px 0px 0px 88px;
+    color: var(--mv-title-color3);
+    border: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 5px;
+    font-weight: bold;
   }
 }

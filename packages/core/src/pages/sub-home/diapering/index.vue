@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useDictList, useRoute } from '@/use'
-import { getBabyInfo } from '@/utils'
+import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
@@ -162,15 +162,17 @@ export default defineComponent({
         content.poopColor = ''
       }
       let apiFunc = state.id ? apiUpdateFeedRecord : apiAddFeedRecord
-      const res = await apiFunc({
+      let record = {
         id: state.id,
         babyId: state.babyId,
         feedType: state.feedType,
         remark: state.remark,
         feedTime: content.feedTime,
         content: state.form
-      }).catch(() => false)
+      }
+      const res = await apiFunc(record).catch(() => false)
       if (!res) return
+      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }

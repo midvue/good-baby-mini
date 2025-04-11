@@ -1,4 +1,5 @@
 import {
+  CopyButton,
   Form,
   FormInstance,
   Icon,
@@ -73,10 +74,10 @@ export let useList = () => {
               })
             }
           }
-        },
-        {
-          component: () => renderItem('老年人模式', iconAged)
         }
+        // {
+        //   component: () => renderItem('老年人模式', iconAged)
+        // }
       ]
     },
     {
@@ -99,8 +100,12 @@ export let useList = () => {
                 render() {
                   return (
                     <div class='flex flex-col items-center'>
-                      <div class='mt-[30px]'>小程序还在开发中，欢迎体验!</div>
+                      <div class='mt-[30px]'>小程序在持续迭代!数据会一直保留</div>
                       <div>需要什么功能,可以截图扫码,群里反馈</div>
+                      <div>
+                        或者添加微信: goodbaby_66{' '}
+                        <CopyButton text='wxid_xsy2vqbkqjoh22'></CopyButton>
+                      </div>
                       <Image class='w-[160px] h-[280px]' src={imgWeChat}></Image>
                     </div>
                   )

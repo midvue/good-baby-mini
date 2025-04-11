@@ -5,6 +5,7 @@ import {
   getMetaEnv,
   getToken,
   getUserInfo,
+  setBabyInfo,
   setEnvVersion,
   setToken,
   setUserInfo
@@ -83,6 +84,7 @@ export const useAppStore = defineStore('app-store', {
     },
     async setBabyInfo(this: IAppStore, babyInfo: BabyInfo) {
       this.babyInfo = babyInfo
+      setBabyInfo(babyInfo)
     },
 
     /**
