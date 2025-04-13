@@ -87,7 +87,14 @@ export let useList = () => {
       children: [
         {
           component: () => renderItem('关于我们', iconAboutMe),
-          attrs: { border: true }
+          attrs: {
+            border: true,
+            onClick: () => {
+              navigateTo({
+                path: '/pages/sub-mine/about-me/index'
+              })
+            }
+          }
         },
         {
           component: () => renderItem('微信群反馈', iconWeChat),
