@@ -17,7 +17,7 @@ export default {
       default: true
     }
   },
-  emits: ['update:modelValue', 'tab-click'],
+  emits: ['update:modelValue', 'tabClick', 'change'],
   setup(props, { emit }) {
     const currentName = ref(props.modelValue)
 
@@ -25,10 +25,11 @@ export default {
       if (currentName.value === value) return
       currentName.value = value
       emit('update:modelValue', value)
+      emit('change', value)
     }
 
     const handleClick = (tabName, event) => {
-      emit('tab-click', tabName, event)
+      emit('tabClick', tabName, event)
       setCurrentName(tabName)
     }
 
@@ -55,10 +56,7 @@ export default {
     const slotsList = this.$slots.default()
     const tabPaneSlotList = slotsList.reduce((result, item) => {
       if (item.children?.length) {
-        result.push(...item.children.filter((cItem) => cItem?.type?.name === 'mvTabPane'))
-      }
-      if (item?.type?.name === 'mvTabPane') {
-        result.push(item)
+        result.push(...item.children.filter((cItem) => cItem?.type?.name === 'MvTabPane'))
       }
       return result
     }, [])

@@ -7,7 +7,13 @@ export default {
     {
       //sub 喂养子包
       root: 'pages/sub-home',
-      pages: ['feed-milk/index', 'baby-manage/index', 'diapering/index', 'height-weight/index']
+      pages: [
+        'feed-milk/index',
+        'baby-manage/index',
+        'diapering/index',
+        'height-weight/index',
+        'feed-records/index'
+      ]
     },
     {
       //sub 用户中心子包

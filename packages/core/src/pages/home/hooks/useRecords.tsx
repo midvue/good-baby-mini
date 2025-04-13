@@ -2,7 +2,7 @@ import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictList, useDictMap } from '@/use'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { Empty, Image, showDialog } from '@mid-vue/taro-h5-ui'
+import { Empty, Icon, Image, showDialog } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { ScrollView } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
@@ -278,6 +278,11 @@ export const useRecords = () => {
       }
     })
   }
+  let onClickMore = () => {
+    navigateTo({
+      path: '/pages/sub-home/feed-records/index'
+    })
+  }
 
   return {
     render: () => {
@@ -285,8 +290,8 @@ export const useRecords = () => {
         <div class='home-records'>
           <div class='home-records-header'>
             <div class='header-title'>喂养记录</div>
-            <div class='header-more' v-show={state.feedRecords.length}>
-              更多
+            <div class='header-more' v-show={state.feedRecords.length} onClick={onClickMore}>
+              更多<Icon name='arrow'></Icon>
             </div>
           </div>
 
