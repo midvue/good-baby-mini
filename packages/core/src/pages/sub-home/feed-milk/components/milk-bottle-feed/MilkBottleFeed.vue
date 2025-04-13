@@ -121,7 +121,7 @@ export default defineComponent({
       {
         render: () => (
           <Tag plain type='primary' size='small' round class='mt-[8px]'>
-            喂养记录列表,可以点击修改,长按删除记录哦!
+            添加完记录,回到记录列表,长按可以删除记录哦!
           </Tag>
         )
       }
