@@ -20,6 +20,7 @@ import { defineComponent, onUnmounted, PropType, reactive, ref, watch } from 'vu
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import imgMilkEnd from './assets/img_milk_end.png'
 import imgMilkStart from './assets/img_milk_start.png'
+import { TimeInput } from '../time-input'
 
 export default defineComponent({
   name: 'BreastMilkFeed',
@@ -92,11 +93,11 @@ export default defineComponent({
       }, 1000)
     }
 
-    let onClickManual = () => {
+    let onClickDrag = () => {
       clearInterval(timer)
+      state.isManual = !state.isManual
       state.isRightStat = false
       state.isLeftStart = false
-      state.isManual = true
     }
 
     onUnmounted(() => {
@@ -116,6 +117,22 @@ export default defineComponent({
             component: () => <DateTimePicker v-model={state.form.content.feedTime}></DateTimePicker>
           },
           {
+            label: '左侧时长',
+            field: 'leftDuration',
+            attrs: { required: true, border: true },
+            show: () => state.isManual,
+            component: () => {
+              return <TimeInput v-model={state.form.content.leftDuration}></TimeInput>
+            }
+          },
+          {
+            label: '右侧时长',
+            field: 'rightDuration',
+            attrs: { required: true },
+            show: () => state.isManual,
+            component: () => <TimeInput v-model={state.form.content.rightDuration}></TimeInput>
+          },
+          {
             label: '总时长',
             field: 'duration',
             attrs: { required: true, border: true },
@@ -127,82 +144,6 @@ export default defineComponent({
                 })}
               </span>
             )
-          },
-          {
-            label: '左侧时长',
-            field: 'leftDuration',
-            attrs: { required: true, border: true },
-            show: () => state.isManual,
-            component: () => {
-              let num = useNumber(state.form.content.leftDuration)
-              let minute = Number(num.div(60).toFixed(0, 0))
-              let second = num.mod(60).toNumber()
-              return (
-                <div class='flex items-center'>
-                  <Input
-                    modelValue={minute}
-                    append='分'
-                    type='number'
-                    onInput={(e) => {
-                      let value = e.detail.value
-                      if (!value) {
-                        state.form.content.leftDuration = second
-                        return
-                      }
-                      state.form.content.leftDuration = value * 60 + second
-                    }}
-                  ></Input>
-                  <Input
-                    modelValue={second}
-                    append='秒'
-                    type='number'
-                    class='ml-[10px]'
-                    onInput={(e) => {
-                      let value = e.detail.value
-                      state.form.content.leftDuration = minute * 60 + (value || 0)
-                    }}
-                  ></Input>
-                </div>
-              )
-            }
-          },
-          {
-            label: '右侧时长',
-            field: 'rightDuration',
-            attrs: { required: true },
-            show: () => state.isManual,
-            component: () => {
-              let num = useNumber(state.form.content.rightDuration)
-              let minute = Number(num.div(60).toFixed(0, 0))
-              let second = num.mod(60).toNumber()
-              return (
-                <div class='flex items-center'>
-                  <Input
-                    modelValue={minute}
-                    append='分'
-                    type='number'
-                    onInput={(e) => {
-                      let value = e.detail.value
-                      if (!value) {
-                        state.form.content.rightDuration = second
-                        return
-                      }
-                      state.form.content.rightDuration = value * 60 + second
-                    }}
-                  ></Input>
-                  <Input
-                    modelValue={second}
-                    append='秒'
-                    type='number'
-                    class='ml-[10px]'
-                    onInput={(e) => {
-                      let value = e.detail.value
-                      state.form.content.rightDuration = minute * 60 + (value || 0)
-                    }}
-                  ></Input>
-                </div>
-              )
-            }
           },
 
           {
@@ -281,8 +222,8 @@ export default defineComponent({
           </Button>
         </FooterBar>
         <Drag gap={{ x: 1, y: 80 }} offset={{ x: -1, y: 430 }}>
-          <div class='breast-drag-content' onClick={onClickManual}>
-            <span>手动输入</span>
+          <div class='breast-drag-content' onClick={onClickDrag}>
+            <span>{state.isManual ? '自动计时' : '手动输入'}</span>
           </div>
         </Drag>
       </div>

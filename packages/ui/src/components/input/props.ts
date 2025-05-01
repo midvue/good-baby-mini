@@ -28,7 +28,7 @@ export const inputProps = {
     default: ''
   },
   formatter: {
-    type: Function as PropType<(value: string) => string | number>,
+    type: Function as PropType<(value: string | number) => string | number>,
     default: undefined
   },
   disabled: {

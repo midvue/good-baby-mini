@@ -11,6 +11,7 @@ export default defineComponent({
   name: 'FeedMilk',
   setup() {
     const { query } = useRoute<IFeedRecord<IMilkBottle | IBreastMilk>>()
+
     let feedType = +query.feedType ? +query.feedType : EnumFeedType.MILK_BOTTLE
     let state = reactive({
       feedType
@@ -48,6 +49,7 @@ export default defineComponent({
           ></Navbar>
           <div class='feed-milk-header'>
             {feedTypeList.map((item) => {
+              if (query.id && state.feedType !== item.value) return null
               return (
                 <Tag
                   type={state.feedType === item.value ? 'primary' : 'default'}

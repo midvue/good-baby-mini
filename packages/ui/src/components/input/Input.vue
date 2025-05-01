@@ -77,9 +77,17 @@ export default defineComponent({
     })
 
     const handleInput = (e: Event) => {
-      const value = (e.target as HTMLInputElement).value as string | number
+      let target = e.target as HTMLInputElement
+      let value = target.value as string | number
+
+      //自定义formatter规则
+      if (props.formatter) {
+        value = props.formatter(value)
+      }
       emit('update:modelValue', value)
       isEmpty.value = !value && value !== 0
+      //@ts-ignore
+      target.value = value
       props.onInput?.(e)
     }
 

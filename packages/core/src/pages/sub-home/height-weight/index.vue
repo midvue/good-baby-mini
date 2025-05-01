@@ -60,7 +60,11 @@ export default defineComponent({
             field: 'weight',
             attrs: { required: true },
             component: () => (
-              <Input v-model={state.form.content.weight} placeholder='请输入体重'></Input>
+              <Input
+                type='digit'
+                v-model={state.form.content.weight}
+                placeholder='请输入体重'
+              ></Input>
             ),
             slots: { append: () => 'kg' }
           },
@@ -69,7 +73,11 @@ export default defineComponent({
             field: 'height',
             attrs: { required: true, border: true },
             component: () => (
-              <Input v-model={state.form.content.height} placeholder='请输入身高'></Input>
+              <Input
+                type='digit'
+                v-model={state.form.content.height}
+                placeholder='请输入身高'
+              ></Input>
             ),
             slots: { append: () => 'cm' }
           }
@@ -86,6 +94,7 @@ export default defineComponent({
             attrs: { required: false, border: true },
             component: () => (
               <Input
+                type='digit'
                 v-model={state.form.content.headCircumference}
                 placeholder='(可选) 请输入头围'
               ></Input>
@@ -98,6 +107,7 @@ export default defineComponent({
             attrs: { required: false },
             component: () => (
               <Input
+                type='digit'
                 v-model={state.form.content.footLength}
                 placeholder='(可选) 请输入脚长'
               ></Input>

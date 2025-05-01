@@ -1,5 +1,7 @@
 <script lang="tsx">
+import { useAppStore } from '@/stores'
 import { useDictList } from '@/use'
+import { useDate } from '@mid-vue/shared'
 import {
   Button,
   FooterBar,
@@ -14,8 +16,6 @@ import Taro from '@tarojs/taro'
 import { defineComponent, PropType, reactive, ref } from 'vue'
 import { apiBabyCreate, apiBabyUpdate } from './api'
 import { IBaby } from './types'
-import { useAppStore } from '@/stores'
-import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 
 export default defineComponent({
   name: 'BabyInfo',
