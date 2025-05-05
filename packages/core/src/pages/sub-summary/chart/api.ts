@@ -1,23 +1,12 @@
 import http from '@mid-vue/http-client'
 
 /**
- * 添加喂养记录
+ * 获取喂养记录
  */
-export const apiAddFeedRecord = (data: Partial<IFeedRecord>) => {
+export const apiFeedRecordList = <T>(data: Partial<IFeedRecord>) => {
   const option = {
-    url: '/baby/feedRecord/create',
+    url: '/baby/feedRecord/list',
     data
   }
-  return http.post<IFeedRecord>(option)
-}
-
-/**
- * 更新喂养记录
- */
-export const apiUpdateFeedRecord = (data: Partial<IFeedRecord>) => {
-  const option = {
-    url: '/baby/feedRecord/update',
-    data
-  }
-  return http.put(option)
+  return http.post<IFeedRecord<T>[]>(option)
 }
