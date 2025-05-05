@@ -17,13 +17,18 @@ export default {
     },
     {
       //sub 用户中心子包
+      root: 'pages/sub-summary',
+      pages: ['chart/index']
+    },
+    {
+      //sub 用户中心子包
       root: 'pages/sub-mine',
       pages: ['web-page/index', 'family-manage/index', 'about-me/index']
     }
   ],
   preloadRule: {
     'pages/home/index': {
-      packages: ['pages/sub-home'],
+      packages: ['pages/sub-home', 'pages/sub-summary'],
       network: 'all'
     },
     'pages/mine/index': {

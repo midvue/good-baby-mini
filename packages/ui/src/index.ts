@@ -1,4 +1,5 @@
 export * from './components/button'
+export * from './components/canvas'
 export * from './components/config-provider'
 export * from './components/copy-button'
 export * from './components/date-time-picker'

@@ -1,14 +1,14 @@
 <script lang="tsx">
-import { useDictList, useDictMap, useRoute } from '@/use'
-import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
-import { defineComponent, reactive } from 'vue'
 import { EnumFeedType } from '@/dict'
-import { apiGetFeedRecordList } from './api'
-import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { useAppStore } from '@/stores'
-import type { SummaryFeedRecord } from './types'
+import { useDictList, useDictMap } from '@/use'
+import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
 import { ScrollView } from '@tarojs/components'
+import { defineComponent, reactive } from 'vue'
+import { apiGetFeedRecordList } from './api'
 import { FeedRecord } from './components/feed-record'
+import type { SummaryFeedRecord } from './types'
 export default defineComponent({
   name: 'feed-records',
   setup() {

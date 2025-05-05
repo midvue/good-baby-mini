@@ -4,12 +4,14 @@
   </canvas>
 </template>
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: 'MvCanvas',
   setup() {
     return {}
   }
-}
+})
 </script>
 
 <style></style>

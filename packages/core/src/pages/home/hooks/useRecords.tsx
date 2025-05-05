@@ -2,7 +2,7 @@ import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictList, useDictMap } from '@/use'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { Empty, Icon, Image, showDialog } from '@mid-vue/taro-h5-ui'
+import { Empty, Icon, Image, showDialog, Tag } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { ScrollView } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
@@ -298,10 +298,12 @@ export const useRecords = () => {
           <ScrollView
             class='home-records-wrapper'
             scroll-y
-            refresher-enabled
+            refresherEnabled
             refresher-triggered={currState.isRefresher}
             onRefresherrefresh={onRefresh}
             onScrolltolower={onLoadMore}
+            showScrollbar={false}
+            enhanced
             scrollTop={0}
           >
             <div class='home-records-scroll'>
@@ -342,6 +344,20 @@ export const useRecords = () => {
                                 <span class='content-number'>{summary.content.volume}</span> ml)
                               </>
                             )}
+                            <Tag
+                              size='small'
+                              class='ml-[5px]'
+                              onClick={() => {
+                                navigateTo({
+                                  path: '/pages/sub-summary/chart/index',
+                                  query: {
+                                    feedType: code
+                                  }
+                                })
+                              }}
+                            >
+                              分析
+                            </Tag>
                           </div>
                         )
                       })}

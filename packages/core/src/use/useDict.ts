@@ -1,7 +1,7 @@
 import { getStorage, setStorage } from '@/utils'
 import Http from '@mid-vue/http-client'
 
-interface DictItem {
+export interface DictItem {
   code: string
   name: string
   sort?: number

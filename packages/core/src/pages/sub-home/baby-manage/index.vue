@@ -133,7 +133,7 @@ export default defineComponent({
                       }}
                       v-show={appStore.babyInfo.id !== baby.id}
                     >
-                      喂养
+                      切换
                     </Tag>
                   </div>
                 </div>
