@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
 import * as util from './chartUtils'
 import { ISerie } from './types'
-import { isNullOrUnDef } from '@mid-vue/shared'
+import { isFunction, isNullOrUnDef } from '@mid-vue/shared'
 let canvasId = ''
 let chartOpt = {
   chartPieCount: 0,
@@ -208,7 +208,7 @@ function checkData(data) {
 function drawChart(ctx: Taro.CanvasContext) {
   drawBackground(ctx)
   drawTitle(ctx)
-  drawLegend(ctx)
+  // drawLegend(ctx)
   if (!chartOpt.hideXYAxis) {
     drawXAxis(ctx)
     drawYAxis(ctx)
@@ -432,10 +432,16 @@ function drawLineChart(
   if (!item.toolTips?.show) return
   for (let k = 0; k < item.data.length; k++) {
     if (isNullOrUnDef(item.data[k])) continue
-    let point = getLinePoint(k, item, barWidth, barHeight)
-    drawPoint(ctx, point.x, point.y, 3, color)
-    drawPoint(ctx, point.x, point.y, 1, chartOpt.bgColor)
-    drawToolTips(ctx, item.data[k]!.toString(), point.x, point.y - chartOpt.chartSpace, color)
+    let isShow = isFunction(item.toolTips.show) ? item.toolTips.show(k) : item.toolTips.show
+    if (isShow) {
+      let point = getLinePoint(k, item, barWidth, barHeight)
+      drawPoint(ctx, point.x, point.y, 3, color)
+      drawPoint(ctx, point.x, point.y, 1, chartOpt.bgColor)
+      let label = item.toolTips.formatter?.(item.data) || item.data[k]!.toString()
+      let x = point.x + (item.toolTips.offset?.[0] || 0)
+      let y = point.y + (item.toolTips.offset?.[1] || 0)
+      drawToolTips(ctx, label, x, y - chartOpt.chartSpace, color)
+    }
   }
 }
 

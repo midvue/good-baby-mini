@@ -334,9 +334,15 @@ export default defineComponent({
               name: key,
               category: 'line',
               toolTips: {
-                show: false
+                show: (index: number) => {
+                  return index >= 12
+                },
+                offset: [13, 12],
+                formatter: () => {
+                  return key
+                }
               },
-              data: seriesData[key as keyof typeof seriesData].slice(0, 12)
+              data: seriesData[key as keyof typeof seriesData].slice(0, 13)
             }
           }),
           {

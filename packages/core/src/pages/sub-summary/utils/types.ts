@@ -3,7 +3,9 @@ export interface ISerie {
   category: string
   data: (number | undefined)[]
   toolTips: {
-    show: boolean
+    show: boolean | ((index: number) => boolean)
+    formatter: (params: any) => string
+    offset: [number, number]
     color: ''
   }
 }

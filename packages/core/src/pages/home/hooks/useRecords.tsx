@@ -307,7 +307,7 @@ export const useRecords = () => {
             scrollTop={0}
           >
             <div class='home-records-scroll'>
-              {!state.feedRecords.length && <Empty message='暂无喂养记录'></Empty>}
+              {!state.feedRecords.length && <Empty message='暂无喂养记录,请添加或刷新重试'></Empty>}
               {state.feedRecords.map((record, index) => {
                 if (!feedTypeList) return null
                 if ('feedType' in record) {
