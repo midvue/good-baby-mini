@@ -67,9 +67,63 @@ let dataSet = {
     }
   ]
 }
-
+let Sys: Taro.getSystemInfoSync.Result | null = null
 export function init(canvasId: string, data) {
   canvasId = canvasId
+  chartOpt = {
+    chartPieCount: 0,
+    hideXYAxis: false,
+    axisYMarks: [] as number[],
+    barLength: 0,
+    barNum: 0,
+    // bgColor: "transparent",
+    lineColor: '#c2c2c2',
+    bgColor: '#ffffff',
+    chartWidth: 0,
+    chartHeight: 0,
+    legendWidth: 0,
+    legendHeight: 0,
+    chartSpace: 10,
+    textSpace: 5,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    axisLeft: 0,
+    axisBottom: 0,
+    axisTop: 0
+  }
+
+  dataSet = {
+    hideYAxis: false,
+    title: {
+      color: '#394655',
+      size: 16,
+      text: ''
+    },
+    legend: {
+      color: '',
+      size: 12
+    },
+    color: [],
+    xAxis: {
+      color: '#666A73',
+      size: 10,
+      data: []
+    },
+    series: [
+      {
+        name: '',
+        category: 'bar',
+        data: []
+      },
+      {
+        name: '',
+        category: 'line',
+        data: []
+      }
+    ]
+  }
   checkData(data)
 
   let ctx = initCanvas(canvasId)
@@ -80,7 +134,9 @@ export function init(canvasId: string, data) {
  */
 function initCanvas(canvasId: string) {
   let ctx = Taro.createCanvasContext(canvasId)
-  let Sys = Taro.getSystemInfoSync()
+  if (!Sys) {
+    Sys = Taro.getSystemInfoSync()
+  }
 
   chartOpt.chartWidth = Sys.windowWidth
   chartOpt.chartHeight = Sys.windowWidth * 1.3 //Canvas组件的宽高比
