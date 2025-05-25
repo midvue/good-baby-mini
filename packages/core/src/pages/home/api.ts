@@ -5,6 +5,18 @@ import { type FeedRecordResp } from './types'
 /**
  * 获取喂养记录列表
  */
+export const apiGetLatestFeedRecords = (data = {}) => {
+  const option = {
+    url: '/baby/feedRecord/latestFeedRecords',
+    data: data,
+    ignoreToast: [401]
+  }
+  return http.post<IFeedRecord[]>(option)
+}
+
+/**
+ * 获取喂养记录列表
+ */
 export const apiGetFeedRecordList = (data = {}) => {
   const option = {
     url: '/baby/feedRecord/page',

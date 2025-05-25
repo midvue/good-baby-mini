@@ -53,17 +53,26 @@ export default defineComponent({
         startFeedTime: useDate().subtract(7, 'day').format('YYYY-MM-DD 00:00:00'),
         endFeedTime: useDate().format('YYYY-MM-DD 23:59:59')
       })
-      let axis = list.reduce(
-        (axis, feedRecord) => {
-          let feedDate = useDate(feedRecord.feedTime).format('MM-DD')
-          axis[feedDate] = {
-            num: (axis[feedDate]?.num || 0) + 1,
-            volume: (axis[feedDate]?.volume || 0) + feedRecord.content.volume
-          }
-          return axis
-        },
-        {} as Record<string, any>
-      )
+
+      let dateObj = {} as Record<string, any>
+      //dateObj 是日期为key, 次数为value的对象
+      // 使用连续日期作为可以, 否则会出现间隔
+      for (let i = -7; i < 1; i++) {
+        let date = useDate().add(i, 'day').format('MM-DD')
+        dateObj[date] = {
+          num: 0,
+          volume: 0
+        }
+      }
+
+      let axis = list.reduce((axis, feedRecord) => {
+        let feedDate = useDate(feedRecord.feedTime).format('MM-DD')
+        axis[feedDate] = {
+          num: (axis[feedDate]?.num || 0) + 1,
+          volume: (axis[feedDate]?.volume || 0) + feedRecord.content.volume
+        }
+        return axis
+      }, dateObj)
 
       this.data.value = {
         xAxisData: Object.keys(axis),
@@ -78,7 +87,12 @@ export default defineComponent({
       code: string,
       axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
     ) {
-      let yData = code === '10' ? axis.yAxisNum : axis.yAxisVolume
+      let yData = code === EnumYesNoPlus.YES ? axis.yAxisNum : axis.yAxisVolume
+
+      // 求平均值
+      if (!yData.length) return
+      let average = (yData.reduce((sum, num) => sum + num, 0) / yData.length).toFixed(1)
+
       init(`${EnumFeedType.MILK_BOTTLE}Canvas`, {
         hideYAxis: false,
         color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
@@ -107,6 +121,20 @@ export default defineComponent({
               show: true
             },
             data: yData
+          },
+          {
+            name: ' ',
+            category: 'line',
+            toolTips: {
+              show: (index: number) => {
+                return index === yData.length - 1
+              },
+              offset: [-10, 0],
+              formatter: () => {
+                return `平均：${average}${code === EnumYesNoPlus.YES ? '次' : 'ml'}`
+              }
+            },
+            data: yData.map(() => average)
           }
         ]
       })
@@ -193,14 +221,20 @@ export default defineComponent({
         startFeedTime: useDate().subtract(7, 'day').format('YYYY-MM-DD 00:00:00'),
         endFeedTime: useDate().format('YYYY-MM-DD 23:59:59')
       })
-      let axis = list.reduce(
-        (axis, feedRecord) => {
-          let feedDate = useDate(feedRecord.feedTime).format('MM-DD')
-          axis[feedDate] = (axis[feedDate] || 0) + 1
-          return axis
-        },
-        {} as Record<string, any>
-      )
+
+      let dateObj = {} as Record<string, any>
+      //dateObj 是日期为key, 次数为value的对象
+      // 使用连续日期作为可以, 否则会出现间隔
+      for (let i = -7; i < 1; i++) {
+        let date = useDate().add(i, 'day').format('MM-DD')
+        dateObj[date] = 0
+      }
+
+      let axis = list.reduce((axis, feedRecord) => {
+        let feedDate = useDate(feedRecord.feedTime).format('MM-DD')
+        axis[feedDate] = (axis[feedDate] || 0) + 1
+        return axis
+      }, dateObj)
 
       this.data.value = {
         xAxisData: Object.keys(axis),
@@ -210,7 +244,15 @@ export default defineComponent({
       initDiaperChart(this.data.value)
     }
 
+    /**
+     * 初始化尿布图表
+     */
     function initDiaperChart(axis: { xAxisData: any[]; yAxisData: any[] }) {
+      // 求平均值
+      let average = (
+        axis.yAxisData.reduce((sum, num) => sum + num, 0) / axis.yAxisData.length
+      ).toFixed(1)
+
       init(`${EnumFeedType.DIAPER}Canvas`, {
         hideYAxis: false,
         color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
@@ -227,6 +269,7 @@ export default defineComponent({
         series: [
           {
             name: ' ',
+            category: '',
             toolTips: {
               show: false
             },
@@ -239,6 +282,19 @@ export default defineComponent({
               show: true
             },
             data: axis.yAxisData
+          },
+          {
+            name: ' ',
+            category: 'line',
+            toolTips: {
+              show: (index: number) => {
+                return index === axis.yAxisData.length - 1
+              },
+              formatter: () => {
+                return `平均：${average}次`
+              }
+            },
+            data: axis.yAxisData.map(() => average)
           }
         ]
       })

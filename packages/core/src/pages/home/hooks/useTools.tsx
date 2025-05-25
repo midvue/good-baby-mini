@@ -8,29 +8,54 @@ import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
 import imgHomeAdd from '../assets/img_home_add.png'
 import { ref } from 'vue'
+import { useDidShow } from '@tarojs/taro'
+import { apiGetLatestFeedRecords } from '../api'
+import { useAppStore } from '@/stores'
 
 export const useTools = () => {
+  const appStore = useAppStore()
   let poopTypeMap = useDictMap('POOP_TYPE')
   const toolsConfList = [
     {
       feedType: EnumFeedType.MILK_BOTTLE,
       name: '喂养',
       bgImg: imgFeedMilk,
-      path: '/feed-milk/index'
+      path: '/feed-milk/index',
+      record: ref<IFeedRecord>()
     },
     {
       feedType: EnumFeedType.DIAPER,
       name: '换尿布',
       bgImg: imgFeedDiaper,
-      path: '/diapering/index'
+      path: '/diapering/index',
+      record: ref<IFeedRecord>()
     },
     {
       feedType: EnumFeedType.HEIGHT_WEIGHT,
       name: '身高体重',
-      path: '/height-weight/index'
+      path: '/height-weight/index',
+      record: ref<IFeedRecord>()
     }
   ]
 
+  /** 页面显示时获取最新的喂养记录 */
+  let getLastList = () => {
+    apiGetLatestFeedRecords({
+      babyId: appStore.babyInfo.id,
+      feedTypes: toolsConfList.map((item) => item.feedType)
+    }).then((list) => {
+      if (!list) return
+      /** 处理返回的记录数据 */
+      list.forEach((record, index) => {
+        toolsConfList[index].record.value = record || {}
+      })
+    })
+  }
+  useDidShow(() => {
+    getLastList()
+  })
+
+  /** 处理工具卡片点击事件的函数 */
   function onItemClick(index: number) {
     if (!getBabyInfo().id) {
       // 未绑定宝宝
@@ -71,7 +96,7 @@ export const useTools = () => {
     })
   }
 
-  const formatFeedTime = (record: IFeedRecord | null) => {
+  const formatFeedTime = (record: IFeedRecord | undefined) => {
     if (!record) return '刚刚'
     let feedDay = useDate(record.feedTime)
     let isToday = feedDay.isSame(useDate(), 'day')
@@ -79,7 +104,8 @@ export const useTools = () => {
     return feedDay.format(isToday ? 'HH:mm' : yesterday ? '昨天 HH:mm' : 'MM月DD日 HH:mm')
   }
 
-  let renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | null) => {
+  /** 渲染工具卡片的内容 */
+  let renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | undefined) => {
     if (!record || !feedType) return null
     if (feedType === EnumFeedType.MILK_BOTTLE) {
       return (
@@ -111,16 +137,15 @@ export const useTools = () => {
     render: () => (
       <div class='home-tools'>
         {toolsConfList.map((tool, index) => {
-          const record = getStorage<IFeedRecord>(FEED_RECORD + tool.feedType)
           return (
             <div
               class={['home-tools-card', 'tools-card-' + tool.feedType]}
               key={index}
               onClick={() => onItemClick(index)}
             >
-              <div class='card-time'>{formatFeedTime(record)}</div>
+              <div class='card-time'>{formatFeedTime(tool.record.value)}</div>
               <div class='card-title'>{tool.name}</div>
-              {renderToolContent(tool.feedType, record)}
+              {renderToolContent(tool.feedType, tool.record.value)}
 
               {tool.bgImg && <Image src={tool.bgImg} class='card-bg-image'></Image>}
             </div>
