@@ -1,6 +1,6 @@
 {
   "miniprogramRoot": "dist/",
-  "projectname": "mid-vue-mini",
+  "projectname": "goods-baby-mini",
   "description": "",
   "appid": "wx439728a6ea05a2a4",
   "setting": {
@@ -20,10 +20,18 @@
     "minifyWXML": false,
     "ignoreUploadUnusedFiles": false,
     "packNpmRelationList": [],
-    "swc": false
+    "swc": false,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "3.5.5",
+  "libVersion": "3.7.11",
   "srcMiniprogramRoot": "dist/",
   "packOptions": {
     "ignore": [],
@@ -34,5 +42,6 @@
     "tabIndent": "insertSpaces",
     "tabSize": 2
   },
-  "projectArchitecture": "miniProgram"
+  "projectArchitecture": "miniProgram",
+  "simulatorPluginLibVersion": {}
 }

@@ -1,15 +1,22 @@
 import Taro from '@tarojs/taro'
 import * as util from './chartUtils'
-import { ISerie } from './types'
+import { ISerie, DataSet, ChartOpt } from './types'
 import { isFunction, isNullOrUnDef } from '@mid-vue/shared'
-let canvasId = ''
-let chartOpt = {
+
+// 定义线条类型枚举
+// 修改枚举名称为 EnumLineType
+export enum EnumLineType {
+  SOLID = 'solid',
+  DASHED = 'dashed'
+}
+
+let canvasId: string = ''
+let chartOpt: ChartOpt = {
   chartPieCount: 0,
   hideXYAxis: false,
   axisYMarks: [] as number[],
   barLength: 0,
   barNum: 0,
-  // bgColor: "transparent",
   lineColor: '#c2c2c2',
   bgColor: '#ffffff',
   chartWidth: 0,
@@ -26,7 +33,8 @@ let chartOpt = {
   axisBottom: 0,
   axisTop: 0
 }
-let dataSet = {
+
+let dataSet: DataSet = {
   hideYAxis: false,
   title: {
     color: '#394655',
@@ -58,17 +66,38 @@ let dataSet = {
     {
       name: '',
       category: 'bar',
-      data: []
+      data: [],
+      toolTips: {
+        show: false,
+        formatter: (params) => '',
+        offset: [0, 0],
+        color: ''
+      },
+      type: EnumLineType.SOLID
     },
     {
       name: '',
       category: 'line',
-      data: []
+      data: [],
+      toolTips: {
+        show: false,
+        formatter: (params) => '',
+        offset: [0, 0],
+        color: ''
+      },
+      type: EnumLineType.SOLID
     }
   ]
 }
+
 let Sys: Taro.getSystemInfoSync.Result | null = null
-export function init(canvasId: string, data) {
+
+/**
+ * 初始化图表
+ * @param canvasId - 画布的 ID
+ * @param data - 图表配置选项
+ */
+export function init(canvasId: string, data: DataSet): void {
   canvasId = canvasId
   chartOpt = {
     chartPieCount: 0,
@@ -76,7 +105,6 @@ export function init(canvasId: string, data) {
     axisYMarks: [] as number[],
     barLength: 0,
     barNum: 0,
-    // bgColor: "transparent",
     lineColor: '#c2c2c2',
     bgColor: '#ffffff',
     chartWidth: 0,
@@ -115,31 +143,49 @@ export function init(canvasId: string, data) {
       {
         name: '',
         category: 'bar',
-        data: []
+        data: [],
+        toolTips: {
+          show: false,
+          formatter: (params) => '',
+          offset: [0, 0],
+          color: ''
+        },
+        type: EnumLineType.SOLID
       },
       {
         name: '',
         category: 'line',
-        data: []
+        data: [],
+        toolTips: {
+          show: false,
+          formatter: (params) => '',
+          offset: [0, 0],
+          color: ''
+        },
+        type: EnumLineType.SOLID
       }
     ]
   }
   checkData(data)
 
-  let ctx = initCanvas(canvasId)
+  let ctx: Taro.CanvasContext = initCanvas(canvasId)
   drawChart(ctx)
 }
+
 /**
- * 初始化Canvas
+ * 初始化 Canvas
+ * @param canvasId - 画布的 ID
+ * @returns Taro 的 Canvas 上下文对象
  */
-function initCanvas(canvasId: string) {
-  let ctx = Taro.createCanvasContext(canvasId)
+
+function initCanvas(canvasId: string): Taro.CanvasContext {
+  let ctx: Taro.CanvasContext = Taro.createCanvasContext(canvasId)
   if (!Sys) {
     Sys = Taro.getSystemInfoSync()
   }
 
   chartOpt.chartWidth = Sys.windowWidth
-  chartOpt.chartHeight = Sys.windowWidth * 1.3 //Canvas组件的宽高比
+  chartOpt.chartHeight = Sys.windowWidth * 1.3 // Canvas 组件的宽高比
 
   chartOpt.legendWidth = dataSet.legend.size * 1.3
   chartOpt.legendHeight = dataSet.legend.size * 0.8
@@ -148,64 +194,69 @@ function initCanvas(canvasId: string) {
   chartOpt.right = chartOpt.chartWidth - chartOpt.chartSpace
   chartOpt.bottom = chartOpt.chartHeight - chartOpt.chartSpace
 
-  //3个数字的文字长度
-  let textWidth = util.measureText('100', dataSet.xAxis.size)
-  let legendHeight = dataSet.series.length > 1 ? chartOpt.legendHeight + chartOpt.chartSpace * 2 : 0
+  // 3 个数字的文字长度
+  let textWidth: number = util.measureText('100', dataSet.xAxis.size)
+  let legendHeight: number =
+    dataSet.series.length > 1 ? chartOpt.legendHeight + chartOpt.chartSpace * 2 : 0
 
   chartOpt.axisLeft = chartOpt.left + (dataSet.hideYAxis ? 0 : textWidth + chartOpt.textSpace)
   chartOpt.axisBottom = chartOpt.bottom - dataSet.xAxis.size - chartOpt.textSpace - legendHeight
   chartOpt.axisTop = chartOpt.top + dataSet.title.size + chartOpt.textSpace + dataSet.xAxis.size * 2
   return ctx
 }
+
 /**
  * 检查并更新图表数据
+ * @param data - 图表配置选项
  */
-function checkData(data) {
+function checkData(data: DataSet): void {
   if (data.title != undefined) {
     if (data.title.color != undefined && data.title.color != '') {
       dataSet.title.color = data.title.color
     }
     dataSet.title.text = data.title.text
   }
-  if (data.color != undefined && data.color != [] && data.color.length > 0) {
+  if (data.color != undefined && data.color.length > 0) {
     dataSet.color = data.color
   }
   dataSet.xAxis.data = data.xAxis.data
 
   dataSet.series = data.series
 
-  let values = new Array()
+  let values: number[] = []
   for (let i = 0; i < dataSet.series.length; i++) {
-    let item = dataSet.series[i]
-    let itemLength = item.data.length
+    let item: ISerie = dataSet.series[i]
+    let itemLength: number = item.data.length
     if (itemLength > chartOpt.barLength) {
       chartOpt.barLength = itemLength
     }
     for (let k = 0; k < itemLength; k++) {
       if (item.data[k] != undefined) {
-        values.push(item.data[k])
+        values.push(item.data[k] as number)
       }
     }
-    if (item.category == 'bar') {
+    if (item.category === 'bar') {
       chartOpt.barNum += 1
     }
-    if (item.category == 'pie') {
+    if (item.category === 'pie') {
       chartOpt.hideXYAxis = true
       for (let k = 0; k < itemLength; k++) {
-        chartOpt.chartPieCount += item.data[k]
+        chartOpt.chartPieCount += item.data[k] as number
       }
     }
   }
 
-  let minNum = Math.min.apply(null, values)
-  let maxNum = Math.max.apply(null, values)
-  //计算Y轴刻度尺数据
+  let minNum: number = Math.min(...values)
+  let maxNum: number = Math.max(...values)
+  // 计算 Y 轴刻度尺数据
   chartOpt.axisYMarks = util.calculateY(minNum, maxNum, 5)
 }
+
 /**
  * 绘制图表
+ * @param ctx - Taro 的 Canvas 上下文对象
  */
-function drawChart(ctx: Taro.CanvasContext) {
+function drawChart(ctx: Taro.CanvasContext): void {
   drawBackground(ctx)
   drawTitle(ctx)
   // drawLegend(ctx)
@@ -218,21 +269,25 @@ function drawChart(ctx: Taro.CanvasContext) {
   drawCharts(ctx)
   ctx.draw()
 }
+
 /**
  * 绘制图表背景
+ * @param ctx - Taro 的 Canvas 上下文对象
  */
-function drawBackground(ctx: Taro.CanvasContext) {
+function drawBackground(ctx: Taro.CanvasContext): void {
   if (chartOpt.bgColor != '' && chartOpt.bgColor != 'transparent') {
     ctx.setFillStyle(chartOpt.bgColor)
     ctx.fillRect(0, 0, chartOpt.chartWidth, chartOpt.chartHeight)
   }
 }
+
 /**
  * 绘制标题
+ * @param ctx - Taro 的 Canvas 上下文对象
  */
-function drawTitle(ctx: Taro.CanvasContext) {
+function drawTitle(ctx: Taro.CanvasContext): void {
   let title = dataSet.title
-  if (title.text != '') {
+  if (title.text !== '') {
     let textWidth = util.measureText(title.text, title.size)
     ctx.setFillStyle(title.color)
     ctx.setFontSize(title.size)
@@ -240,11 +295,14 @@ function drawTitle(ctx: Taro.CanvasContext) {
     ctx.fillText(title.text, (chartOpt.chartWidth - textWidth) / 2, chartOpt.top + title.size)
   }
 }
+
 /**
- * 绘制X轴刻度尺
+ * 绘制 X 轴刻度尺
+ * @param ctx - Taro 的 Canvas 上下文对象
  */
-function drawXAxis(ctx: Taro.CanvasContext) {
-  //绘制X轴横线
+
+function drawXAxis(ctx: Taro.CanvasContext): void {
+  // 绘制 X 轴横线
   ctx.setLineWidth(0.5)
   ctx.setLineCap('round')
   ctx.moveTo(chartOpt.axisLeft, chartOpt.axisBottom)
@@ -253,7 +311,7 @@ function drawXAxis(ctx: Taro.CanvasContext) {
 
   let width = (chartOpt.right - chartOpt.axisLeft) / chartOpt.barLength
   let data = dataSet.xAxis.data
-  //绘制X轴显示文字
+  // 绘制 X 轴显示文字
   for (let i = 0; i < data.length; i++) {
     let textX = width * (i + 1) - width / 2 + chartOpt.axisLeft
     ctx.setFillStyle(dataSet.xAxis.color)
@@ -262,17 +320,20 @@ function drawXAxis(ctx: Taro.CanvasContext) {
     ctx.fillText(data[i], textX, chartOpt.axisBottom + dataSet.xAxis.size + chartOpt.textSpace)
   }
 }
+
 /**
- * 绘制Y轴刻度尺
+ * 绘制 Y 轴刻度尺
+ * @param ctx - Taro 的 Canvas 上下文对象
  */
-function drawYAxis(ctx: Taro.CanvasContext) {
-  //绘制Y轴横线
+
+function drawYAxis(ctx: Taro.CanvasContext): void {
+  // 绘制 Y 轴横线
   ctx.setLineWidth(0.5)
   ctx.setLineCap('round')
 
   let height = (chartOpt.axisBottom - chartOpt.axisTop) / (chartOpt.axisYMarks.length - 1)
 
-  //绘制Y轴显示数字
+  // 绘制 Y 轴显示数字
   for (let i = 0; i < chartOpt.axisYMarks.length; i++) {
     let y = chartOpt.axisBottom - height * i
     if (i > 0) {
@@ -285,7 +346,7 @@ function drawYAxis(ctx: Taro.CanvasContext) {
       ctx.setFontSize(dataSet.xAxis.size)
       ctx.setTextAlign('right')
       ctx.fillText(
-        chartOpt.axisYMarks[i],
+        chartOpt.axisYMarks[i].toString(),
         chartOpt.axisLeft - chartOpt.textSpace,
         y + chartOpt.textSpace
       )
@@ -295,19 +356,20 @@ function drawYAxis(ctx: Taro.CanvasContext) {
 
 /**
  * 绘制图例
+ * @param ctx - Taro 的 Canvas 上下文对象
  */
-function drawLegend(ctx: Taro.CanvasContext) {
+function drawLegend(ctx: Taro.CanvasContext): void {
   let series = dataSet.series
 
   for (let i = 0; i < series.length; i++) {
     let names = series[i].name
-    let isPie = series[i].category == 'pie'
+    let isPie = series[i].category === 'pie'
     let textWidth = util.measureText(isPie ? names[0] : names, dataSet.xAxis.size)
     let legendWidth = chartOpt.legendWidth + textWidth + chartOpt.chartSpace * 2
     let startX =
       chartOpt.chartWidth / 2 - (legendWidth * (isPie ? names.length : series.length)) / 2
 
-    if (series[i].category == 'pie') {
+    if (series[i].category === 'pie') {
       for (let k = 0; k < names.length; k++) {
         let x = startX + legendWidth * k
         let y = chartOpt.bottom - chartOpt.legendHeight
@@ -334,9 +396,9 @@ function drawLegend(ctx: Taro.CanvasContext) {
       ctx.setFillStyle(color)
       ctx.setLineWidth(2)
       ctx.setStrokeStyle(color)
-      if (series[i].category == 'bar') {
+      if (series[i].category === 'bar') {
         ctx.fillRect(x, y + 1, chartOpt.legendWidth, chartOpt.legendHeight)
-      } else if (series[i].category == 'line') {
+      } else if (series[i].category === 'line') {
         let lx = x + chartOpt.legendWidth / 2
         let ly = y + chartOpt.legendHeight / 2 + 1
         ctx.beginPath()
@@ -350,19 +412,33 @@ function drawLegend(ctx: Taro.CanvasContext) {
     }
   }
 }
+
 /**
  * 绘制数据标签
+ * @param ctx - Taro 的 Canvas 上下文对象
+ * @param text - 要绘制的文本
+ * @param x - 文本的 X 坐标
+ * @param y - 文本的 Y 坐标
+ * @param color - 文本的颜色
  */
-function drawToolTips(ctx: Taro.CanvasContext, text: string, x, y, color) {
+function drawToolTips(
+  ctx: Taro.CanvasContext,
+  text: string,
+  x: number,
+  y: number,
+  color: string
+): void {
   ctx.setFillStyle(color)
   ctx.setFontSize(dataSet.xAxis.size)
   ctx.setTextAlign('center')
   ctx.fillText(text, x, y)
 }
+
 /**
  * 画图
+ * @param ctx - Taro 的 Canvas 上下文对象
  */
-function drawCharts(ctx: Taro.CanvasContext) {
+function drawCharts(ctx: Taro.CanvasContext): void {
   let series = dataSet.series
   for (let i = 0; i < series.length; i++) {
     let category = series[i].category
@@ -370,25 +446,39 @@ function drawCharts(ctx: Taro.CanvasContext) {
     let barHeight = chartOpt.axisBottom - chartOpt.axisTop
     let maxMark = chartOpt.axisYMarks[chartOpt.axisYMarks.length - 1]
 
-    if (category == 'bar') {
+    if (category === 'bar') {
       barWidth = barWidth - chartOpt.chartSpace
       drawBarChart(ctx, i, series, barWidth, barHeight, maxMark)
-    } else if (category == 'line') {
+    } else if (category === 'line') {
       drawLineChart(ctx, i, series, barWidth, barHeight)
-    } else if (category == 'pie') {
+    } else if (category === 'pie') {
       drawPieChart(ctx, i, series)
     }
   }
 }
+
 /**
  * 绘制柱状图
+ * @param ctx - Taro 的 Canvas 上下文对象
+ * @param i - 系列的索引
+ * @param series - 系列数据
+ * @param barWidth - 柱状图的宽度
+ * @param barHeight - 柱状图的高度
+ * @param maxMark - Y 轴最大刻度值
  */
-function drawBarChart(ctx, i, series, barWidth, barHeight, maxMark) {
+function drawBarChart(
+  ctx: Taro.CanvasContext,
+  i: number,
+  series: ISerie[],
+  barWidth: number,
+  barHeight: number,
+  maxMark: number
+): void {
   let item = series[i]
   let itemWidth = barWidth / chartOpt.barNum
 
   for (let k = 0; k < item.data.length; k++) {
-    let itemHeight = barHeight * (item.data[k] / maxMark)
+    let itemHeight = barHeight * ((item.data[k] as number) / maxMark)
     let x =
       barWidth * k +
       chartOpt.axisLeft +
@@ -400,11 +490,23 @@ function drawBarChart(ctx, i, series, barWidth, barHeight, maxMark) {
     ctx.setFillStyle(color)
     ctx.fillRect(x, y, itemWidth, itemHeight)
 
-    drawToolTips(ctx, item.data[k], x + itemWidth / 2, y - chartOpt.textSpace, color)
+    drawToolTips(
+      ctx,
+      (item.data[k] as number).toString(),
+      x + itemWidth / 2,
+      y - chartOpt.textSpace,
+      color
+    )
   }
 }
+
 /**
  * 绘制折线图
+ * @param ctx - Taro 的 Canvas 上下文对象
+ * @param i - 系列的索引
+ * @param series - 系列数据
+ * @param barWidth - 柱状图的宽度
+ * @param barHeight - 柱状图的高度
  */
 function drawLineChart(
   ctx: Taro.CanvasContext,
@@ -412,23 +514,35 @@ function drawLineChart(
   series: ISerie[],
   barWidth: number,
   barHeight: number
-) {
+): void {
   let item = series[i]
+  // 更新枚举引用
+  const lineType = item.type || EnumLineType.SOLID
   let color = getColor(i)
   ctx.setLineWidth(2)
   ctx.setStrokeStyle(color)
   ctx.beginPath()
+
+  let prevPoint: { x: number; y: number } | null = null
   for (let k = 0; k < item.data.length; k++) {
     if (isNullOrUnDef(item.data[k])) continue
     let point = getLinePoint(k, item, barWidth, barHeight)
-    if (k == 0) {
+    if (k === 0) {
       ctx.moveTo(point.x, point.y)
     } else {
-      ctx.lineTo(point.x, point.y)
+      // 更新枚举引用
+      if (lineType === EnumLineType.SOLID) {
+        ctx.lineTo(point.x, point.y)
+      } else if (lineType === EnumLineType.DASHED && prevPoint) {
+        // 绘制虚线
+        util.drawDashLine(ctx, prevPoint.x, prevPoint.y, point.x, point.y)
+      }
     }
+    prevPoint = point
   }
   ctx.stroke()
   ctx.closePath()
+
   if (!item.toolTips?.show) return
   for (let k = 0; k < item.data.length; k++) {
     if (isNullOrUnDef(item.data[k])) continue
@@ -437,33 +551,64 @@ function drawLineChart(
       let point = getLinePoint(k, item, barWidth, barHeight)
       drawPoint(ctx, point.x, point.y, 3, color)
       drawPoint(ctx, point.x, point.y, 1, chartOpt.bgColor)
-      let label = item.toolTips.formatter?.(item.data) || item.data[k]!.toString()
+      let label = item.toolTips.formatter?.(item.data) || (item.data[k] as number).toString()
       let x = point.x + (item.toolTips.offset?.[0] || 0)
       let y = point.y + (item.toolTips.offset?.[1] || 0)
       drawToolTips(ctx, label, x, y - chartOpt.chartSpace, color)
     }
   }
 }
-
-function getLinePoint(k: number, item: ISerie, barWidth: number, barHeight: number) {
+/**
+ * 获取折线图上点的坐标
+ * @param k - 数据点的索引
+ * @param item - 系列数据项
+ * @param barWidth - 柱状图的宽度
+ * @param barHeight - 柱状图的高度
+ * @returns 点的坐标对象
+ */
+function getLinePoint(
+  k: number,
+  item: ISerie,
+  barWidth: number,
+  barHeight: number
+): { x: number; y: number } {
   let maxY = chartOpt.axisYMarks[chartOpt.axisYMarks.length - 1]
   let minY = chartOpt.axisYMarks[0]
   let x = barWidth * k + chartOpt.axisLeft + barWidth / 2
-  let y = chartOpt.axisBottom - barHeight * ((item.data[k]! - minY) / (maxY - minY))
+  let y = chartOpt.axisBottom - barHeight * (((item.data[k] as number) - minY) / (maxY - minY))
 
   return { x, y }
 }
-function drawPoint(ctx: Taro.CanvasContext, x: number, y: number, radius: number, color: string) {
+
+/**
+ * 绘制点
+ * @param ctx - Taro 的 Canvas 上下文对象
+ * @param x - 点的 X 坐标
+ * @param y - 点的 Y 坐标
+ * @param radius - 点的半径
+ * @param color - 点的颜色
+ */
+function drawPoint(
+  ctx: Taro.CanvasContext,
+  x: number,
+  y: number,
+  radius: number,
+  color: string
+): void {
   ctx.setFillStyle(color)
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, 2 * Math.PI)
   ctx.fill()
   ctx.closePath()
 }
+
 /**
  * 绘制饼图
+ * @param ctx - Taro 的 Canvas 上下文对象
+ * @param i - 系列的索引
+ * @param series - 系列数据
  */
-function drawPieChart(ctx, i, series) {
+function drawPieChart(ctx: Taro.CanvasContext, i: number, series: ISerie[]): void {
   let item = series[i]
 
   let x = (chartOpt.right - chartOpt.left) / 2 + chartOpt.left
@@ -473,12 +618,13 @@ function drawPieChart(ctx, i, series) {
   let lastAngel = 0
   for (let k = 0; k < item.data.length; k++) {
     let color = getColor(k)
-    let curAngel = (2 / chartOpt.chartPieCount) * item.data[k]
-    let precent = (100 / chartOpt.chartPieCount) * item.data[k]
+
+    let curAngel = (2 / chartOpt.chartPieCount) * (item.data[k] as number)
+    let precent = (100 / chartOpt.chartPieCount) * (item.data[k] as number)
 
     drawPieToolTips(
       ctx,
-      item.data[k] + '(' + Math.round(precent) + '%)',
+      (item.data[k] as number) + '(' + Math.round(precent) + '%)',
       color,
       x,
       y,
@@ -496,10 +642,28 @@ function drawPieChart(ctx, i, series) {
     lastAngel += curAngel
   }
 }
+
 /**
  * 绘制饼图数据标签
+ * @param ctx - Taro 的 Canvas 上下文对象
+ * @param value - 要显示的值
+ * @param color - 标签的颜色
+ * @param x - 圆心的 X 坐标
+ * @param y - 圆心的 Y 坐标
+ * @param radius - 饼图的半径
+ * @param lastAngel - 上一个扇形的角度
+ * @param curAngel - 当前扇形的角度
  */
-function drawPieToolTips(ctx, value, color, x, y, radius, lastAngel, curAngel) {
+function drawPieToolTips(
+  ctx: Taro.CanvasContext,
+  value: string,
+  color: string,
+  x: number,
+  y: number,
+  radius: number,
+  lastAngel: number,
+  curAngel: number
+): void {
   let textWidth = util.measureText(value, dataSet.xAxis.size)
   let cosc = Math.cos((lastAngel - 0.5 + curAngel / 2) * Math.PI)
   let sinc = Math.sin((lastAngel - 0.5 + curAngel / 2) * Math.PI)
@@ -532,10 +696,13 @@ function drawPieToolTips(ctx, value, color, x, y, radius, lastAngel, curAngel) {
   ctx.stroke()
   ctx.closePath()
 }
+
 /**
  * 获取柱状图颜色值，循环渲染
+ * @param index - 颜色的索引
+ * @returns 颜色值
  */
-function getColor(index: number) {
+function getColor(index: number): string {
   let cLength = dataSet.color.length
   if (index >= cLength) {
     return dataSet.color[index % cLength]
@@ -543,10 +710,12 @@ function getColor(index: number) {
     return dataSet.color[index]
   }
 }
+
 /**
  * 保存图表为图片
+ * @param func - 回调函数
  */
-export function saveCanvas(func) {
+export function saveCanvas(func: () => void): void {
   Taro.canvasToTempFilePath({
     canvasId: canvasId,
     success: function (res) {

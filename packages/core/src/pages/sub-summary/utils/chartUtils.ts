@@ -61,7 +61,14 @@ export function calculateY(dMin: number, dMax: number, iMaxAxisNum: number) {
 /**
  * 绘制虚线
  */
-export function drawDashLine(ctx, x1, y1, x2, y2, dashLen) {
+export function drawDashLine(
+  ctx: Taro.CanvasContext,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  dashLen?: number
+) {
   dashLen = dashLen === undefined ? 4 : dashLen
   let beveling = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
   let num = Math.floor(beveling / dashLen)
@@ -82,7 +89,14 @@ export function drawDashLine(ctx, x1, y1, x2, y2, dashLen) {
 /**
  * 绘制圆角矩形
  */
-export function drawRoundBar(ctx, x, y, width, height, radius) {
+export function drawRoundBar(
+  ctx: Taro.CanvasContext,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
   ctx.beginPath()
   ctx.arc(x + radius, y + radius, radius, Math.PI, (Math.PI * 3) / 2)
   ctx.lineTo(width - radius + x, y)
@@ -95,18 +109,6 @@ export function drawRoundBar(ctx, x, y, width, height, radius) {
   ctx.fill()
 }
 
-function requestAnimation(callback) {
-  let that = this
-  // 保证如果重复执行callback的话，callback的执行起始时间相隔16ms
-  let currTime = new Date().getTime()
-  let timeToCall = Math.max(0, 16 - (currTime - lastTime))
-  let id = setTimeout(function () {
-    callback(currTime + timeToCall)
-  }, timeToCall)
-  lastTime = currTime + timeToCall
-  return id
-}
-
-function easeOut(t, b, c, d) {
+function easeOut(t: number, b: number, c: number, d: number) {
   return c * ((t = t / d - 1) * t * t + 1) + b
 }

@@ -6,7 +6,7 @@ import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { Canvas, Navbar, TabPane, Tabs, Tag } from '@mid-vue/taro-h5-ui'
 import Taro from '@tarojs/taro'
 import { defineComponent, reactive, ref } from 'vue'
-import { init } from '../utils/chart'
+import { init, EnumLineType } from '../utils/chart'
 import { apiFeedRecordList } from './api'
 import { femaleHeight, femaleWeight, maleHeight, maleWeight } from './data'
 export default defineComponent({
@@ -125,6 +125,7 @@ export default defineComponent({
           {
             name: ' ',
             category: 'line',
+            type: EnumLineType.DASHED,
             toolTips: {
               show: (index: number) => {
                 return index === yData.length - 1
@@ -134,7 +135,7 @@ export default defineComponent({
                 return `平均：${average}${code === EnumYesNoPlus.YES ? '次' : 'ml'}`
               }
             },
-            data: yData.map(() => average)
+            data: yData.map(() => +average)
           }
         ]
       })
@@ -286,6 +287,7 @@ export default defineComponent({
           {
             name: ' ',
             category: 'line',
+            type: EnumLineType.DASHED,
             toolTips: {
               show: (index: number) => {
                 return index === axis.yAxisData.length - 1
@@ -294,7 +296,7 @@ export default defineComponent({
                 return `平均：${average}次`
               }
             },
-            data: axis.yAxisData.map(() => average)
+            data: axis.yAxisData.map(() => +average)
           }
         ]
       })
@@ -389,6 +391,7 @@ export default defineComponent({
             return {
               name: key,
               category: 'line',
+              type: EnumLineType.DASHED,
               toolTips: {
                 show: (index: number) => {
                   return index >= 12
