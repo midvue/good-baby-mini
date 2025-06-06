@@ -26,4 +26,25 @@
       }
     }
   }
+  .date-choose {
+    width: 100%;
+    height: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    line-height: 20px;
+    margin-top: 10px;
+    margin-left: 35px;
+
+    .date-text {
+      font-size: 12px;
+      margin: 0 3px;
+    }
+    .picker {
+      width: auto;
+      background: var(--mv-background-color);
+      padding: 0 5px;
+      border-radius: 2px;
+    }
+  }
 }

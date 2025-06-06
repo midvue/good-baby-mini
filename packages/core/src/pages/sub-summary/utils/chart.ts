@@ -210,45 +210,63 @@ function initCanvas(canvasId: string): Taro.CanvasContext {
  * @param data - 图表配置选项
  */
 function checkData(data: DataSet): void {
+  // 检查传入的配置中是否有标题信息
   if (data.title != undefined) {
+    // 若标题颜色存在且不为空字符串，则更新全局数据集的标题颜色
     if (data.title.color != undefined && data.title.color != '') {
       dataSet.title.color = data.title.color
     }
+    // 更新全局数据集的标题文本
     dataSet.title.text = data.title.text
   }
+  // 检查传入的配置中颜色数组是否存在且不为空，若满足条件则更新全局数据集的颜色数组
   if (data.color != undefined && data.color.length > 0) {
     dataSet.color = data.color
   }
+  // 更新全局数据集的 X 轴数据
   dataSet.xAxis.data = data.xAxis.data
 
+  // 更新全局数据集的系列数据
   dataSet.series = data.series
 
+  // 用于存储所有系列数据中的数值
   let values: number[] = []
+  // 遍历全局数据集的系列数据
   for (let i = 0; i < dataSet.series.length; i++) {
-    let item: ISerie = dataSet.series[i]
-    let itemLength: number = item.data.length
+    // 获取当前系列数据
+    let serie: ISerie = dataSet.series[i]
+    // 获取当前系列数据的长度
+    let itemLength: number = serie.data.length
+    // 若当前系列数据的长度大于之前记录的最大柱状图长度，则更新最大柱状图长度
     if (itemLength > chartOpt.barLength) {
       chartOpt.barLength = itemLength
     }
+    // 遍历当前系列数据中的每个元素
     for (let k = 0; k < itemLength; k++) {
-      if (item.data[k] != undefined) {
-        values.push(item.data[k] as number)
+      // 若当前元素存在，则将其作为数字添加到 values 数组中
+      if (serie.data[k] != undefined) {
+        values.push(serie.data[k] as number)
       }
     }
-    if (item.category === 'bar') {
+    // 若当前系列为柱状图类型，则增加柱状图数量计数
+    if (serie.category === 'bar') {
       chartOpt.barNum += 1
     }
-    if (item.category === 'pie') {
+    // 若当前系列为饼图类型，则隐藏 X 轴和 Y 轴，并累加饼图数据的总和
+    if (serie.category === 'pie') {
       chartOpt.hideXYAxis = true
       for (let k = 0; k < itemLength; k++) {
-        chartOpt.chartPieCount += item.data[k] as number
+        // 累加当前饼图系列中每个数据项的值到饼图数据总和中
+        chartOpt.chartPieCount += serie.data[k] as number
       }
     }
   }
 
+  // 计算所有数值中的最小值
   let minNum: number = Math.min(...values)
+  // 计算所有数值中的最大值
   let maxNum: number = Math.max(...values)
-  // 计算 Y 轴刻度尺数据
+  // 调用工具函数计算 Y 轴刻度尺数据，将结果存储到全局图表配置中
   chartOpt.axisYMarks = util.calculateY(minNum, maxNum, 5)
 }
 

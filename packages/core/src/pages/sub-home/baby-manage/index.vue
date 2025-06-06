@@ -13,19 +13,33 @@ import { apiBabyList } from './api'
 export default defineComponent({
   name: 'baby-manage',
   setup() {
+    // 获取路由参数，判断是否是切换操作
     let query = useRoute<{ isChange: EnumYesNoPlus }>().query
+    // 定义响应式状态，存储宝宝列表
     let currState = reactive({
       list: [] as BabyInfo[]
     })
+    // 获取应用状态管理实例
     let appStore = useAppStore()
 
+    /**
+     * 获取宝宝列表数据
+     * 从 API 获取宝宝列表，并更新当前组件状态中的宝宝列表
+     */
     async function getList() {
       currState.list = await apiBabyList()
     }
+    // 组件初始化时调用获取宝宝列表函数
     getList()
 
+    // 获取性别字典映射
     let genderMap = useDictMap('GENDER')
 
+    /**
+     * 格式化宝宝出生时间，计算从出生到现在的时长
+     * @param {BabyInfo} baby - 宝宝信息对象
+     * @returns {string} - 格式化后的时长字符串
+     */
     let formatBirthTime = (baby: BabyInfo) => {
       let now = useDate()
       let targetDate = useDate(baby.birthDate)
@@ -33,6 +47,10 @@ export default defineComponent({
       return `${durationFormatNoZero(diff, { format: baby.birthTime ? 'D天H小时' : '第D天' })}`
     }
 
+    /**
+     * 点击宝宝项时触发的函数，弹出添加或修改宝宝信息的弹窗
+     * @param {IBaby} [baby] - 可选的宝宝信息对象，存在则为修改操作，不存在则为添加操作
+     */
     let onBabyClick = (baby?: IBaby) => {
       showPopup({
         round: true,
@@ -44,6 +62,7 @@ export default defineComponent({
               data={baby}
               onClose={() => {
                 scoped.close()
+                // 关闭弹窗后重新获取宝宝列表
                 getList()
               }}
             ></BabyInfo>
@@ -52,6 +71,10 @@ export default defineComponent({
       })
     }
 
+    /**
+     * 切换宝宝喂养时触发的函数，弹出确认对话框
+     * @param {IBaby} baby - 要切换喂养的宝宝信息对象
+     */
     let onBabyChange = (baby: IBaby) => {
       showDialog({
         title: '切换宝宝喂养',
@@ -61,12 +84,16 @@ export default defineComponent({
           </div>
         ),
         onConfirm: () => {
+          // 设置宝宝信息
           setBabyInfo(baby)
+          // 更新应用状态中的宝宝信息
           appStore.setBabyInfo(baby)
           if (query.isChange === EnumYesNoPlus.YES) {
+            // 如果是切换操作，返回上一页
             navigateBack()
             return
           }
+          // 重新获取宝宝列表
           getList()
         }
       })

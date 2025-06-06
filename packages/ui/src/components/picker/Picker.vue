@@ -4,7 +4,7 @@
     :mode="mode"
     :range="range"
     :rangeKey="rangeKey"
-    :value="pickerIndex"
+    :value="mode === 'selector' ? pickerIndex : modelValue"
     :disabled="disabled"
     :start="start"
     :end="end"
@@ -58,7 +58,7 @@ export default defineComponent({
     }
   },
   emits: ['update:modelValue', 'change'],
-  setup(props, { attrs, emit }) {
+  setup(props, { emit }) {
     const pickerIndex = ref(0)
     const pickerLabel = ref()
 

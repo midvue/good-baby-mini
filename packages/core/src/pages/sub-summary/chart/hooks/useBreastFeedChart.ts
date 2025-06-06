@@ -3,8 +3,11 @@ import { apiFeedRecordList } from '../api'
 import { useDate } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
 import { init } from '../../utils/chart'
+import { useCtxState } from '@mid-vue/use'
+import { IChartState } from '../types'
 
 export function useBreastFeedChart() {
+  let [state] = useCtxState<IChartState>()
   const appStore = useAppStore()
 
   /**
@@ -12,27 +15,32 @@ export function useBreastFeedChart() {
    * @param code - 图表类型代码
    */
   async function initBreastFeed(code = '10') {
-    if (this.data.value) {
-      initBreastFeedChart(code, this.data.value)
-      return
-    }
     let list = await apiFeedRecordList<IBreastMilk>({
       babyId: appStore.babyInfo.id,
       feedType: EnumFeedType.BREAST_FEED_DIRECT,
-      startFeedTime: useDate().subtract(7, 'day').format('YYYY-MM-DD 00:00:00'),
-      endFeedTime: useDate().format('YYYY-MM-DD 23:59:59')
+      startFeedTime: state.form.startFeedTime + ' 00:00:00',
+      endFeedTime: state.form.endFeedTime + ' 23:59:59'
     })
-    let axis = list.reduce(
-      (axis, feedRecord) => {
-        let feedDate = useDate(feedRecord.feedTime).format('MM-DD')
-        axis[feedDate] = {
-          num: (axis[feedDate]?.num || 0) + 1,
-          volume: (axis[feedDate]?.volume || 0) + feedRecord.content.duration
-        }
-        return axis
-      },
-      {} as Record<string, any>
-    )
+
+    let dateObj = {} as Record<string, any>
+    //dateObj 是日期为key, 次数为value的对象
+    // 使用连续日期作为可以, 否则会出现间隔
+    let totalDays = useDate(state.form.endFeedTime).diff(useDate(state.form.startFeedTime), 'days')
+    for (let i = -totalDays; i < 1; i++) {
+      let date = useDate().add(i, 'day').format('MM-DD')
+      dateObj[date] = {
+        num: 0,
+        volume: 0
+      }
+    }
+    let axis = list.reduce((axis, feedRecord) => {
+      let feedDate = useDate(feedRecord.feedTime).format('MM-DD')
+      axis[feedDate] = {
+        num: (axis[feedDate]?.num || 0) + 1,
+        volume: (axis[feedDate]?.volume || 0) + feedRecord.content.duration
+      }
+      return axis
+    }, dateObj)
 
     this.data.value = {
       xAxisData: Object.keys(axis),

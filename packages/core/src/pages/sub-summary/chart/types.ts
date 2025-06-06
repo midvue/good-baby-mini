@@ -1,3 +1,9 @@
-export interface IHeightWeightState {
-  form: IFeedRecord<IHeightWeight>
+import { EnumFeedType } from '@/dict'
+
+export interface IChartState {
+  tabActive: EnumFeedType
+  form: {
+    startFeedTime: string
+    endFeedTime: string
+  }
 }

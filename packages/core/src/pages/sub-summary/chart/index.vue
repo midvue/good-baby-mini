@@ -1,24 +1,28 @@
 <script lang="tsx">
 import { EnumFeedType } from '@/dict'
-// import { useAppStore } from '@/stores'
 import { DictItem, useDictList, useRoute } from '@/use'
-import { Canvas, Navbar, TabPane, Tabs, Tag } from '@mid-vue/taro-h5-ui'
+import { Canvas, Navbar, Picker, TabPane, Tabs, Tag } from '@mid-vue/taro-h5-ui'
 import Taro from '@tarojs/taro'
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref, watch } from 'vue'
 import { useHeightWeightChart } from './hooks/useHeightWeightChart'
-// 假设其他 hook 函数也类似拆分，这里先占位
 import { useBreastFeedChart } from './hooks/useBreastFeedChart'
 import { useDiaperChart } from './hooks/useDiaperChart'
 import { useMilkBottleChart } from './hooks/useMilkBottleChart'
+import { sleep, useDate } from '@mid-vue/shared'
+import { defineCtxState } from '@mid-vue/use'
+import { IChartState } from './types'
 
 export default defineComponent({
   name: 'chart',
   setup() {
     const { query } = useRoute<{ feedType: EnumFeedType }>()
-    // let appStore = useAppStore()
-    const state = reactive({
+
+    const [state, setState] = defineCtxState<IChartState>({
       tabActive: (+query.feedType || 40) as EnumFeedType,
-      form: {}
+      form: {
+        startFeedTime: useDate().subtract(7, 'day').format('YYYY-MM-DD'),
+        endFeedTime: useDate().format('YYYY-MM-DD')
+      }
     })
 
     let initTabList = () => {
@@ -49,64 +53,79 @@ export default defineComponent({
     const { initBreastFeed } = useBreastFeedChart()
     const { initDiaper } = useDiaperChart()
 
+    const renderChartCanvas = (feedType: EnumFeedType) => {
+      return (
+        <Canvas
+          key={feedType + 'Canvas'}
+          canvas-id={feedType + 'Canvas'}
+          style={{ width: '100%', height: '100%', flex: 1 }}
+        ></Canvas>
+      )
+    }
+
     let feedTypeStrategy = {
       [EnumFeedType.HEIGHT_WEIGHT]: {
         data: ref(),
         init: initHeightWeight,
-        render: function () {
-          return (
-            <Canvas
-              key={EnumFeedType.HEIGHT_WEIGHT + 'Canvas'}
-              canvas-id={EnumFeedType.HEIGHT_WEIGHT + 'Canvas'}
-              style={{ width: '100%', height: '100%', flex: 1 }}
-            ></Canvas>
-          )
-        }
+        render: () => renderChartCanvas(EnumFeedType.HEIGHT_WEIGHT)
       },
       [EnumFeedType.MILK_BOTTLE]: {
         data: ref(),
         init: initMilkBottle,
-        render: () => {
-          return (
-            <Canvas
-              key={EnumFeedType.MILK_BOTTLE + 'Canvas'}
-              canvas-id={EnumFeedType.MILK_BOTTLE + 'Canvas'}
-              style={{ width: '100%', height: '100%', flex: 1 }}
-            ></Canvas>
-          )
-        }
+        render: () => renderChartCanvas(EnumFeedType.MILK_BOTTLE)
       },
       [EnumFeedType.BREAST_FEED_DIRECT]: {
         data: ref(),
         init: initBreastFeed,
-        render: () => {
-          return (
-            <Canvas
-              key={EnumFeedType.BREAST_FEED_DIRECT + 'Canvas'}
-              canvas-id={EnumFeedType.BREAST_FEED_DIRECT + 'Canvas'}
-              style={{ width: '100%', height: '100%', flex: 1 }}
-            ></Canvas>
-          )
-        }
+        render: () => renderChartCanvas(EnumFeedType.BREAST_FEED_DIRECT)
       },
       [EnumFeedType.DIAPER]: {
         data: ref(),
+        // 修改 init 函数，传递日期参数
         init: initDiaper,
-        render: () => {
-          return (
-            <Canvas
-              key={EnumFeedType.DIAPER + 'Canvas'}
-              canvas-id={EnumFeedType.DIAPER + 'Canvas'}
-              style={{ width: '100%', height: '100%', flex: 1 }}
-            ></Canvas>
-          )
-        }
+        render: () => renderChartCanvas(EnumFeedType.DIAPER)
       }
     } as const
-    let strategy = feedTypeStrategy[state.tabActive] || {}
-    Taro.nextTick(() => {
-      strategy.init?.()
-    })
+
+    function initChart() {
+      sleep(50).then(() => {
+        let strategy = feedTypeStrategy[state.tabActive] || {}
+        strategy.init?.()
+      })
+    }
+    initChart()
+
+    /**
+     *  监听日期选择的变化，重新渲染图表
+     */
+    const onDateChange = () => {
+      initChart()
+    }
+
+    /** 渲染选择日期的组件 */
+    const renderChooseDate = (feedType: EnumFeedType) => {
+      if (feedType === EnumFeedType.HEIGHT_WEIGHT) return null
+      return (
+        <div class='date-choose'>
+          <div class='date-text'>日期范围</div>
+          <Picker
+            class='picker'
+            v-model={state.form.startFeedTime}
+            mode='date'
+            end={useDate().format('YYYY-MM-DD')}
+            onChange={onDateChange}
+          ></Picker>
+          <div class='date-text'>到</div>
+          <Picker
+            class='picker'
+            v-model={state.form.endFeedTime}
+            mode='date'
+            end={useDate().format('YYYY-MM-DD')}
+            onChange={onDateChange}
+          ></Picker>
+        </div>
+      )
+    }
     return () => {
       let strategy = feedTypeStrategy[state.tabActive] || {}
 
@@ -120,16 +139,7 @@ export default defineComponent({
             }}
           ></Navbar>
           <div class='chart-tabs'>
-            <Tabs
-              v-model={state.tabActive}
-              onChange={() => {
-                setTimeout(() => {
-                  strategy = feedTypeStrategy[state.tabActive] || {}
-                  strategy.init?.()
-                }, 50)
-              }}
-              border={false}
-            >
+            <Tabs v-model={state.tabActive} onChange={() => initChart()} border={false}>
               {tabList.map((feedType) => {
                 return (
                   <TabPane label={feedType.name} key={feedType.code} name={+feedType.code}>
@@ -158,7 +168,7 @@ export default defineComponent({
               })}
             </Tabs>
           </div>
-
+          {renderChooseDate(state.tabActive)}
           {strategy.render?.()}
         </div>
       )
