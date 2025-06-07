@@ -65,7 +65,7 @@ export function useMilkBottleChart() {
 
     new Chart().init(`${EnumFeedType.MILK_BOTTLE}Canvas`, {
       hideYAxis: false,
-      color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
+      colors: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {
         text: '',
         color: '#333333',

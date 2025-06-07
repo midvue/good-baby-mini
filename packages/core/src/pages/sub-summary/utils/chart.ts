@@ -1,5 +1,4 @@
 import Taro from '@tarojs/taro'
-import * as util from './chartUtils'
 import { ISerie, DataSet, ChartOpt } from './types'
 import { isFunction, isNullOrUnDef } from '@mid-vue/shared'
 
@@ -9,6 +8,8 @@ export enum EnumLineType {
   SOLID = 'solid',
   DASHED = 'dashed'
 }
+
+let sysInfo: Taro.getSystemInfoSync.Result | null = null
 
 export class Chart {
   private canvasId: string = ''
@@ -45,36 +46,13 @@ export class Chart {
       color: '',
       size: 12
     },
-    color: [
-      '#74DAE5',
-      '#394655',
-      '#FEE746',
-      '#B9A39B',
-      '#C18734',
-      '#9EC3AD',
-      '#6D9BA3',
-      '#7E9C82',
-      '#DAEE59',
-      '#CFDCED'
-    ],
+    colors: ['#74DAE5', '#394655', '#FEE746'],
     xAxis: {
       color: '#666A73',
       size: 10,
       data: []
     },
     series: [
-      {
-        name: '',
-        category: 'bar',
-        data: [],
-        toolTips: {
-          show: false,
-          formatter: (params) => '',
-          offset: [0, 0],
-          color: ''
-        },
-        type: EnumLineType.SOLID
-      },
       {
         name: '',
         category: 'line',
@@ -89,7 +67,6 @@ export class Chart {
       }
     ]
   }
-  private Sys: Taro.getSystemInfoSync.Result | null = null
 
   /**
    * 初始化图表
@@ -98,73 +75,6 @@ export class Chart {
    */
   public init(canvasId: string, data: DataSet): void {
     this.canvasId = canvasId
-    this.chartOpt = {
-      chartPieCount: 0,
-      hideXYAxis: false,
-      axisYMarks: [] as number[],
-      barLength: 0,
-      barNum: 0,
-      lineColor: '#c2c2c2',
-      bgColor: '#ffffff',
-      chartWidth: 0,
-      chartHeight: 0,
-      legendWidth: 0,
-      legendHeight: 0,
-      chartSpace: 10,
-      textSpace: 5,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      axisLeft: 0,
-      axisBottom: 0,
-      axisTop: 0
-    }
-
-    this.dataSet = {
-      hideYAxis: false,
-      title: {
-        color: '#394655',
-        size: 16,
-        text: ''
-      },
-      legend: {
-        color: '',
-        size: 12
-      },
-      color: [],
-      xAxis: {
-        color: '#666A73',
-        size: 10,
-        data: []
-      },
-      series: [
-        {
-          name: '',
-          category: 'bar',
-          data: [],
-          toolTips: {
-            show: false,
-            formatter: (params) => '',
-            offset: [0, 0],
-            color: ''
-          },
-          type: EnumLineType.SOLID
-        },
-        {
-          name: '',
-          category: 'line',
-          data: [],
-          toolTips: {
-            show: false,
-            formatter: (params) => '',
-            offset: [0, 0],
-            color: ''
-          },
-          type: EnumLineType.SOLID
-        }
-      ]
-    }
     this.checkData(data)
 
     let ctx: Taro.CanvasContext = this.initCanvas(canvasId)
@@ -178,12 +88,12 @@ export class Chart {
    */
   private initCanvas(canvasId: string): Taro.CanvasContext {
     let ctx: Taro.CanvasContext = Taro.createCanvasContext(canvasId)
-    if (!this.Sys) {
-      this.Sys = Taro.getSystemInfoSync()
+    if (!sysInfo) {
+      sysInfo = Taro.getSystemInfoSync()
     }
 
-    this.chartOpt.chartWidth = this.Sys.windowWidth
-    this.chartOpt.chartHeight = this.Sys.windowWidth * 1.3 // Canvas 组件的宽高比
+    this.chartOpt.chartWidth = sysInfo.windowWidth
+    this.chartOpt.chartHeight = sysInfo.windowWidth * 1.3 // Canvas 组件的宽高比
 
     this.chartOpt.legendWidth = this.dataSet.legend.size * 1.3
     this.chartOpt.legendHeight = this.dataSet.legend.size * 0.8
@@ -193,7 +103,7 @@ export class Chart {
     this.chartOpt.bottom = this.chartOpt.chartHeight - this.chartOpt.chartSpace
 
     // 3 个数字的文字长度
-    let textWidth: number = util.measureText('100', this.dataSet.xAxis.size)
+    let textWidth: number = this.measureText('100', this.dataSet.xAxis.size)
     let legendHeight: number =
       this.dataSet.series.length > 1 ? this.chartOpt.legendHeight + this.chartOpt.chartSpace * 2 : 0
 
@@ -224,8 +134,8 @@ export class Chart {
       this.dataSet.title.text = data.title.text
     }
     // 检查传入的配置中颜色数组是否存在且不为空，若满足条件则更新全局数据集的颜色数组
-    if (data.color != undefined && data.color.length > 0) {
-      this.dataSet.color = data.color
+    if (data.colors != undefined && data.colors.length > 0) {
+      this.dataSet.colors = data.colors
     }
     // 更新全局数据集的 X 轴数据
     this.dataSet.xAxis.data = data.xAxis.data
@@ -271,7 +181,7 @@ export class Chart {
     // 计算所有数值中的最大值
     let maxNum: number = Math.max(...values)
     // 调用工具函数计算 Y 轴刻度尺数据，将结果存储到全局图表配置中
-    this.chartOpt.axisYMarks = util.calculateY(minNum, maxNum, 5)
+    this.chartOpt.axisYMarks = this.calculateY(minNum, maxNum, 5)
   }
 
   /**
@@ -310,7 +220,7 @@ export class Chart {
   private drawTitle(ctx: Taro.CanvasContext): void {
     let title = this.dataSet.title
     if (title.text !== '') {
-      let textWidth = util.measureText(title.text, title.size)
+      let textWidth = this.measureText(title.text, title.size)
       ctx.setFillStyle(title.color)
       ctx.setFontSize(title.size)
       ctx.setTextAlign('left')
@@ -367,7 +277,7 @@ export class Chart {
       let y = this.chartOpt.axisBottom - height * i
       if (i > 0) {
         ctx.setStrokeStyle(this.chartOpt.lineColor)
-        util.drawDashLine(ctx, this.chartOpt.axisLeft, y, this.chartOpt.right, y)
+        this.drawDashLine(ctx, this.chartOpt.axisLeft, y, this.chartOpt.right, y)
       }
 
       if (!this.dataSet.hideYAxis) {
@@ -393,7 +303,7 @@ export class Chart {
     for (let i = 0; i < series.length; i++) {
       let names = series[i].name
       let isPie = series[i].category === 'pie'
-      let textWidth = util.measureText(isPie ? names[0] : names, this.dataSet.xAxis.size)
+      let textWidth = this.measureText(isPie ? names[0] : names, this.dataSet.xAxis.size)
       let legendWidth = this.chartOpt.legendWidth + textWidth + this.chartOpt.chartSpace * 2
       let startX =
         this.chartOpt.chartWidth / 2 - (legendWidth * (isPie ? names.length : series.length)) / 2
@@ -572,7 +482,7 @@ export class Chart {
           ctx.lineTo(point.x, point.y)
         } else if (lineType === EnumLineType.DASHED && prevPoint) {
           // 绘制虚线
-          util.drawDashLine(ctx, prevPoint.x, prevPoint.y, point.x, point.y)
+          this.drawDashLine(ctx, prevPoint.x, prevPoint.y, point.x, point.y)
         }
       }
       prevPoint = point
@@ -703,7 +613,7 @@ export class Chart {
     lastAngel: number,
     curAngel: number
   ): void {
-    let textWidth = util.measureText(value, this.dataSet.xAxis.size)
+    let textWidth = this.measureText(value, this.dataSet.xAxis.size)
     let cosc = Math.cos((lastAngel - 0.5 + curAngel / 2) * Math.PI)
     let sinc = Math.sin((lastAngel - 0.5 + curAngel / 2) * Math.PI)
     let x1 = radius * cosc + x
@@ -742,11 +652,11 @@ export class Chart {
    * @returns 颜色值
    */
   private getColor(index: number): string {
-    let cLength = this.dataSet.color.length
+    let cLength = this.dataSet.colors.length
     if (index >= cLength) {
-      return this.dataSet.color[index % cLength]
+      return this.dataSet.colors[index % cLength]
     } else {
-      return this.dataSet.color[index]
+      return this.dataSet.colors[index]
     }
   }
 
@@ -770,5 +680,123 @@ export class Chart {
         })
       }
     })
+  }
+
+  /**
+   * 测量文字宽度，
+   * Canvas宽度太大，微信提供的setTextAlign(center)
+   * 方法并不能准确居中显示
+   */
+  private measureText(text: string, textSize: number) {
+    let ratio = textSize / 20
+    let texts = text.split('')
+    let width = 0
+    texts.forEach(function (item) {
+      if (/[a-zA-Z]/.test(item)) {
+        width += 14 * ratio
+      } else if (/[0-9]/.test(item)) {
+        width += 11 * ratio
+      } else if (/\./.test(item)) {
+        width += 5.4 * ratio
+      } else if (/-/.test(item)) {
+        width += 6.5 * ratio
+      } else if (/[\u4e00-\u9fa5]/.test(item)) {
+        width += 20 * ratio
+      }
+    })
+    return width
+  }
+
+  /**
+   * 计算Y轴显示刻度
+   */
+  private calculateY(dMin: number, dMax: number, iMaxAxisNum: number) {
+    if (iMaxAxisNum < 1 || dMax < dMin) return [] as number[]
+
+    let dDelta = dMax - dMin
+    if (dDelta < 1.0) {
+      dMax += (1.0 - dDelta) / 2.0
+      dMin -= (1.0 - dDelta) / 2.0
+    }
+    dDelta = dMax - dMin
+
+    let iExp = parseInt((Math.log(dDelta) / Math.log(10.0)).toString()) - 2
+    let dMultiplier = Math.pow(10, iExp)
+    let dSolutions = [1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 250, 500]
+    let i
+    for (i = 0; i < dSolutions.length; i++) {
+      let dMultiCal = dMultiplier * dSolutions[i]
+      if (parseInt((dDelta / dMultiCal).toString()) + 1 <= iMaxAxisNum) {
+        break
+      }
+    }
+
+    let dInterval = dMultiplier * dSolutions[i]
+
+    let dStartPoint = (parseInt((dMin / dInterval).toString()) - 1) * dInterval
+    let yIndex = [] as number[]
+    let iAxisIndex
+    for (iAxisIndex = 1; true; iAxisIndex++) {
+      let y = dStartPoint + dInterval * iAxisIndex
+      yIndex.push(y)
+      if (y > dMax) break
+    }
+    return yIndex
+  }
+
+  /**
+   * 绘制虚线
+   */
+  private drawDashLine(
+    ctx: Taro.CanvasContext,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    dashLen?: number
+  ) {
+    dashLen = dashLen === undefined ? 4 : dashLen
+    let beveling = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+    let num = Math.floor(beveling / dashLen)
+
+    ctx.beginPath()
+    for (let i = 0; i < num; i++) {
+      let x = x1 + ((x2 - x1) / num) * i
+      let y = y1 + ((y2 - y1) / num) * i
+      if (i % 2 == 0) {
+        ctx.moveTo(x, y)
+      } else {
+        ctx.lineTo(x, y)
+      }
+    }
+    ctx.stroke()
+    ctx.closePath()
+  }
+
+  /**
+   * 绘制圆角矩形
+   */
+  private drawRoundBar(
+    ctx: Taro.CanvasContext,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number
+  ) {
+    ctx.beginPath()
+    ctx.arc(x + radius, y + radius, radius, Math.PI, (Math.PI * 3) / 2)
+    ctx.lineTo(width - radius + x, y)
+    ctx.arc(width - radius + x, radius + y, radius, (Math.PI * 3) / 2, Math.PI * 2)
+    ctx.lineTo(width + x, height + y - radius)
+    ctx.arc(width - radius + x, height - radius + y, radius, 0, (Math.PI * 1) / 2)
+    ctx.lineTo(radius + x, height + y)
+    ctx.arc(radius + x, height - radius + y, radius, (Math.PI * 1) / 2, Math.PI)
+    ctx.closePath()
+    ctx.fill()
+  }
+
+  private easeOut(t: number, b: number, c: number, d: number) {
+    return c * ((t = t / d - 1) * t * t + 1) + b
   }
 }

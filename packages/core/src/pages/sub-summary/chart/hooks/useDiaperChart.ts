@@ -1,9 +1,9 @@
-import { useAppStore } from '@/stores'
-import { apiFeedRecordList } from '../api' // 假设存在该 API
-import { useDate } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
-import { Chart, EnumLineType, init } from '../../utils/chart'
+import { useAppStore } from '@/stores'
+import { useDate } from '@mid-vue/shared'
 import { useCtxState } from '@mid-vue/use'
+import { Chart, EnumLineType } from '../../utils/chart'
+import { apiFeedRecordList } from '../api' // 假设存在该 API
 import { IChartState } from '../types'
 
 export function useDiaperChart() {
@@ -53,7 +53,7 @@ export function useDiaperChart() {
 
     new Chart().init(`${EnumFeedType.DIAPER}Canvas`, {
       hideYAxis: false,
-      color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
+      colors: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {
         text: '',
         color: '#333333',

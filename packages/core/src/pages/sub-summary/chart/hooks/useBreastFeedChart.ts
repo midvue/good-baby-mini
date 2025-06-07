@@ -58,7 +58,7 @@ export function useBreastFeedChart() {
     let yData = code === '10' ? axis.yAxisNum : axis.yAxisVolume
     new Chart().init(`${EnumFeedType.BREAST_FEED_DIRECT}Canvas`, {
       hideYAxis: false,
-      color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
+      colors: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {
         text: '',
         color: '#333333',

@@ -7,6 +7,7 @@ export interface ISerie {
     show: boolean | ((index: number) => boolean)
     formatter?: (params: any) => string
     offset?: number[]
+    color?: string
   }
   // 新增 type 属性，用于指定线条类型
   type?: 'solid' | 'dashed'
@@ -34,7 +35,7 @@ export interface DataSet {
   hideYAxis: boolean
   title: Title
   legend?: Legend
-  color: string[]
+  colors: string[]
   xAxis: XAxis
   series: ISerie[]
 }

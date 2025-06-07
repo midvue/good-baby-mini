@@ -116,7 +116,7 @@ export function useHeightWeightChart() {
 
     new Chart().init(`${EnumFeedType.HEIGHT_WEIGHT}Canvas`, {
       hideYAxis: false,
-      color: [
+      colors: [
         '#ED7672',
         '#F3AA59',
         '#74DAE5',
