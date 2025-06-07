@@ -29,6 +29,7 @@ interface XAxis {
   color: string
   size: number
   data: any[]
+  show?: boolean | ((index: number) => boolean)
 }
 
 export interface DataSet {

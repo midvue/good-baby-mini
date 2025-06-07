@@ -1,9 +1,9 @@
-import { useAppStore } from '@/stores'
-import { apiFeedRecordList } from '../api' // 假设存在该 API
-import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
-import { Chart, EnumLineType, init } from '../../utils/chart'
+import { useAppStore } from '@/stores'
+import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { useCtxState } from '@mid-vue/use'
+import { Chart, EnumLineType } from '../../utils/chart'
+import { apiFeedRecordList } from '../api' // 假设存在该 API
 import { IChartState } from '../types'
 
 export function useMilkBottleChart() {
@@ -58,7 +58,9 @@ export function useMilkBottleChart() {
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
     let yData = code === EnumYesNoPlus.YES ? axis.yAxisNum : axis.yAxisVolume
-
+    // 提前计算x轴间隔
+    let xDataLength = axis.xAxisData.length
+    let xInterval = Math.floor(xDataLength / 7)
     // 求平均值
     if (!yData.length) return
     let average = (yData.reduce((sum, num) => sum + num, 0) / yData.length).toFixed(1)
@@ -74,7 +76,13 @@ export function useMilkBottleChart() {
       xAxis: {
         color: '#666A73',
         size: 10,
-        data: axis.xAxisData
+        data: axis.xAxisData,
+        show: (index: number) => {
+          if (xDataLength <= 7) {
+            return true
+          }
+          return index % xInterval === 0
+        }
       },
       series: [
         {

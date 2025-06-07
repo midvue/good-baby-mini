@@ -50,7 +50,9 @@ export function useDiaperChart() {
     let average = (
       axis.yAxisData.reduce((sum, num) => sum + num, 0) / axis.yAxisData.length
     ).toFixed(1)
-
+    // 提前计算x轴间隔
+    let xDataLength = axis.xAxisData.length
+    let xInterval = Math.floor(xDataLength / 7)
     new Chart().init(`${EnumFeedType.DIAPER}Canvas`, {
       hideYAxis: false,
       colors: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
@@ -62,7 +64,13 @@ export function useDiaperChart() {
       xAxis: {
         color: '#666A73',
         size: 10,
-        data: axis.xAxisData
+        data: axis.xAxisData,
+        show: (index: number) => {
+          if (xDataLength <= 7) {
+            return true
+          }
+          return index % xInterval === 0
+        }
       },
       series: [
         {
