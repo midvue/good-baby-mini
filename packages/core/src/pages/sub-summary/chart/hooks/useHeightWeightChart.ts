@@ -1,7 +1,7 @@
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
-import { EnumLineType, init } from '../../utils/chart'
+import { Chart, EnumLineType, init } from '../../utils/chart'
 import { apiFeedRecordList } from '../api'
 import {
   femaleHeadCircumference,
@@ -114,7 +114,7 @@ export function useHeightWeightChart() {
       }
     }
 
-    init(`${EnumFeedType.HEIGHT_WEIGHT}Canvas`, {
+    new Chart().init(`${EnumFeedType.HEIGHT_WEIGHT}Canvas`, {
       hideYAxis: false,
       color: [
         '#ED7672',

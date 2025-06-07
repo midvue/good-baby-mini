@@ -2,7 +2,7 @@ import { useAppStore } from '@/stores'
 import { apiFeedRecordList } from '../api'
 import { useDate } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
-import { init } from '../../utils/chart'
+import { Chart } from '../../utils/chart'
 import { useCtxState } from '@mid-vue/use'
 import { IChartState } from '../types'
 
@@ -56,7 +56,7 @@ export function useBreastFeedChart() {
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
     let yData = code === '10' ? axis.yAxisNum : axis.yAxisVolume
-    init(`${EnumFeedType.BREAST_FEED_DIRECT}Canvas`, {
+    new Chart().init(`${EnumFeedType.BREAST_FEED_DIRECT}Canvas`, {
       hideYAxis: false,
       color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {

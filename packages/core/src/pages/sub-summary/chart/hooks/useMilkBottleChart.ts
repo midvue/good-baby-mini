@@ -2,7 +2,7 @@ import { useAppStore } from '@/stores'
 import { apiFeedRecordList } from '../api' // 假设存在该 API
 import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
-import { EnumLineType, init } from '../../utils/chart'
+import { Chart, EnumLineType, init } from '../../utils/chart'
 import { useCtxState } from '@mid-vue/use'
 import { IChartState } from '../types'
 
@@ -14,7 +14,8 @@ export function useMilkBottleChart() {
    * 初始化奶瓶喂养图表数据
    * @param code - 图表类型代码
    */
-  async function initMilkBottle(code = EnumYesNoPlus.YES) {
+  async function initMilkBottle() {
+    let code = this.childCode.value
     let list = await apiFeedRecordList<IMilkBottle>({
       babyId: appStore.babyInfo.id,
       feedType: EnumFeedType.MILK_BOTTLE,
@@ -49,10 +50,10 @@ export function useMilkBottleChart() {
       yAxisVolume: Object.values(axis).map((item) => item.volume)
     }
 
-    initMilkBottleChart(code, this.data.value)
+    initChart(code, this.data.value)
   }
 
-  function initMilkBottleChart(
+  function initChart(
     code: string | undefined,
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
@@ -62,7 +63,7 @@ export function useMilkBottleChart() {
     if (!yData.length) return
     let average = (yData.reduce((sum, num) => sum + num, 0) / yData.length).toFixed(1)
 
-    init(`${EnumFeedType.MILK_BOTTLE}Canvas`, {
+    new Chart().init(`${EnumFeedType.MILK_BOTTLE}Canvas`, {
       hideYAxis: false,
       color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {
@@ -76,13 +77,6 @@ export function useMilkBottleChart() {
         data: axis.xAxisData
       },
       series: [
-        {
-          name: ' ',
-          toolTips: {
-            show: false
-          },
-          data: yData.map(() => 0)
-        },
         {
           name: appStore.babyInfo.nickname,
           category: 'line',
@@ -111,7 +105,6 @@ export function useMilkBottleChart() {
   }
 
   return {
-    initMilkBottle,
-    initMilkBottleChart
+    initMilkBottle
   }
 }

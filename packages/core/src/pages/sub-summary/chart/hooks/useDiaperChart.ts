@@ -2,7 +2,7 @@ import { useAppStore } from '@/stores'
 import { apiFeedRecordList } from '../api' // 假设存在该 API
 import { useDate } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
-import { EnumLineType, init } from '../../utils/chart'
+import { Chart, EnumLineType, init } from '../../utils/chart'
 import { useCtxState } from '@mid-vue/use'
 import { IChartState } from '../types'
 
@@ -51,7 +51,7 @@ export function useDiaperChart() {
       axis.yAxisData.reduce((sum, num) => sum + num, 0) / axis.yAxisData.length
     ).toFixed(1)
 
-    init(`${EnumFeedType.DIAPER}Canvas`, {
+    new Chart().init(`${EnumFeedType.DIAPER}Canvas`, {
       hideYAxis: false,
       color: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {
@@ -65,14 +65,6 @@ export function useDiaperChart() {
         data: axis.xAxisData
       },
       series: [
-        {
-          name: ' ',
-          category: '',
-          toolTips: {
-            show: false
-          },
-          data: axis.yAxisData.map(() => 0)
-        },
         {
           name: appStore.babyInfo.nickname,
           category: 'line',
