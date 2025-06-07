@@ -8,7 +8,7 @@ import { useHeightWeightChart } from './hooks/useHeightWeightChart'
 import { useBreastFeedChart } from './hooks/useBreastFeedChart'
 import { useDiaperChart } from './hooks/useDiaperChart'
 import { useMilkBottleChart } from './hooks/useMilkBottleChart'
-import { sleep, useDate } from '@mid-vue/shared'
+import { EnumYesNoPlus, sleep, useDate } from '@mid-vue/shared'
 import { defineCtxState } from '@mid-vue/use'
 import { IChartState } from './types'
 
@@ -66,21 +66,25 @@ export default defineComponent({
     let feedTypeStrategy = {
       [EnumFeedType.HEIGHT_WEIGHT]: {
         data: ref(),
+        childCode: ref(EnumYesNoPlus.YES),
         init: initHeightWeight,
         render: () => renderChartCanvas(EnumFeedType.HEIGHT_WEIGHT)
       },
       [EnumFeedType.MILK_BOTTLE]: {
         data: ref(),
+        childCode: ref(EnumYesNoPlus.YES),
         init: initMilkBottle,
         render: () => renderChartCanvas(EnumFeedType.MILK_BOTTLE)
       },
       [EnumFeedType.BREAST_FEED_DIRECT]: {
         data: ref(),
+        childCode: ref(EnumYesNoPlus.YES),
         init: initBreastFeed,
         render: () => renderChartCanvas(EnumFeedType.BREAST_FEED_DIRECT)
       },
       [EnumFeedType.DIAPER]: {
         data: ref(),
+        childCode: ref(EnumYesNoPlus.YES),
         // 修改 init 函数，传递日期参数
         init: initDiaper,
         render: () => renderChartCanvas(EnumFeedType.DIAPER)
@@ -155,7 +159,8 @@ export default defineComponent({
                             key={tag.code + '_' + index}
                             onClick={() => {
                               feedType.childIndex = index
-                              strategy.init?.(tag.code)
+                              strategy.childCode.value = tag.code
+                              strategy.init?.()
                             }}
                           >
                             {tag.label}

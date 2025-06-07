@@ -48,10 +48,10 @@ export function useBreastFeedChart() {
       yAxisVolume: Object.values(axis).map((item) => item.volume)
     }
 
-    initBreastFeedChart(code, this.data.value)
+    initCHart(code, this.data.value)
   }
 
-  function initBreastFeedChart(
+  function initCHart(
     code: string,
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
@@ -90,7 +90,6 @@ export function useBreastFeedChart() {
   }
 
   return {
-    initBreastFeed,
-    initBreastFeedChart
+    initBreastFeed
   }
 }

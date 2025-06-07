@@ -39,13 +39,13 @@ export function useDiaperChart() {
       yAxisData: Object.values(axis)
     }
 
-    initDiaperChart(this.data.value)
+    initCHart(this.data.value)
   }
 
   /**
    * 初始化尿布图表
    */
-  function initDiaperChart(axis: { xAxisData: any[]; yAxisData: any[] }) {
+  function initCHart(axis: { xAxisData: any[]; yAxisData: any[] }) {
     // 求平均值
     let average = (
       axis.yAxisData.reduce((sum, num) => sum + num, 0) / axis.yAxisData.length
@@ -100,7 +100,6 @@ export function useDiaperChart() {
   }
 
   return {
-    initDiaper,
-    initDiaperChart
+    initDiaper
   }
 }

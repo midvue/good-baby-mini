@@ -14,7 +14,7 @@ export function useMilkBottleChart() {
    * 初始化奶瓶喂养图表数据
    * @param code - 图表类型代码
    */
-  async function initMilkBottle(code = '10') {
+  async function initMilkBottle(code = EnumYesNoPlus.YES) {
     let list = await apiFeedRecordList<IMilkBottle>({
       babyId: appStore.babyInfo.id,
       feedType: EnumFeedType.MILK_BOTTLE,

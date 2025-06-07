@@ -3,7 +3,16 @@ import { useAppStore } from '@/stores'
 import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { EnumLineType, init } from '../../utils/chart'
 import { apiFeedRecordList } from '../api'
-import { femaleHeight, femaleWeight, maleHeight, maleWeight } from '../data'
+import {
+  femaleHeadCircumference,
+  femaleHeight,
+  femaleWeight,
+  maleHeadCircumference,
+  maleHeight,
+  maleWeight
+} from '../data'
+// 引入新生成的枚举
+import { EnumHeightWeightIndex } from '../dict'
 
 export function useHeightWeightChart() {
   const appStore = useAppStore()
@@ -12,10 +21,13 @@ export function useHeightWeightChart() {
    * 初始化身高体重图表数据
    * @param code - 图表类型代码，默认为 '10'，用于区分显示身高或体重数据
    */
-  async function initHeightWeight(code = '10') {
+  async function initHeightWeight() {
     // 检查数据是否已存在，如果存在则直接初始化图表
+    //this 指向调用者 strategy 实例
+
+    let code = this.childCode.value
     if (this.data.value) {
-      initHeightWeightChart(code, this.data.value)
+      initChart(code, this.data.value)
       return
     }
     let list = await apiFeedRecordList<IHeightWeight>({
@@ -34,6 +46,7 @@ export function useHeightWeightChart() {
       (axis, feedRecord) => {
         let feedDate = useDate(feedRecord.feedTime)
         let targetDate = useDate(birthDate)
+
         // 计算月龄
         let month = feedDate.diff(targetDate, 'month')
         // 计算宝宝出生后第 month 个月的对应日期
@@ -48,22 +61,50 @@ export function useHeightWeightChart() {
         // 将该月龄对应的身高数据存入 heightArr 数组
         axis.heightArr[month] = +feedRecord.content.height
         axis.weightArr[month] = +feedRecord.content.weight
+        axis.headCircumferenceArr[month] = Number(feedRecord.content.headCircumference || 0)
+        axis.footLengthArr[month] = Number(feedRecord.content.footLength || 0)
         return axis
       },
       {
         // 初始化身高数组，长度为当前月龄加 1，初始值为 undefined
         heightArr: new Array(currMonth + 1).fill(undefined),
-        weightArr: new Array(currMonth + 1).fill(undefined)
+        weightArr: new Array(currMonth + 1).fill(undefined),
+        headCircumferenceArr: new Array(currMonth + 1).fill(undefined),
+        footLengthArr: new Array(currMonth + 1).fill(undefined)
       }
     )
 
-    initHeightWeightChart(code, this.data.value)
+    initChart(code, this.data.value)
   }
 
-  function initHeightWeightChart(code: string, axis: { heightArr: any[]; weightArr: any[] }) {
+  function initChart(
+    code: string,
+    axis: { heightArr: any[]; weightArr: any[]; headCircumferenceArr: any[]; footLengthArr: any[] }
+  ) {
     let heightData = appStore.babyInfo.gender === EnumYesNoPlus.YES ? femaleHeight : maleHeight
-    let WeightData = appStore.babyInfo.gender === EnumYesNoPlus.YES ? femaleWeight : maleWeight
-    let seriesData = code === '10' ? heightData : WeightData
+    let weightData = appStore.babyInfo.gender === EnumYesNoPlus.YES ? femaleWeight : maleWeight
+    type Serieskey = keyof typeof heightData
+    let headCircumferenceData =
+      appStore.babyInfo.gender === EnumYesNoPlus.YES
+        ? femaleHeadCircumference
+        : maleHeadCircumference
+    let seriesData = {} as Record<Serieskey, number[]>
+    switch (code) {
+      case EnumHeightWeightIndex.HEIGHT:
+        seriesData = heightData
+        break
+      case EnumHeightWeightIndex.WEIGHT:
+        seriesData = weightData
+        break
+      case EnumHeightWeightIndex.HEAD_CIRCUMFERENCE:
+        seriesData = headCircumferenceData
+        break
+      case EnumHeightWeightIndex.FOOT_LENGTH:
+        seriesData = {} as Record<Serieskey, number[]>
+        break
+      default:
+        seriesData = heightData
+    }
 
     init(`${EnumFeedType.HEIGHT_WEIGHT}Canvas`, {
       hideYAxis: false,
@@ -137,14 +178,20 @@ export function useHeightWeightChart() {
           toolTips: {
             show: true
           },
-          data: code === '10' ? axis.heightArr : axis.weightArr
+          data:
+            code === EnumHeightWeightIndex.HEIGHT
+              ? axis.heightArr
+              : code === EnumHeightWeightIndex.WEIGHT
+                ? axis.weightArr
+                : code === EnumHeightWeightIndex.HEAD_CIRCUMFERENCE
+                  ? axis.headCircumferenceArr
+                  : axis.footLengthArr
         }
       ]
     })
   }
 
   return {
-    initHeightWeight,
-    initHeightWeightChart
+    initHeightWeight
   }
 }
