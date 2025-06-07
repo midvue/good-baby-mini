@@ -31,5 +31,13 @@ export enum EnumFeedType {
   /** 尿布 */
   DIAPER = 30,
   /** 身高体重 */
-  HEIGHT_WEIGHT = 40
+  HEIGHT_WEIGHT = 40,
+  /** 疫苗 */
+  VACCINE = 50,
+  /** 补剂 */
+  SUPPLEMENT = 60,
+  /** 睡眠 */
+  SLEEP = 70,
+  /** 辅食 */
+  BABY_FOOD = 80
 }
