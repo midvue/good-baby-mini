@@ -1,15 +1,14 @@
 <script lang="tsx">
 import { EnumFeedType } from '@/dict'
 import { DictItem, useDictList, useRoute } from '@/use'
+import { EnumYesNoPlus, sleep, useDate } from '@mid-vue/shared'
 import { Canvas, Navbar, Picker, TabPane, Tabs, Tag } from '@mid-vue/taro-h5-ui'
-import Taro from '@tarojs/taro'
-import { defineComponent, reactive, ref, watch } from 'vue'
-import { useHeightWeightChart } from './hooks/useHeightWeightChart'
+import { defineCtxState } from '@mid-vue/use'
+import { defineComponent, reactive, ref } from 'vue'
 import { useBreastFeedChart } from './hooks/useBreastFeedChart'
 import { useDiaperChart } from './hooks/useDiaperChart'
+import { useHeightWeightChart } from './hooks/useHeightWeightChart'
 import { useMilkBottleChart } from './hooks/useMilkBottleChart'
-import { EnumYesNoPlus, sleep, useDate } from '@mid-vue/shared'
-import { defineCtxState } from '@mid-vue/use'
 import { IChartState } from './types'
 
 export default defineComponent({
@@ -17,7 +16,7 @@ export default defineComponent({
   setup() {
     const { query } = useRoute<{ feedType: EnumFeedType }>()
 
-    const [state, setState] = defineCtxState<IChartState>({
+    const [state] = defineCtxState<IChartState>({
       tabActive: (+query.feedType || 40) as EnumFeedType,
       form: {
         startFeedTime: useDate().subtract(7, 'day').format('YYYY-MM-DD'),
@@ -66,7 +65,7 @@ export default defineComponent({
     let feedTypeStrategy = {
       [EnumFeedType.HEIGHT_WEIGHT]: {
         data: ref(),
-        childCode: ref(EnumYesNoPlus.YES),
+        childCode: ref<string>(EnumYesNoPlus.YES),
         init: initHeightWeight,
         render: () => renderChartCanvas(EnumFeedType.HEIGHT_WEIGHT)
       },

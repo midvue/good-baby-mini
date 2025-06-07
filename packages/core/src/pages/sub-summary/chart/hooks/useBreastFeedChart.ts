@@ -14,7 +14,8 @@ export function useBreastFeedChart() {
    * 初始化母乳喂养图表数据
    * @param code - 图表类型代码
    */
-  async function initBreastFeed(code = '10') {
+  async function initBreastFeed() {
+    let code = this.childCode.value
     let list = await apiFeedRecordList<IBreastMilk>({
       babyId: appStore.babyInfo.id,
       feedType: EnumFeedType.BREAST_FEED_DIRECT,
@@ -56,6 +57,9 @@ export function useBreastFeedChart() {
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
     let yData = code === '10' ? axis.yAxisNum : axis.yAxisVolume
+    // 提前计算x轴间隔
+    let xDataLength = axis.xAxisData.length
+    let xInterval = Math.floor(xDataLength / 7)
     new Chart().init(`${EnumFeedType.BREAST_FEED_DIRECT}Canvas`, {
       hideYAxis: false,
       colors: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
@@ -67,16 +71,15 @@ export function useBreastFeedChart() {
       xAxis: {
         color: '#666A73',
         size: 10,
-        data: axis.xAxisData
+        data: axis.xAxisData,
+        show: (index: number) => {
+          if (xDataLength <= 7) {
+            return true
+          }
+          return index % xInterval === 0
+        }
       },
       series: [
-        {
-          name: ' ',
-          toolTips: {
-            show: false
-          },
-          data: yData.map(() => 0)
-        },
         {
           name: appStore.babyInfo.nickname,
           category: 'line',

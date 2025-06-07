@@ -58,12 +58,12 @@ export function useMilkBottleChart() {
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
     let yData = code === EnumYesNoPlus.YES ? axis.yAxisNum : axis.yAxisVolume
-    // 提前计算x轴间隔
-    let xDataLength = axis.xAxisData.length
-    let xInterval = Math.floor(xDataLength / 7)
     // 求平均值
     if (!yData.length) return
     let average = (yData.reduce((sum, num) => sum + num, 0) / yData.length).toFixed(1)
+    // 提前计算x轴间隔
+    let xDataLength = axis.xAxisData.length
+    let xInterval = Math.floor(xDataLength / 7)
 
     new Chart().init(`${EnumFeedType.MILK_BOTTLE}Canvas`, {
       hideYAxis: false,
