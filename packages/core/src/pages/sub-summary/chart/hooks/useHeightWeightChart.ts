@@ -81,29 +81,37 @@ export function useHeightWeightChart() {
     code: string,
     axis: { heightArr: any[]; weightArr: any[]; headCircumferenceArr: any[]; footLengthArr: any[] }
   ) {
-    let heightData = appStore.babyInfo.gender === EnumYesNoPlus.YES ? femaleHeight : maleHeight
-    let weightData = appStore.babyInfo.gender === EnumYesNoPlus.YES ? femaleWeight : maleWeight
+    let isFemale = appStore.babyInfo.gender === EnumYesNoPlus.YES
+    let heightData = isFemale ? femaleHeight : maleHeight
+    let weightData = isFemale ? femaleWeight : maleWeight
+    let headCircumferenceData = isFemale ? femaleHeadCircumference : maleHeadCircumference
     type Serieskey = keyof typeof heightData
-    let headCircumferenceData =
-      appStore.babyInfo.gender === EnumYesNoPlus.YES
-        ? femaleHeadCircumference
-        : maleHeadCircumference
     let seriesData = {} as Record<Serieskey, number[]>
+    let yData = [] as number[]
+
     switch (code) {
       case EnumHeightWeightIndex.HEIGHT:
         seriesData = heightData
+        yData = axis.heightArr
         break
       case EnumHeightWeightIndex.WEIGHT:
         seriesData = weightData
+        yData = axis.weightArr
         break
       case EnumHeightWeightIndex.HEAD_CIRCUMFERENCE:
         seriesData = headCircumferenceData
+        yData = axis.headCircumferenceArr
         break
       case EnumHeightWeightIndex.FOOT_LENGTH:
-        seriesData = {} as Record<Serieskey, number[]>
+        {
+          seriesData = {} as Record<Serieskey, number[]>
+          yData = axis.footLengthArr
+        }
         break
-      default:
-        seriesData = heightData
+      default: {
+        seriesData = {} as Record<Serieskey, number[]>
+        yData = []
+      }
     }
 
     init(`${EnumFeedType.HEIGHT_WEIGHT}Canvas`, {
@@ -178,14 +186,7 @@ export function useHeightWeightChart() {
           toolTips: {
             show: true
           },
-          data:
-            code === EnumHeightWeightIndex.HEIGHT
-              ? axis.heightArr
-              : code === EnumHeightWeightIndex.WEIGHT
-                ? axis.weightArr
-                : code === EnumHeightWeightIndex.HEAD_CIRCUMFERENCE
-                  ? axis.headCircumferenceArr
-                  : axis.footLengthArr
+          data: yData
         }
       ]
     })
