@@ -1,20 +1,22 @@
 import { BabyInfo } from '@/components/baby-info'
 import { EnumFeedType } from '@/dict'
+import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictMap } from '@/use'
 import { FEED_RECORD, getBabyInfo, getStorage, HOME_DRAG_OFFSET, setStorage } from '@/utils'
 import { dateFormat, useDate } from '@mid-vue/shared'
 import { Drag, Image, showPopup } from '@mid-vue/taro-h5-ui'
+import { useDidShow } from '@tarojs/taro'
+import { ref } from 'vue'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
 import imgHomeAdd from '../assets/img_home_add.png'
-import { ref } from 'vue'
-import { useDidShow } from '@tarojs/taro'
+import { ToolsList } from '../components/tools-list'
+
 import { apiGetLatestFeedRecords } from '../api'
-import { useAppStore } from '@/stores'
 
 export const useTools = () => {
   const appStore = useAppStore()
-  let poopTypeMap = useDictMap('POOP_TYPE')
+  const poopTypeMap = useDictMap('POOP_TYPE')
   const toolsConfList = [
     {
       feedType: EnumFeedType.MILK_BOTTLE,
@@ -39,7 +41,8 @@ export const useTools = () => {
   ]
 
   /** 页面显示时获取最新的喂养记录 */
-  let getLastList = () => {
+
+  const getLastList = () => {
     if (!appStore.babyInfo.id) return
     apiGetLatestFeedRecords({
       babyId: appStore.babyInfo.id,
@@ -81,8 +84,8 @@ export const useTools = () => {
     }
     const tool = toolsConfList[index]
     const record = getStorage<IFeedRecord>(FEED_RECORD + tool.feedType)
-    let feedTime = dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
-    let query = {
+    const feedTime = dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+    const query = {
       id: undefined,
       feedType: tool.feedType,
       feedTime
@@ -99,14 +102,14 @@ export const useTools = () => {
 
   const formatFeedTime = (record: IFeedRecord | undefined) => {
     if (!record) return '刚刚'
-    let feedDay = useDate(record.feedTime)
-    let isToday = feedDay.isSame(useDate(), 'day')
-    let yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
+    const feedDay = useDate(record.feedTime)
+    const isToday = feedDay.isSame(useDate(), 'day')
+    const yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
     return feedDay.format(isToday ? 'HH:mm' : yesterday ? '昨天 HH:mm' : 'MM月DD日 HH:mm')
   }
 
   /** 渲染工具卡片的内容 */
-  let renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | undefined) => {
+  const renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | undefined) => {
     if (!record || !feedType) return null
     if (feedType === EnumFeedType.MILK_BOTTLE) {
       return (
@@ -123,7 +126,7 @@ export const useTools = () => {
       )
     }
     if (feedType === EnumFeedType.HEIGHT_WEIGHT) {
-      let content = record.content as IHeightWeight
+      const content = record.content as IHeightWeight
       return (
         <div class='card-content'>
           <span>{content.height}cm </span>
@@ -134,6 +137,16 @@ export const useTools = () => {
     return null
   }
   const offset = ref(getStorage<{ x: number; y: number }>(HOME_DRAG_OFFSET) || { x: -1, y: -1 })
+  const onPopShowClick = () => {
+    showPopup({
+      round: true,
+      height: '40%',
+      render() {
+        return <ToolsList></ToolsList>
+      }
+    })
+  }
+
   return {
     render: () => (
       <div class='home-tools'>
@@ -159,7 +172,11 @@ export const useTools = () => {
             setStorage(HOME_DRAG_OFFSET, offset)
           }}
         >
-          <Image class='w-[75px] h-[75px]' src={imgHomeAdd} onClick={() => onItemClick(0)}></Image>
+          <Image
+            class='w-[75px] h-[75px]'
+            src={imgHomeAdd}
+            onClick={() => onPopShowClick()}
+          ></Image>
         </Drag>
       </div>
     )
