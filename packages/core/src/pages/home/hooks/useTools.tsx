@@ -23,20 +23,20 @@ export const useTools = () => {
       name: '喂养',
       bgImg: imgFeedMilk,
       path: '/feed-milk/index',
-      record: ref<IFeedRecord>()
+      record: ref({} as IFeedRecord)
     },
     {
       feedType: EnumFeedType.DIAPER,
       name: '换尿布',
       bgImg: imgFeedDiaper,
       path: '/diapering/index',
-      record: ref<IFeedRecord>()
+      record: ref({} as IFeedRecord)
     },
     {
       feedType: EnumFeedType.HEIGHT_WEIGHT,
       name: '身高体重',
       path: '/height-weight/index',
-      record: ref<IFeedRecord>()
+      record: ref({} as IFeedRecord)
     }
   ]
 
@@ -111,22 +111,23 @@ export const useTools = () => {
   /** 渲染工具卡片的内容 */
   const renderToolContent = (feedType: EnumFeedType, record: IFeedRecord | undefined) => {
     if (!record || !feedType) return null
+    let content = record.content || {}
     if (feedType === EnumFeedType.MILK_BOTTLE) {
       return (
         <div class='card-content'>
-          <span>{(record.content as IMilkBottle).volume}</span> ml
+          <span>{(content as IMilkBottle).volume}</span> ml
         </div>
       )
     }
     if (feedType === EnumFeedType.DIAPER) {
       return (
         <div class='card-content'>
-          <span>{poopTypeMap[(record.content as IDiaper).poopType]?.name}</span>
+          <span>{poopTypeMap[(content as IDiaper).poopType]?.name}</span>
         </div>
       )
     }
     if (feedType === EnumFeedType.HEIGHT_WEIGHT) {
-      const content = record.content as IHeightWeight
+      content = content as IHeightWeight
       return (
         <div class='card-content'>
           <span>{content.height}cm </span>
