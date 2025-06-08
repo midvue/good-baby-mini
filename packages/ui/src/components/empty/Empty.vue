@@ -19,9 +19,9 @@ export default defineComponent({
       return isFunction(props.message) ? props.message() : props.message
     }
     return () => (
-      <div class='mv-mini-zc-empty'>
-        <Image src={props.src} class='mv-mini-zc-empty-image' mode='scaleToFill' />
-        <span class='mv-mini-zc-empty-message'>
+      <div class='mv-mini-empty'>
+        <Image src={props.src} class='mv-mini-empty-image' mode='scaleToFill' />
+        <span class='mv-mini-empty-message'>
           {slots.default ? slots.default?.() : renderMsg()}
           <div class='mt-[12px]'>{slots.button?.()}</div>
         </span>
@@ -32,19 +32,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.mv-mini-zc-empty {
+.mv-mini-empty {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 185px;
   height: 100%;
-  .mv-mini-zc-empty-image {
+  .mv-mini-empty-image {
     width: 156px;
     height: 120px;
     object-fit: contain;
   }
-  .mv-mini-zc-empty-message {
+  .mv-mini-empty-message {
     position: relative;
     top: -8px;
     font-size: 14px;

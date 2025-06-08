@@ -27,7 +27,7 @@ const CIPluginOpt = {
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig<'webpack5'>(async (merge) => {
   const baseConfig: UserConfigExport<'webpack5'> = {
-    projectName: 'mid-vue-mini-zc',
+    projectName: 'good-baby-mini',
     date: '2024-8-30',
     designWidth: 375,
     deviceRatio: {

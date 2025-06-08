@@ -7,7 +7,7 @@
 import { computed, defineComponent, type PropType } from 'vue'
 import { Image, type BaseEventOrig, type ImageProps } from '@tarojs/components'
 
-const BASE_URL = 'https://kydl.kyslb.com/mid-vue/xiaochengxu/mv-mini-zc/'
+const BASE_URL = 'https://kydl.kyslb.com/mid-vue/xiaochengxu/good-baby-mini/'
 
 export default defineComponent({
   name: 'MvImage',
