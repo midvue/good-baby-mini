@@ -36,7 +36,6 @@ export default defineComponent({
         footLength: undefined
       } as IHeightWeight
     }
-    console.log(query, 22)
 
     const state = reactive<IHeightWeightState>({
       form: { ...defaultHeightWeight, ...query }
