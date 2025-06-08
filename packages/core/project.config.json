@@ -2,7 +2,7 @@
   "miniprogramRoot": "dist/",
   "projectname": "goods-baby-mini",
   "description": "",
-  "appid": "wx439728a6ea05a2a4",
+  "appid": "wx45c4433ce635c795",
   "setting": {
     "urlCheck": true,
     "es6": false,
@@ -31,7 +31,7 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "3.7.11",
+  "libVersion": "3.7.12",
   "srcMiniprogramRoot": "dist/",
   "packOptions": {
     "ignore": [],
