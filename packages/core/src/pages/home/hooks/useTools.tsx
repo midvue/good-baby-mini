@@ -40,6 +40,7 @@ export const useTools = () => {
 
   /** 页面显示时获取最新的喂养记录 */
   let getLastList = () => {
+    if (!appStore.babyInfo.id) return
     apiGetLatestFeedRecords({
       babyId: appStore.babyInfo.id,
       feedTypes: toolsConfList.map((item) => item.feedType)
