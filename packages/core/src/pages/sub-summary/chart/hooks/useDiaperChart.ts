@@ -21,10 +21,11 @@ export function useDiaperChart() {
     let dateObj = {} as Record<string, any>
     //dateObj 是日期为key, 次数为value的对象
     // 使用连续日期作为可以, 否则会出现间隔
-    let totalDays = useDate(state.form.endFeedTime).diff(useDate(state.form.startFeedTime), 'days')
+    let endFeedTime = useDate(state.form.endFeedTime)
+    let totalDays = endFeedTime.diff(useDate(state.form.startFeedTime), 'day')
 
     for (let i = -totalDays; i < 1; i++) {
-      let date = useDate().add(i, 'day').format('MM-DD')
+      let date = endFeedTime.add(i, 'day').format('MM-DD')
       dateObj[date] = 0
     }
 

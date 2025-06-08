@@ -52,16 +52,6 @@ export default defineComponent({
     const { initBreastFeed } = useBreastFeedChart()
     const { initDiaper } = useDiaperChart()
 
-    const renderChartCanvas = (feedType: EnumFeedType) => {
-      return (
-        <Canvas
-          key={feedType + 'Canvas'}
-          canvas-id={feedType + 'Canvas'}
-          style={{ width: '100%', height: '100%', flex: 1 }}
-        ></Canvas>
-      )
-    }
-
     let feedTypeStrategy = {
       [EnumFeedType.HEIGHT_WEIGHT]: {
         data: ref(),
@@ -91,7 +81,7 @@ export default defineComponent({
     } as const
 
     function initChart() {
-      sleep(50).then(() => {
+      sleep(32).then(() => {
         let strategy = feedTypeStrategy[state.tabActive] || {}
         strategy.init?.()
       })
@@ -101,7 +91,21 @@ export default defineComponent({
     /**
      *  监听日期选择的变化，重新渲染图表
      */
-    const onDateChange = () => {
+    const onDateChange = (type: EnumYesNoPlus) => {
+      // 起始和结束日期不能相差30天以上, 超过30天就自动切换到30天
+      // 如果改变的是起始日期，结束日期就自动变成起始日期的后
+      if (useDate(state.form.endFeedTime).diff(useDate(state.form.startFeedTime), 'day') > 30) {
+        if (type === EnumYesNoPlus.YES) {
+          state.form.endFeedTime = useDate(state.form.startFeedTime)
+            .add(30, 'day')
+            .format('YYYY-MM-DD')
+        } else {
+          state.form.startFeedTime = useDate(state.form.endFeedTime)
+            .subtract(30, 'day')
+            .format('YYYY-MM-DD')
+        }
+      }
+
       initChart()
     }
 
@@ -116,7 +120,7 @@ export default defineComponent({
             v-model={state.form.startFeedTime}
             mode='date'
             end={useDate().format('YYYY-MM-DD')}
-            onChange={onDateChange}
+            onChange={() => onDateChange(EnumYesNoPlus.YES)}
           ></Picker>
           <div class='date-text'>到</div>
           <Picker
@@ -124,11 +128,22 @@ export default defineComponent({
             v-model={state.form.endFeedTime}
             mode='date'
             end={useDate().format('YYYY-MM-DD')}
-            onChange={onDateChange}
+            onChange={() => onDateChange(EnumYesNoPlus.NO)}
           ></Picker>
         </div>
       )
     }
+
+    function renderChartCanvas(feedType: EnumFeedType) {
+      return (
+        <Canvas
+          key={feedType + 'Canvas'}
+          canvas-id={feedType + 'Canvas'}
+          style={{ width: '100%', height: '100%', flex: 1 }}
+        ></Canvas>
+      )
+    }
+
     return () => {
       let strategy = feedTypeStrategy[state.tabActive] || {}
 
