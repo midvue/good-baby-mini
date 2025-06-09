@@ -1,15 +1,15 @@
 import { Image, Navbar } from '@mid-vue/taro-h5-ui'
-import { getUserInfo } from '@/utils'
-import { bgMineHeader, iconAchieve, iconFamily } from '../assets'
-import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { durationFormat, durationFormatNoZero, useDate } from '@mid-vue/shared'
+import { getUserInfo } from '@/utils'
+import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { navigateTo } from '@/use'
+import { bgMineHeader, iconAchieve, iconFamily } from '../assets'
 
 /** 用户信息 */
-export let useProfile = () => {
-  let userInfo = getUserInfo()
+export const useProfile = () => {
+  const userInfo = getUserInfo()
 
-  let panels = [
+  const panels = [
     {
       icon: iconFamily,
       title: '家庭成员',
@@ -25,11 +25,16 @@ export let useProfile = () => {
     },
     {
       icon: iconFamily,
-      title: '积分'
+      title: '积分',
+      click: () => {
+        navigateTo({
+          path: '/pages/sub-mine/credit/index'
+        })
+      }
     }
   ]
 
-  let renderMenuPanels = () => {
+  const renderMenuPanels = () => {
     return (
       <div class='profile-panel'>
         {panels.map((panel, index) => {

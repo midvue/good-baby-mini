@@ -1,0 +1,127 @@
+.credit {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-bottom: 52px;
+  background: #f7eef3;
+  .credit-contain {
+    width: 100%;
+    flex: none;
+    height: 214px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: var(--mv-padding-w);
+    z-index: 88;
+    .credit-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .credit-content {
+      width: 173px;
+      margin-top: 110px;
+      margin-left: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .credit-content-left,
+      .credit-content-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: 600;
+        font-size: 28px;
+        color: #433a51;
+        .credit-title {
+          font-size: 14px;
+          color: #afa8bc;
+        }
+      }
+      .credit-line {
+        width: 1px;
+        height: 32px;
+        background: rgba(67, 58, 81, 0.1);
+      }
+    }
+  }
+  .credit-list {
+    margin-top: -20px;
+
+    .credit-item {
+      width: 332px;
+      height: 66px;
+      background: #ffffff;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 13px;
+      position: relative;
+      z-index: 99;
+      margin-bottom: 16px;
+      .item-left {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .item-icon-wrap {
+          width: 32px;
+          height: 32px;
+          line-height: 32px;
+          background: #edc6ff;
+          border-radius: 50%;
+          text-align: center;
+          font-weight: 600;
+          font-size: 12px;
+          color: #9d6ab4;
+        }
+        .item-content {
+          display: flex;
+          flex-direction: column;
+          max-width: 160px;
+          margin-left: 9px;
+          .item-title {
+            font-size: 15px;
+            color: #433a51;
+          }
+          .item-text {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #ff5d9e;
+          }
+        }
+      }
+      .item-right {
+        width: 76px;
+        height: 28px;
+        line-height: 28px;
+        border-radius: 100px;
+        text-align: center;
+        font-size: 13px;
+        color: #ffffff;
+      }
+      // 未领取状态
+      .item-right-status-0 {
+        background: #ff5d9e;
+      }
+
+      // 已领取状态
+      .item-right-status-1 {
+        background: #e0e0e0;
+      }
+
+      // 不可领取状态
+      .item-right-status-2 {
+        background: #ff9f68;
+      }
+    }
+  }
+}
