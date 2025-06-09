@@ -12,7 +12,8 @@ export default {
         'baby-manage/index',
         'diapering/index',
         'height-weight/index',
-        'feed-records/index'
+        'feed-records/index',
+        'report/index'
       ]
     },
     {

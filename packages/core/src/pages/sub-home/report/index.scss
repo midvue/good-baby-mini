@@ -1,0 +1,149 @@
+.report {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding-bottom: 52px;
+  background: #f7eef3;
+  .baby-report {
+    width: 100%;
+    flex: none;
+    height: 185px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: var(--mv-padding-w);
+    z-index: 88;
+    .baby-report-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .baby-report-title {
+      font-weight: 600;
+      font-size: 26px;
+      color: #433a51;
+      margin-top: 95px;
+    }
+    .baby-report-date {
+      width: 100px;
+      height: 24px;
+      line-height: 24px;
+      margin-top: 4px;
+      border-radius: 32px;
+      border: 1px solid #675d78;
+      font-weight: 400;
+      font-size: 12px;
+      color: #675d78;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  .report-item {
+    width: 350px;
+    height: 111px;
+    background: #ffffff;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    .title-content {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      margin-top: 8px;
+      margin-left: 16px;
+      .icon-container {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        margin-right: 8px;
+        .icon {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .title {
+        font-weight: bold;
+        font-size: 16px;
+        color: #433a51;
+      }
+    }
+
+    .content {
+      width: 100%; // 让 content 容器占满父容器宽度
+      display: flex; // 使用 flex 布局
+      flex-direction: row; // 让子元素从左到右排列
+      gap: 16px; // 设置子元素之间的间距
+      flex-wrap: wrap; // 允许子元素换行
+      .content-item {
+        max-width: calc((100% - 3 * 24px - 60px) / 4);
+        box-sizing: border-box; // 让内边距和边框包含在宽度内
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        box-sizing: border-box;
+        margin-left: 20px;
+
+        .item-title {
+          font-size: 12px;
+          color: #afa8bc;
+        }
+
+        .item-value {
+          font-size: 16px;
+          color: #433a51;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+  .summary {
+    width: 350px;
+    background: #ffffff;
+    padding: 16px;
+    margin-top: 16px;
+    border-radius: 16px;
+
+    .summary-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #433a51;
+      margin-bottom: 8px;
+    }
+
+    .summary-list {
+      list-style-type: disc;
+      margin: 0;
+
+      .summary-item {
+        position: relative;
+        font-size: 14px;
+        color: #675d78;
+        line-height: 1.5;
+        margin-bottom: 4px;
+        padding-left: 12px;
+      }
+      .summary-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: #ffc4db; // 粉色小圆点
+      }
+    }
+  }
+}
