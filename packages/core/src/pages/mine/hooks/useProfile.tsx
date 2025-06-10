@@ -62,7 +62,7 @@ export const useProfile = () => {
           <Image class='image-avatar' src={imgBabyAvatar}></Image>
           <div class='profile-info'>
             <div class='username'>
-              <span>{userInfo.value.nickname}</span>
+              <span>{userInfo.value.nickname || '微信用户' + userInfo.value.id}</span>
               <Icon name='arrow' color='#675d78' class='edit-arrow'></Icon>
             </div>
             <div class='register-time'>
