@@ -23,7 +23,7 @@ export default {
     {
       //sub 用户中心子包
       root: 'pages/sub-mine',
-      pages: ['web-page/index', 'family-manage/index', 'about-me/index']
+      pages: ['web-page/index', 'family-manage/index', 'about-me/index', 'edit-me/index']
     }
   ],
   preloadRule: {
