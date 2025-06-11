@@ -27,24 +27,46 @@
     }
   }
   .date-choose {
-    width: 100%;
-    height: 20px;
+    width: calc(100% - 32px);
+    height: 40px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    line-height: 20px;
-    margin-top: 10px;
-    margin-left: 35px;
-
-    .date-text {
-      font-size: 12px;
-      margin: 0 3px;
+    justify-content: space-between;
+    font-size: 12px;
+    .date-left {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      color: var(--mv-text-color);
+      .date-text {
+        margin: 0 3px;
+      }
+      .picker {
+        width: auto;
+        background: var(--mv-background-color);
+        padding: 0 5px;
+        border-radius: 2px;
+        color: var(--mv-title-color);
+      }
     }
-    .picker {
-      width: auto;
-      background: var(--mv-background-color);
-      padding: 0 5px;
-      border-radius: 2px;
+    .date-right {
+      display: flex;
+      flex-direction: row;
+      font-size: 11px;
+      .right-item {
+        border: 1px solid var(--mv-border-color);
+        color: var(--mv-text-color);
+        padding: 2px 8px;
+        margin-left: 5px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+
+        &.selected {
+          border-color: var(--mv-primary-color);
+          color: var(--mv-primary-color);
+        }
+      }
     }
   }
 }

@@ -1,20 +1,23 @@
 <script lang="tsx">
-import { EnumFeedType } from '@/dict'
-import { DictItem, useDictList, useRoute } from '@/use'
+import { defineComponent, reactive, ref } from 'vue'
+import Taro from '@tarojs/taro'
 import { EnumYesNoPlus, sleep, useDate } from '@mid-vue/shared'
 import { Canvas, Navbar, Picker, TabPane, Tabs, Tag } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
-import { defineComponent, reactive, ref } from 'vue'
+import { EnumFeedType } from '@/dict'
+import { type DictItem, useDictList, useRoute } from '@/use'
 import { useBreastFeedChart } from './hooks/useBreastFeedChart'
 import { useDiaperChart } from './hooks/useDiaperChart'
 import { useHeightWeightChart } from './hooks/useHeightWeightChart'
 import { useMilkBottleChart } from './hooks/useMilkBottleChart'
-import { IChartState } from './types'
+import { type IChartState } from './types'
 
 export default defineComponent({
-  name: 'chart',
+  name: 'Chart',
   setup() {
     const { query } = useRoute<{ feedType: EnumFeedType }>()
+    // 新增选中状态
+    const selectedDateRange = ref<string>('')
 
     const [state] = defineCtxState<IChartState>({
       tabActive: (+query.feedType || 40) as EnumFeedType,
@@ -24,18 +27,18 @@ export default defineComponent({
       }
     })
 
-    let initTabList = () => {
-      let feedTypeList = useDictList('FEED_TYPE')
+    const initTabList = () => {
+      const feedTypeList = useDictList('FEED_TYPE')
       return feedTypeList
         .filter((feedType) => !!feedType.ext)
         .map((feedType) => {
-          let { ext, ...rest } = feedType
-          let obj = reactive(rest) as DictItem & {
+          const { ext, ...rest } = feedType
+          const obj = reactive(rest) as DictItem & {
             sort: number
             childIndex: number
             children: { label: string; code: string }[]
           }
-          let extObj = JSON.parse(ext!)
+          const extObj = JSON.parse(ext!)
           obj.childIndex = 0
           obj.sort = extObj.summary.sort
           obj.children = extObj.summary.children
@@ -45,14 +48,14 @@ export default defineComponent({
           return a.sort - b.sort
         })
     }
-    let tabList = initTabList()
+    const tabList = initTabList()
 
     const { initHeightWeight } = useHeightWeightChart()
     const { initMilkBottle } = useMilkBottleChart()
     const { initBreastFeed } = useBreastFeedChart()
     const { initDiaper } = useDiaperChart()
 
-    let feedTypeStrategy = {
+    const feedTypeStrategy = {
       [EnumFeedType.HEIGHT_WEIGHT]: {
         data: ref(),
         childCode: ref<string>(EnumYesNoPlus.YES),
@@ -82,7 +85,7 @@ export default defineComponent({
 
     function initChart() {
       sleep(32).then(() => {
-        let strategy = feedTypeStrategy[state.tabActive] || {}
+        const strategy = feedTypeStrategy[state.tabActive] || {}
         strategy.init?.()
       })
     }
@@ -95,6 +98,7 @@ export default defineComponent({
       // 起始和结束日期不能相差30天以上, 超过30天就自动切换到30天
       // 如果改变的是起始日期，结束日期就自动变成起始日期的后
       if (useDate(state.form.endFeedTime).diff(useDate(state.form.startFeedTime), 'day') > 30) {
+        Taro.showToast({ title: '日期最多能选择30天哦!', icon: 'none' })
         if (type === EnumYesNoPlus.YES) {
           state.form.endFeedTime = useDate(state.form.startFeedTime)
             .add(30, 'day')
@@ -105,7 +109,20 @@ export default defineComponent({
             .format('YYYY-MM-DD')
         }
       }
+      selectedDateRange.value = ''
+      initChart()
+    }
 
+    // 新增日期范围选择处理函数
+    const handleDateRangeSelect = (range: string) => {
+      selectedDateRange.value = range
+      if (range === '7') {
+        state.form.startFeedTime = useDate().subtract(7, 'day').format('YYYY-MM-DD')
+        state.form.endFeedTime = useDate().format('YYYY-MM-DD')
+      } else if (range === '30') {
+        state.form.startFeedTime = useDate().subtract(30, 'day').format('YYYY-MM-DD')
+        state.form.endFeedTime = useDate().format('YYYY-MM-DD')
+      }
       initChart()
     }
 
@@ -114,22 +131,43 @@ export default defineComponent({
       if (feedType === EnumFeedType.HEIGHT_WEIGHT) return null
       return (
         <div class='date-choose'>
-          <div class='date-text'>日期范围</div>
-          <Picker
-            class='picker'
-            v-model={state.form.startFeedTime}
-            mode='date'
-            end={useDate().format('YYYY-MM-DD')}
-            onChange={() => onDateChange(EnumYesNoPlus.YES)}
-          ></Picker>
-          <div class='date-text'>到</div>
-          <Picker
-            class='picker'
-            v-model={state.form.endFeedTime}
-            mode='date'
-            end={useDate().format('YYYY-MM-DD')}
-            onChange={() => onDateChange(EnumYesNoPlus.NO)}
-          ></Picker>
+          <div class='date-left'>
+            <div class='date-text'>日期范围</div>
+            <Picker
+              class='picker'
+              v-model={state.form.startFeedTime}
+              mode='date'
+              end={useDate().format('YYYY-MM-DD')}
+              onChange={() => onDateChange(EnumYesNoPlus.YES)}
+            >
+              {useDate(state.form.startFeedTime).format('MM-DD')}
+            </Picker>
+            {/* <Icon name='arrow-down' color='#675d78'></Icon> */}
+            <div class='date-text'>到</div>
+            <Picker
+              class='picker'
+              v-model={state.form.endFeedTime}
+              mode='date'
+              end={useDate().format('YYYY-MM-DD')}
+              onChange={() => onDateChange(EnumYesNoPlus.NO)}
+            >
+              {useDate(state.form.endFeedTime).format('MM-DD')}
+            </Picker>
+          </div>
+          <div class='date-right'>
+            <div
+              class={`right-item ${selectedDateRange.value === '7' ? 'selected' : ''}`}
+              onClick={() => handleDateRangeSelect('7')}
+            >
+              近7天
+            </div>
+            <div
+              class={`right-item ${selectedDateRange.value === '30' ? 'selected' : ''}`}
+              onClick={() => handleDateRangeSelect('30')}
+            >
+              近30天
+            </div>
+          </div>
         </div>
       )
     }
@@ -145,7 +183,7 @@ export default defineComponent({
     }
 
     return () => {
-      let strategy = feedTypeStrategy[state.tabActive] || {}
+      const strategy = feedTypeStrategy[state.tabActive] || {}
 
       return (
         <div class='chart'>
