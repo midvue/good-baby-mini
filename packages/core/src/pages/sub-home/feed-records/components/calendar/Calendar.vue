@@ -164,10 +164,8 @@ const showPopup = () => {
 }
 
 // 日期选择确认
-const onDateChange = (value: string) => {
-  state.currentStr = value
-  state.current = useDate(value).toDate()
-  state.currentFormatted = useDate(value).format('YYYY年MM月')
+const onDateChange = () => {
+  state.current = useDate(state.currentStr).toDate()
   emit('change', state.current)
 }
 
