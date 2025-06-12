@@ -1,18 +1,21 @@
 <script lang="tsx">
+import { defineComponent, reactive, ref, nextTick, watch } from 'vue'
+import { ScrollView } from '@tarojs/components'
+import { useDate } from '@mid-vue/shared'
+import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { useDictList, useDictMap } from '@/use'
-import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
-import { ScrollView } from '@tarojs/components'
-import { defineComponent, reactive } from 'vue'
 import { apiGetFeedRecordList } from './api'
 import { FeedRecord } from './components/feed-record'
+import Calender from './components/calendar/Calendar.vue'
+import { useCalendar } from './components/calendar/hooks/useCalendar'
+import { type ICalendarItem } from './components/calendar/type'
 import type { SummaryFeedRecord } from './types'
 export default defineComponent({
-  name: 'feed-records',
+  name: 'FeedRecords',
   setup() {
-    let appStore = useAppStore()
+    const appStore = useAppStore()
 
     const state = reactive({
       tabActive: EnumFeedType.MILK_BOTTLE,
@@ -21,49 +24,42 @@ export default defineComponent({
         current: 1,
         size: 16,
         total: 0
-      }
+      },
+      currentDate: useDate().toDate(), //当前日期
+      expended: false,
+      clist: [] as ICalendarItem[]
     })
-    let feedTypeList = useDictList('FEED_TYPE')
-    let milkTypeMap = useDictMap('MILK_TYPE')
+    const calenderRef = ref(null)
+    const feedTypeList = useDictList('FEED_TYPE')
+    const milkTypeMap = useDictMap('MILK_TYPE')
 
-    let startFeedTime = useDate().subtract(1, 'day').format('YYYY-MM-DD 00:00:00')
-    let endFeedTime = useDate().format('YYYY-MM-DD 23:59:59')
     let dayMap = {} as Record<string, SummaryFeedRecord>
 
     async function init() {
       dayMap = {}
       const res = await apiGetFeedRecordList({
         feedType: state.tabActive,
-        startFeedTime,
-        endFeedTime,
+        startFeedTime: useDate(state.currentDate).format('YYYY-MM-DD 00:00:00'),
+        endFeedTime: useDate(state.currentDate).format('YYYY-MM-DD 23:59:59'),
         babyId: appStore.babyInfo.id,
         ...state.pagination
       })
-      let list = res.list || []
-      let now = Date.now()
+      const list = res.list || []
 
       //格式化时间
-      let feedRecords = list.reduce(
+      const feedRecords = list.reduce(
         (records, record) => {
           /** 喂养类型 */
-          let duration = dateDiff(now, record.feedTime)
-          let feedDay = useDate(record.feedTime)
-          let isToday = feedDay.isSame(useDate(), 'day')
-          let yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
-          let key = isToday ? '今天' : yesterday ? '昨天' : feedDay.format('MM月DD日')
+          const feedDay = useDate(record.feedTime)
+
+          const key = feedDay.format('YYYY年MM月DD日')
           /** 处理汇总 */
-          let { isAdd, summary } = formatSummary(key, record)
+          const { isAdd, summary } = formatSummary(key, record)
           if (isAdd) {
             records.push(summary)
           }
           //普通Record明细
-          let feedTimeStr = `${
-            duration < 60000
-              ? '刚刚'
-              : durationFormatNoZero(duration, {
-                  format: isToday ? 'H小时m分前' : 'D天H小时m分前'
-                })
-          } (${feedDay.format(isToday ? 'HH:mm' : yesterday ? '昨天 HH:mm' : 'MM月DD日 HH:mm')})`
+          const feedTimeStr = feedDay.format('HH:mm')
 
           records.push({ ...record, feedTimeStr })
 
@@ -75,7 +71,7 @@ export default defineComponent({
     }
     /** 格式化每日汇总 */
     function formatSummary(key: string, record: IFeedRecord) {
-      let feedType = record.feedType
+      const feedType = record.feedType
       let isAdd = false
       /** 每日汇总 */
       let summary = dayMap[key] as SummaryFeedRecord
@@ -103,13 +99,32 @@ export default defineComponent({
       feedTypeItem.count += 1
       /** 奶粉喂养,计算容量 */
       if (feedType === EnumFeedType.MILK_BOTTLE) {
-        let { volume, type } = record.content as IMilkBottle
+        const { volume, type } = record.content as IMilkBottle
         feedTypeItem.content.label = milkTypeMap[type]?.name || ''
         feedTypeItem.content.volume += volume
       }
       return { isAdd, summary }
     }
     init()
+
+    const initDate = (date: Date) => {
+      state.clist = useCalendar(date)
+    }
+    initDate(state.currentDate)
+    const handleDateChange = (date: Date) => {
+      nextTick(() => {
+        initDate(date)
+        state.currentDate = date
+      })
+    }
+
+    watch(
+      () => state.currentDate,
+      () => {
+        init()
+      },
+      { deep: true }
+    )
 
     return () => {
       return (
@@ -135,6 +150,12 @@ export default defineComponent({
               })}
             </Tabs>
           </div>
+          <Calender
+            current={state.currentDate}
+            expended={state.expended}
+            list={state.clist}
+            onChange={handleDateChange}
+          />
           <ScrollView class='feed-records-wrapper' scroll-y scrollTop={0}>
             {!state.feedRecords.length && <Empty></Empty>}
             {state.feedRecords.map((record, index) => {

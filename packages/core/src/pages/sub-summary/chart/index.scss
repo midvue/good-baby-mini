@@ -48,6 +48,9 @@
         padding: 0 5px;
         border-radius: 2px;
         color: var(--mv-title-color);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
       }
     }
     .date-right {
@@ -69,4 +72,7 @@
       }
     }
   }
+}
+.mv-tabs .mv-tabs__header .activated {
+  color: #ff9aaa;
 }

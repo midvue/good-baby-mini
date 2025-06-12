@@ -2,7 +2,7 @@
 import { defineComponent, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
 import { EnumYesNoPlus, sleep, useDate } from '@mid-vue/shared'
-import { Canvas, Navbar, Picker, TabPane, Tabs, Tag } from '@mid-vue/taro-h5-ui'
+import { Canvas, Navbar, Picker, TabPane, Tabs, Tag, Icon } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { EnumFeedType } from '@/dict'
 import { type DictItem, useDictList, useRoute } from '@/use'
@@ -17,7 +17,7 @@ export default defineComponent({
   setup() {
     const { query } = useRoute<{ feedType: EnumFeedType }>()
     // 新增选中状态
-    const selectedDateRange = ref<string>('')
+    const selectedDateRange = ref<number>(7)
 
     const [state] = defineCtxState<IChartState>({
       tabActive: (+query.feedType || 40) as EnumFeedType,
@@ -116,13 +116,8 @@ export default defineComponent({
     // 新增日期范围选择处理函数
     const handleDateRangeSelect = (range: string) => {
       selectedDateRange.value = range
-      if (range === '7') {
-        state.form.startFeedTime = useDate().subtract(7, 'day').format('YYYY-MM-DD')
-        state.form.endFeedTime = useDate().format('YYYY-MM-DD')
-      } else if (range === '30') {
-        state.form.startFeedTime = useDate().subtract(30, 'day').format('YYYY-MM-DD')
-        state.form.endFeedTime = useDate().format('YYYY-MM-DD')
-      }
+      state.form.startFeedTime = useDate().subtract(range, 'day').format('YYYY-MM-DD')
+      state.form.endFeedTime = useDate().format('YYYY-MM-DD')
       initChart()
     }
 
@@ -133,37 +128,41 @@ export default defineComponent({
         <div class='date-choose'>
           <div class='date-left'>
             <div class='date-text'>日期范围</div>
-            <Picker
-              class='picker'
-              v-model={state.form.startFeedTime}
-              mode='date'
-              end={useDate().format('YYYY-MM-DD')}
-              onChange={() => onDateChange(EnumYesNoPlus.YES)}
-            >
-              {useDate(state.form.startFeedTime).format('MM-DD')}
-            </Picker>
-            {/* <Icon name='arrow-down' color='#675d78'></Icon> */}
+            <div class='picker'>
+              <Picker
+                v-model={state.form.startFeedTime}
+                mode='date'
+                end={useDate().format('YYYY-MM-DD')}
+                onChange={() => onDateChange(EnumYesNoPlus.YES)}
+              >
+                {useDate(state.form.startFeedTime).format('MM-DD')}
+              </Picker>
+              <Icon name='down'></Icon>
+            </div>
+
             <div class='date-text'>到</div>
-            <Picker
-              class='picker'
-              v-model={state.form.endFeedTime}
-              mode='date'
-              end={useDate().format('YYYY-MM-DD')}
-              onChange={() => onDateChange(EnumYesNoPlus.NO)}
-            >
-              {useDate(state.form.endFeedTime).format('MM-DD')}
-            </Picker>
+            <div class='picker'>
+              <Picker
+                v-model={state.form.endFeedTime}
+                mode='date'
+                end={useDate().format('YYYY-MM-DD')}
+                onChange={() => onDateChange(EnumYesNoPlus.NO)}
+              >
+                {useDate(state.form.endFeedTime).format('MM-DD')}
+              </Picker>
+              <Icon name='down'></Icon>
+            </div>
           </div>
           <div class='date-right'>
             <div
-              class={`right-item ${selectedDateRange.value === '7' ? 'selected' : ''}`}
-              onClick={() => handleDateRangeSelect('7')}
+              class={`right-item ${selectedDateRange.value === 7 ? 'selected' : ''}`}
+              onClick={() => handleDateRangeSelect(7)}
             >
               近7天
             </div>
             <div
-              class={`right-item ${selectedDateRange.value === '30' ? 'selected' : ''}`}
-              onClick={() => handleDateRangeSelect('30')}
+              class={`right-item ${selectedDateRange.value === 30 ? 'selected' : ''}`}
+              onClick={() => handleDateRangeSelect(30)}
             >
               近30天
             </div>

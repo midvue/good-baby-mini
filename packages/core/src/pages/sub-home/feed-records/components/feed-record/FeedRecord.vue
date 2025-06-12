@@ -1,15 +1,15 @@
 <script lang="tsx">
+import { defineComponent, type PropType } from 'vue'
+import { Image } from '@mid-vue/taro-h5-ui'
+import { durationFormatNoZero } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
 import { useDictList, useDictMap } from '@/use'
-import { defineComponent, PropType } from 'vue'
 import IconFeedDiaper from './assets/icon_feed_diaper.png'
 import iconFeedHeight from './assets/icon_feed_height.png'
 import iconFeedMilk from './assets/icon_feed_milk.png'
 import iconFeedBreast from './assets/icon_feed_breast.png'
-import { Image } from '@mid-vue/taro-h5-ui'
-import { durationFormatNoZero } from '@mid-vue/shared'
 export default defineComponent({
-  name: 'feed-record',
+  name: 'FeedRecord',
   props: {
     data: {
       type: Object as PropType<IFeedRecord>,
@@ -18,18 +18,18 @@ export default defineComponent({
   },
   setup(props) {
     const feedTypeList = useDictList('FEED_TYPE')
-    let feedTypeMap = useDictMap('FEED_TYPE')
-    let milkTypeMap = useDictMap('MILK_TYPE')
-    let diaperTypeMap = useDictMap('DIAPER_TYPE')
-    let poopTypeMap = useDictMap('POOP_TYPE')
+    const feedTypeMap = useDictMap('FEED_TYPE')
+    const milkTypeMap = useDictMap('MILK_TYPE')
+    const diaperTypeMap = useDictMap('DIAPER_TYPE')
+    const poopTypeMap = useDictMap('POOP_TYPE')
     const poopColorMap = useDictMap('POOP_COLOR')
 
-    let feedTypeStrategy = {
+    const feedTypeStrategy = {
       /** 奶粉 */
       [EnumFeedType.MILK_BOTTLE]: {
         path: '/pages/sub-home/feed-milk/index',
         render: (content: IFeedRecord['content']) => {
-          let { volume, type } = content as IMilkBottle
+          const { volume, type } = content as IMilkBottle
           return (
             <div class='feed-record-item-wrapper'>
               <div class='record-item-logo'>
@@ -49,7 +49,7 @@ export default defineComponent({
       [EnumFeedType.BREAST_FEED_DIRECT]: {
         path: '/pages/sub-home/feed-milk/index',
         render: (content: IFeedRecord['content']) => {
-          let { duration, leftDuration, rightDuration } = content as IBreastMilk
+          const { duration, leftDuration, rightDuration } = content as IBreastMilk
           return (
             <div class='feed-record-item-wrapper'>
               <div class='record-item-logo'>
@@ -86,7 +86,7 @@ export default defineComponent({
       [EnumFeedType.DIAPER]: {
         path: '/pages/sub-home/diapering/index',
         render: (content: IFeedRecord['content']) => {
-          let { type, poopType, poopColor } = content as IDiaper
+          const { type, poopType, poopColor } = content as IDiaper
           return (
             <div class='feed-record-item-wrapper'>
               <div class='record-item-logo'>
@@ -109,7 +109,7 @@ export default defineComponent({
       [EnumFeedType.HEIGHT_WEIGHT]: {
         path: '/pages/sub-home/height-weight/index',
         render: (content: IFeedRecord['content']) => {
-          let { weight, height } = content as IHeightWeight
+          const { weight, height } = content as IHeightWeight
           return (
             <div class='feed-record-item-wrapper'>
               <div class='record-item-logo'>
@@ -125,11 +125,11 @@ export default defineComponent({
       }
     } as const
 
-    let renderContent = () => {
-      let record = props.data
+    const renderContent = () => {
+      const record = props.data
       if ('feedType' in record) {
-        let feedType = record.feedType
-        let strategy = feedTypeStrategy[feedType]
+        const feedType = record.feedType
+        const strategy = feedTypeStrategy[feedType]
         return (
           <div class={['feed-record-item', 'records-item-' + feedType]}>
             <div class='records-item-time'>{record.feedTimeStr}</div>
@@ -142,8 +142,8 @@ export default defineComponent({
           <span class='records-summary-time'>{record.feedTimeStr}</span>
           <div class='feed-record-summary-wrapper '>
             {feedTypeList.map((dict, index) => {
-              let code = dict.code as `${EnumFeedType}`
-              let summary = record[code]
+              const code = dict.code as `${EnumFeedType}`
+              const summary = record[code]
               if (!summary) return null
               return (
                 <div class='summary-item' key={code + index}>

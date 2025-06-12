@@ -1,0 +1,148 @@
+.calendar {
+  width: 100%;
+  padding-bottom: 10px;
+  font-size: 14px;
+  background-color: #ffffff;
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+
+  .section-slider {
+    display: flex;
+    flex-direction: column;
+
+    .slider-year-month {
+      height: 45px;
+      display: flex;
+      flex-direction: rows;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 30px;
+      border-bottom: 1px solid #f0f0f0;
+
+      .current-month {
+        color: #000000;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .change-month {
+        color: #666666;
+      }
+      .no-change {
+        color: #f7f9f9;
+      }
+    }
+
+    .slider-week {
+      display: flex;
+      color: #b0b0b0;
+      justify-content: center;
+
+      .week-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        margin: 0 5px;
+        text-align: center;
+        justify-content: center;
+      }
+    }
+
+    .slider-day {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+
+      .day-item {
+        width: 40px;
+        height: 40px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        text-align: center;
+        background: #f7f9f9;
+        border-radius: 4px;
+        margin: 8px 5px 0;
+        box-sizing: content-box;
+
+        .day {
+          width: 40px;
+          line-height: 40px;
+          height: 40px;
+          position: relative;
+          box-sizing: content-box;
+        }
+
+        .sel:after {
+          position: absolute;
+          display: block;
+          content: '';
+          width: 3px;
+          height: 3px;
+          margin: auto;
+          background: #fff1e3;
+          left: 0;
+          right: 0;
+          bottom: 0;
+        }
+      }
+      .no-show {
+        color: #c9c6c6;
+      }
+      .day-item-sel {
+        color: #333;
+        background: #fff1e3;
+        border: 1px solid #ff9aaa;
+        border-radius: 4px;
+      }
+
+      .not-current-month {
+        border: none;
+        background: none;
+
+        .has {
+          display: none;
+        }
+
+        .day {
+          color: #c9c6c6;
+        }
+      }
+    }
+
+    .slider-shrink {
+      text-align: center;
+      color: #999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 12px;
+    }
+  }
+
+  .back-top {
+    width: 70px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    color: #999999;
+    font-size: 11px;
+    border: 1px solid #ff9aaa;
+    position: absolute;
+    right: 0;
+    bottom: 13px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+  }
+
+  .ex-icon {
+    margin-left: 6px;
+    font-size: 12px;
+  }
+}
