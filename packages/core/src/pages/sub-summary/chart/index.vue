@@ -97,7 +97,11 @@ export default defineComponent({
     const onDateChange = (type: EnumYesNoPlus) => {
       // 起始和结束日期不能相差30天以上, 超过30天就自动切换到30天
       // 如果改变的是起始日期，结束日期就自动变成起始日期的后
-      if (useDate(state.form.endFeedTime).diff(useDate(state.form.startFeedTime), 'day') > 30) {
+      const diffDate = useDate(state.form.endFeedTime).diff(
+        useDate(state.form.startFeedTime),
+        'day'
+      )
+      if (diffDate > 30 || diffDate < 0) {
         Taro.showToast({ title: '日期最多能选择30天哦!', icon: 'none' })
         if (type === EnumYesNoPlus.YES) {
           state.form.endFeedTime = useDate(state.form.startFeedTime)
@@ -109,12 +113,12 @@ export default defineComponent({
             .format('YYYY-MM-DD')
         }
       }
-      selectedDateRange.value = ''
+      selectedDateRange.value = 7
       initChart()
     }
 
     // 新增日期范围选择处理函数
-    const handleDateRangeSelect = (range: string) => {
+    const handleDateRangeSelect = (range: number) => {
       selectedDateRange.value = range
       state.form.startFeedTime = useDate().subtract(range, 'day').format('YYYY-MM-DD')
       state.form.endFeedTime = useDate().format('YYYY-MM-DD')
