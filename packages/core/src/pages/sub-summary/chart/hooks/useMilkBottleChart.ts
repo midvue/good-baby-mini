@@ -58,10 +58,10 @@ export function useMilkBottleChart() {
     code: string | undefined,
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
-    let yData = code === EnumYesNoPlus.YES ? axis.yAxisNum : axis.yAxisVolume
+    let yDatas = code === EnumYesNoPlus.YES ? axis.yAxisNum : axis.yAxisVolume
     // 求平均值
-    if (!yData.length) return
-    let average = (yData.reduce((sum, num) => sum + num, 0) / yData.length).toFixed(1)
+    if (!yDatas.length) return
+    let average = (yDatas.reduce((sum, num) => sum + num, 0) / yDatas.length).toFixed(1)
     // 提前计算x轴间隔
     let xDataLength = axis.xAxisData.length
     let xInterval = Math.floor(xDataLength / 7)
@@ -92,7 +92,7 @@ export function useMilkBottleChart() {
           toolTips: {
             show: true
           },
-          data: yData
+          data: yDatas
         },
         {
           name: ' ',
@@ -100,14 +100,22 @@ export function useMilkBottleChart() {
           type: EnumLineType.DASHED,
           toolTips: {
             show: (index: number) => {
-              return index === yData.length - 1
+              return index === yDatas.length - 1
             },
             offset: [-10, 0],
             formatter: () => {
               return `平均：${average}${code === EnumYesNoPlus.YES ? '次' : 'ml'}`
             }
           },
-          data: yData.map(() => +average)
+          data: yDatas.map(() => +average)
+        },
+        {
+          name: ' ',
+          category: 'line',
+          toolTips: {
+            show: false
+          },
+          data: yDatas.map(() => 0)
         }
       ]
     })

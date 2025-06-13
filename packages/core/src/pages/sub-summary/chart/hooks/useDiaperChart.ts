@@ -95,6 +95,14 @@ export function useDiaperChart() {
             }
           },
           data: axis.yAxisData.map(() => +average)
+        },
+        {
+          name: ' ',
+          category: 'line',
+          toolTips: {
+            show: false
+          },
+          data: axis.yAxisData.map(() => +0)
         }
       ]
     })

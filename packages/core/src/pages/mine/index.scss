@@ -44,6 +44,14 @@
           font-weight: bold;
           font-size: 16px;
           color: #433a51;
+          height: 20px;
+          line-height: 20px;
+          display: flex;
+
+          .edit-arrow {
+            font-size: 20px;
+            font-weight: normal;
+          }
         }
         .register-time {
           font-weight: 400;
