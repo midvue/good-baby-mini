@@ -1,4 +1,4 @@
-import { EnumFeedType } from '@/dict'
+import { type EnumFeedType } from '@/dict'
 
 export interface FeedRecordResp {
   count: number

@@ -1,15 +1,22 @@
-import { Image, Navbar } from '@mid-vue/taro-h5-ui'
-import { getUserInfo } from '@/utils'
-import { bgMineHeader, iconAchieve, iconFamily } from '../assets'
+import { ref } from 'vue'
+import { useDidShow } from '@tarojs/taro'
+import { Icon, Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { useDate } from '@mid-vue/shared'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
-import { durationFormat, durationFormatNoZero, useDate } from '@mid-vue/shared'
 import { navigateTo } from '@/use'
-
+import { useAppStore } from '@/stores'
+import { getUserInfo } from '@/utils'
+import { bgMineHeader, iconAchieve, iconFamily, iconCredit } from '../assets'
 /** 用户信息 */
-export let useProfile = () => {
-  let userInfo = getUserInfo()
+export const useProfile = () => {
+  // 使用 ref 将 userInfo 转换为响应式引用
+  const appstore = useAppStore()
+  const userInfo = ref(getUserInfo())
+  useDidShow(() => {
+    userInfo.value = appstore.userInfo
+  })
 
-  let panels = [
+  const panels = [
     {
       icon: iconFamily,
       title: '家庭成员',
@@ -24,12 +31,12 @@ export let useProfile = () => {
       title: '成就'
     },
     {
-      icon: iconFamily,
+      icon: iconCredit,
       title: '积分'
     }
   ]
 
-  let renderMenuPanels = () => {
+  const renderMenuPanels = () => {
     return (
       <div class='profile-panel'>
         {panels.map((panel, index) => {
@@ -48,12 +55,18 @@ export let useProfile = () => {
       <div class='mine-profile'>
         <Image src={bgMineHeader} class='profile-bg'></Image>
         <Navbar leftArrow={false} showHome={false}></Navbar>
-        <div class='profile-content'>
+        <div
+          class='profile-content'
+          onClick={() => navigateTo({ path: '/pages/sub-mine/edit-me/index' })}
+        >
           <Image class='image-avatar' src={imgBabyAvatar}></Image>
           <div class='profile-info'>
-            <div class='username'>微信用户 {userInfo.id}</div>
+            <div class='username'>
+              <span>{userInfo.value.nickname || '微信用户' + userInfo.value.id}</span>
+              <Icon name='arrow' color='#675d78' class='edit-arrow'></Icon>
+            </div>
             <div class='register-time'>
-              加入好宝宝喂养{useDate().diff(userInfo.createTime, 'day')}天了
+              您加入好宝宝喂养{useDate().diff(userInfo.value.createTime, 'day')}天了
             </div>
           </div>
         </div>

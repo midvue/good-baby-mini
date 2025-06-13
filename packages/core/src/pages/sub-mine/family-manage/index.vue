@@ -1,28 +1,28 @@
 <script lang="tsx">
+import { defineComponent, reactive } from 'vue'
+import { Navbar, Tag } from '@mid-vue/taro-h5-ui'
 import { useAppStore } from '@/stores'
 import { useDictMap } from '@/use'
-import { Navbar, Tag } from '@mid-vue/taro-h5-ui'
-import { defineComponent, reactive } from 'vue'
 import { apiFamilyList } from './api'
-import { IFamily } from './types'
+import { type IFamily } from './types'
 
 export default defineComponent({
-  name: 'family-manage',
+  name: 'FamilyManage',
   setup() {
-    let state = reactive({
+    const state = reactive({
       list: [] as IFamily[]
     })
-    let appStore = useAppStore()
+    const appStore = useAppStore()
 
     async function getList() {
-      let list = await apiFamilyList()
+      const list = await apiFamilyList()
       state.list = list || []
     }
     getList()
 
-    let genderMap = useDictMap('GENDER')
+    const genderMap = useDictMap('GENDER')
 
-    let onFamilyClick = (family?: IFamily) => {}
+    const onFamilyClick = (family?: IFamily) => {}
 
     return () => {
       return (
@@ -49,9 +49,11 @@ export default defineComponent({
                       <Tag size='mini' type='success' plain round>
                         {family.id === appStore.familyId ? '我创建' : '我加入的'}
                       </Tag>
-                      <Tag size='mini' round type='primary' plain>
-                        当前家庭
-                      </Tag>
+                      {family.id === appStore.familyId && (
+                        <Tag size='mini' round type='primary' plain>
+                          当前家庭
+                        </Tag>
+                      )}
                     </div>
                     <div class='gender'></div>
                   </div>

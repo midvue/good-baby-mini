@@ -1,14 +1,14 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
 
-import { useList, useProfile } from './hooks'
 import { SafeBottom } from '@mid-vue/taro-h5-ui'
+import { useList, useProfile } from './hooks'
 
 export default defineComponent({
   name: 'Mine',
   setup() {
-    let { render: renderProfile } = useProfile()
-    let { render: renderList } = useList()
+    const { render: renderProfile } = useProfile()
+    const { render: renderList } = useList()
 
     return () => {
       return (
