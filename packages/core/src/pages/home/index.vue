@@ -1,44 +1,54 @@
 <script lang="tsx">
-import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
-import { defineComponent, watch } from 'vue'
-import { useHeader, useRecords, useTools } from './hooks'
-import { type IHomeState } from './types'
+import { defineComponent } from 'vue'
+import Taro from '@tarojs/taro'
+import { SafeBottom, Image, CopyButton } from '@mid-vue/taro-h5-ui'
+import imgWeChat from './assets/img_we_chat.png'
 
 export default defineComponent({
   name: 'Home',
   setup() {
-    const [state] = defineCtxState<IHomeState>({
-      loading: false,
-      pagination: {
-        current: 1,
-        size: 16,
-        total: 0
-      },
-      feedRecords: []
-    })
-
-    watch(
-      () => state.loading,
-      (loading) => {
-        loading
-          ? showLoading({
-              title: '加载中'
-            })
-          : hideLoading()
-      }
-    )
-
-    const { render: renderHeader } = useHeader()
-    const { render: renderTools } = useTools()
-    const { render: renderRecords } = useRecords()
+    const toMiniApp = () => {
+      Taro.navigateToMiniProgram({
+        appId: 'wx45c4433ce635c795',
+        path: 'pages/home/index',
+        extraData: {
+          extra: 'fromOldMiniApp'
+        },
+        envVersion: 'release',
+        success(res: any) {
+          // 打开成功
+          console.log(res)
+        }
+      })
+    }
 
     return () => {
       return (
         <div class='home'>
-          {renderHeader()}
-          {renderTools()}
-          {renderRecords()}
+          <div class='mt-[100px] text-center' onClick={toMiniApp}>
+            <div>该小程序已迁移到</div>
+            <div class='text-[24px] font-normal mt-[30px]'> 奶娃星球-小飞燕</div>
+          </div>
+          <div
+            class='text-[#fff] mt-[30px] text-[36px] bg-[#FF5D9E] rounded-[12px] px-12'
+            onClick={toMiniApp}
+          >
+            跳转奶娃星球
+          </div>
+          <div class='flex flex-col items-center'>
+            <div class='mt-[30px] text-[14px]'>小程序在持续迭代!数据会一直保留</div>
+            <div class='text-[14px]'>如需转移数据,可以截图扫码,群里反馈</div>
+            <div class='text-[14px]'>
+              或者添加微信: goodbaby_66 <CopyButton text='wxid_xsy2vqbkqjoh22'></CopyButton>
+            </div>
+            <Image class='w-[160px] h-[280px]' src={imgWeChat}></Image>
+          </div>
+          <div
+            class='text-[#fff] mt-[30px] text-[36px] bg-[#FF5D9E] rounded-[12px] px-12'
+            onClick={toMiniApp}
+          >
+            跳转奶娃星球
+          </div>
           <SafeBottom></SafeBottom>
         </div>
       )
