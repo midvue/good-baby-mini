@@ -1,8 +1,8 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
 import Taro from '@tarojs/taro'
-import { SafeBottom, Image, CopyButton } from '@mid-vue/taro-h5-ui'
-import imgWeChat from './assets/img_we_chat.png'
+import { SafeBottom, Image, CopyButton, Button } from '@mid-vue/taro-h5-ui'
+import imgWeChat from './assets/img_chat.jpg'
 
 export default defineComponent({
   name: 'Home',
@@ -26,29 +26,38 @@ export default defineComponent({
       return (
         <div class='home'>
           <div class='mt-[100px] text-center' onClick={toMiniApp}>
-            <div>该小程序已迁移到</div>
-            <div class='text-[24px] font-normal mt-[30px]'> 奶娃星球-小飞燕</div>
+            <div class='text-[18px]'>该小程序已迁移至</div>
+            <div class='text-[24px] font-normal mt-[30px] mb-[10px]'> 奶娃星球-小飞燕</div>
           </div>
-          <div
-            class='text-[#fff] mt-[30px] text-[36px] bg-[#FF5D9E] rounded-[12px] px-12'
+          <Button
+            type='primary'
+            size='medium'
+            round
+            class='text-[#fff]  text-[36px] bg-[#FF5D9E] rounded-[12px] px-12'
             onClick={toMiniApp}
           >
-            跳转奶娃星球
-          </div>
+            点击跳转奶娃星球
+          </Button>
           <div class='flex flex-col items-center'>
-            <div class='mt-[30px] text-[14px]'>小程序在持续迭代!数据会一直保留</div>
-            <div class='text-[14px]'>如需转移数据,可以截图扫码,群里反馈</div>
-            <div class='text-[14px]'>
-              或者添加微信: goodbaby_66 <CopyButton text='wxid_xsy2vqbkqjoh22'></CopyButton>
+            <div class='text-[14px] mt-[20px]'>如需转移数据,可以长按添加企业微信</div>
+            <div class='text-[18px] mt-[20px]'>
+              或者添加微信: goodbaby_66 <CopyButton text='goodbaby_66'></CopyButton>
             </div>
-            <Image class='w-[160px] h-[280px]' src={imgWeChat}></Image>
+            <Image
+              class='w-[240px] h-[240px] mt-[30px] mb-[50px]'
+              src={imgWeChat}
+              show-menu-by-longpress
+            ></Image>
           </div>
-          <div
-            class='text-[#fff] mt-[30px] text-[36px] bg-[#FF5D9E] rounded-[12px] px-12'
+          <Button
+            type='primary'
+            size='medium'
+            round
+            class='text-[#fff]  text-[36px] bg-[#FF5D9E] rounded-[12px] px-12'
             onClick={toMiniApp}
           >
-            跳转奶娃星球
-          </div>
+            点击跳转奶娃星球
+          </Button>
           <SafeBottom></SafeBottom>
         </div>
       )
