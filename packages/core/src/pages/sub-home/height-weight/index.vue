@@ -1,7 +1,6 @@
 <script lang="tsx">
-import { EnumFeedType } from '@/dict'
-import { navigateBack, useRoute } from '@/use'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { defineComponent, reactive, ref } from 'vue'
+import Taro from '@tarojs/taro'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
@@ -14,17 +13,18 @@ import {
   type FormInstance,
   type IFormItem
 } from '@mid-vue/taro-h5-ui'
-import Taro from '@tarojs/taro'
-import { defineComponent, reactive, ref } from 'vue'
+import { EnumFeedType } from '@/dict'
+import { navigateBack, useRoute } from '@/use'
+import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
-import { IHeightWeightState } from './types'
+import { type IHeightWeightState } from './types'
 export default defineComponent({
   name: 'HeightWeight',
   setup() {
     const { query } = useRoute<IFeedRecord<IHeightWeight>>()
-    let babyInfo = getBabyInfo()
+    const babyInfo = getBabyInfo()
 
-    let defaultHeightWeight = {
+    const defaultHeightWeight = {
       feedType: EnumFeedType.HEIGHT_WEIGHT,
       remark: '',
       babyId: babyInfo.id,
@@ -134,8 +134,8 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
-      let apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
-      let record = { ...state.form, feedTime: state.form.content.feedTime }
+      const apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
+      const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
       setStorage(FEED_RECORD + record.feedType, record)
@@ -147,7 +147,7 @@ export default defineComponent({
       return (
         <div class='height-weight'>
           <Navbar
-            title='身高体重记录'
+            title='生长发育记录'
             defaultConfig={{
               frontColor: '#000000',
               backgroundColor: 'fff8e5'

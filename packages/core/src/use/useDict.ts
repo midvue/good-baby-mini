@@ -1,5 +1,5 @@
-import { getStorage, setStorage } from '@/utils'
 import Http from '@mid-vue/http-client'
+import { getStorage, setStorage } from '@/utils'
 
 export interface DictItem {
   code: string
@@ -12,24 +12,38 @@ type codeType = (typeof codes)[number]
 type DictMap = Record<codeType, Omit<DictItem, 'list'>[]>
 type DictObjMap = Record<codeType, Record<string, DictItem>>
 
-let codes = ['GENDER', 'FEED_TYPE', 'MILK_TYPE', 'DIAPER_TYPE', 'POOP_COLOR', 'POOP_TYPE'] as const
+let codes = [
+  'GENDER',
+  'FEED_TYPE',
+  'MILK_TYPE',
+  'DIAPER_TYPE',
+  'POOP_COLOR',
+  'POOP_TYPE',
+  'SLEEP_TYPE',
+  'SLEEP_QUALITY',
+  'FOOD_TYPE',
+  'FOOD_SHAPE',
+  'FOOD_UNIT',
+  'FOOD_DURATION',
+  'FOOD_FEEDBACK'
+] as const
 
 let dictListMap = {} as DictMap
 let dictObjMap = {} as DictObjMap
 
-let DICT_LIST_KEY = 'dict_list'
-let DICT_OBJ_KEY = 'dict_obj'
+const DICT_LIST_KEY = 'dict_list'
+const DICT_OBJ_KEY = 'dict_obj'
 /**
  * 获取字典
  */
-export let initDict = async () => {
+export const initDict = async () => {
   dictListMap = getStorage<DictMap>(DICT_LIST_KEY) || ({} as DictMap)
   dictObjMap = getStorage<DictObjMap>(DICT_OBJ_KEY) || ({} as DictObjMap)
   const option = {
     url: '/dict/batch',
     data: { codes }
   }
-  let list = await Http.post<DictItem[]>(option)
+  const list = await Http.post<DictItem[]>(option)
   list.forEach((dict) => {
     dictListMap[dict.code as codeType] = dict.list
     dictObjMap[dict.code as codeType] = dict.list.reduce(
@@ -48,7 +62,7 @@ export let initDict = async () => {
  * 获取字典数组
  * {'GENDER': [ {code: '20', name: '男'}, {code: '10', name: '女'}]}
  */
-export let useDictList = (code: codeType) => {
+export const useDictList = (code: codeType) => {
   return dictListMap[code]
 }
 
@@ -56,6 +70,6 @@ export let useDictList = (code: codeType) => {
  * 获取字典键值对结构
  * {'GENDER': { '20': {code: '20', name: '男'}, '10': {code: '10', name: '女'} } }
  */
-export let useDictMap = (code: codeType) => {
+export const useDictMap = (code: codeType) => {
   return dictObjMap[code] || {}
 }

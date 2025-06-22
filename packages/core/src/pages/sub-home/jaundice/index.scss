@@ -1,0 +1,82 @@
+// 已有样式
+.jaundice {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(180deg, #fff8e5 0%, #ffffff 100%);
+  padding: 0 var(--mv-padding-w);
+
+  .jaundice-form {
+    width: 100%;
+
+    .form-item-card {
+      box-shadow: var(--mv-box-shadow);
+      border-radius: 8px;
+      margin: 12px var(--mv-padding-w 0);
+      padding: 15px;
+
+      &:last-child {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+      }
+    }
+    // 新增样式
+    .unit-selector {
+      display: flex;
+      flex-direction: row;
+      .unit-option {
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        margin-right: 16px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        &.selected .radio {
+          border-color: #ff5d9e;
+        }
+        .radio {
+          width: 16px;
+          height: 16px;
+          border: 2px solid #cccccc;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-right: 4px;
+        }
+
+        .dot {
+          width: 8px;
+          height: 8px;
+          background-color: #ff5d9e;
+          border-radius: 50%;
+        }
+      }
+    }
+
+    // 新增卡片说明样式
+    .jaundice-reference-card {
+      margin-top: 40px;
+      .card-title {
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+      .reference-list {
+        font-size: 10px;
+        color: #333;
+      }
+
+      .reference-list li {
+        margin-bottom: 8px;
+      }
+    }
+  }
+}

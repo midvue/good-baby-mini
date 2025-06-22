@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, reactive, ref, nextTick, watch } from 'vue'
+import { defineComponent, reactive, nextTick, watch } from 'vue'
 import { ScrollView } from '@tarojs/components'
 import { useDate } from '@mid-vue/shared'
 import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
@@ -29,8 +29,44 @@ export default defineComponent({
       expended: false,
       clist: [] as ICalendarItem[]
     })
-    const calenderRef = ref(null)
     const feedTypeList = useDictList('FEED_TYPE')
+    // const feedTypeList = [
+    //   {
+    //     code: '10',
+    //     name: '奶瓶喂养',
+    //     sort: 1
+    //   },
+    //   {
+    //     code: '20',
+    //     name: '母乳亲喂',
+    //     sort: 2
+    //   },
+    //   {
+    //     code: '30',
+    //     name: '换尿布',
+    //     sort: 3
+    //   },
+    //   {
+    //     code: '40',
+    //     name: '生长发育',
+    //     sort: 4
+    //   },
+    //   {
+    //     code: '50',
+    //     name: '黄疸',
+    //     sort: 5
+    //   },
+    //   {
+    //     code: '60',
+    //     name: '睡眠',
+    //     sort: 6
+    //   },
+    //   {
+    //     code: '70',
+    //     name: '辅食',
+    //     sort: 7
+    //   }
+    // ]
     const milkTypeMap = useDictMap('MILK_TYPE')
 
     let dayMap = {} as Record<string, SummaryFeedRecord>
@@ -137,6 +173,7 @@ export default defineComponent({
               backgroundColor: 'fff8e5'
             }}
           ></Navbar>
+
           <div class='feed-records-tabs'>
             <Tabs v-model={state.tabActive} onChange={() => init()} border={false}>
               {feedTypeList.map((feedType) => {
@@ -150,6 +187,7 @@ export default defineComponent({
               })}
             </Tabs>
           </div>
+
           <Calender
             current={state.currentDate}
             expended={state.expended}

@@ -1,7 +1,6 @@
 <script lang="tsx">
-import { EnumFeedType } from '@/dict'
-import { navigateBack } from '@/use'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { defineComponent, onUnmounted, type PropType, reactive, ref, watch } from 'vue'
+import Taro from '@tarojs/taro'
 import { dateFormat, durationFormat, durationFormatNoZero, useNumber } from '@mid-vue/shared'
 import {
   Button,
@@ -9,18 +8,19 @@ import {
   Drag,
   FooterBar,
   Form,
-  FormInstance,
-  IFormItem,
+  type FormInstance,
+  type IFormItem,
   Image,
   Input,
   Textarea
 } from '@mid-vue/taro-h5-ui'
-import Taro from '@tarojs/taro'
-import { defineComponent, onUnmounted, PropType, reactive, ref, watch } from 'vue'
+import { EnumFeedType } from '@/dict'
+import { navigateBack } from '@/use'
+import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { TimeInput } from '../time-input'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import imgMilkEnd from './assets/img_milk_end.png'
 import imgMilkStart from './assets/img_milk_start.png'
-import { TimeInput } from '../time-input'
 
 export default defineComponent({
   name: 'BreastMilkFeed',
@@ -32,8 +32,8 @@ export default defineComponent({
   emits: ['close'],
   setup(props) {
     /** 奶瓶喂养 */
-    let babyInfo = getBabyInfo()
-    let defaultMilk = {
+    const babyInfo = getBabyInfo()
+    const defaultMilk = {
       feedType: EnumFeedType.BREAST_FEED_DIRECT,
       remark: '',
       babyId: babyInfo.id,
@@ -60,7 +60,7 @@ export default defineComponent({
       }
     )
 
-    let formatDuration = (duration: number = 0) => {
+    const formatDuration = (duration: number = 0) => {
       if (!duration) return '00:00'
       return durationFormat(duration, { format: 'mm:ss', unit: 's' })
     }
@@ -69,7 +69,7 @@ export default defineComponent({
 
     let timer: NodeJS.Timeout
     /** 点击左边 */
-    let onLeftClick = () => {
+    const onLeftClick = () => {
       if (timer) {
         clearInterval(timer)
       }
@@ -81,7 +81,7 @@ export default defineComponent({
       }, 1000)
     }
     /** 点击右边 */
-    let onRightClick = () => {
+    const onRightClick = () => {
       if (timer) {
         clearInterval(timer)
       }
@@ -93,7 +93,7 @@ export default defineComponent({
       }, 1000)
     }
 
-    let onClickDrag = () => {
+    const onClickDrag = () => {
       clearInterval(timer)
       state.isManual = !state.isManual
       state.isRightStat = false
@@ -196,6 +196,13 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
+      if (state.form.content.duration === 0) {
+        Taro.showToast({
+          title: '喂养时长不能为0哦!',
+          icon: 'none'
+        })
+        return
+      }
       if (state.isLeftStart || state.isRightStat) {
         Taro.showToast({
           title: '请先结束喂养计时',
@@ -203,9 +210,8 @@ export default defineComponent({
         })
         return
       }
-
-      let apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
-      let record = { ...state.form, feedTime: state.form.content.feedTime }
+      const apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
+      const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
       setStorage(FEED_RECORD + record.feedType, record)

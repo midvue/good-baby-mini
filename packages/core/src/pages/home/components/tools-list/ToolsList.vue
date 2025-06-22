@@ -11,18 +11,33 @@ import imgToolVaccine from '../assets/icon_tool_vaccine.png'
 import imgToolSupplement from '../assets/icon_tool_supplement.png'
 import imgToolSleep from '../assets/icon_tool_sleep.png'
 import imgToolFood from '../assets/icon_tool_food.png'
+import imgToolJaundice from '../assets/icon_tool_jaundice.png'
+import imgToolBreast from '../assets/icon_tool_breast.png'
 
 export default defineComponent({
   name: 'ToolsList',
-
-  setup() {
+  emits: ['close'],
+  setup(_, { emit }) {
     const moreToolsConfList = [
       {
         feedType: EnumFeedType.MILK_BOTTLE,
-        name: '喂奶',
+        name: '奶瓶喂养',
         icon: imgToolMilk,
         bgColor: '#FFF7F8',
-        path: '/feed-milk/index'
+        path: '/feed-milk/index',
+        query: {
+          feedType: '10'
+        }
+      },
+      {
+        feedType: EnumFeedType.BREAST_FEED_DIRECT,
+        name: '母乳喂养',
+        icon: imgToolBreast,
+        bgColor: '#FFF7F8',
+        path: '/feed-milk/index',
+        query: {
+          feedType: '20'
+        }
       },
       {
         feedType: EnumFeedType.DIAPER,
@@ -39,6 +54,27 @@ export default defineComponent({
         path: '/height-weight/index'
       },
       {
+        feedType: EnumFeedType.JAUNDICE,
+        name: '黄疸',
+        icon: imgToolJaundice,
+        bgColor: '#FFFAF0',
+        path: '/jaundice/index'
+      },
+      {
+        feedType: EnumFeedType.SLEEP,
+        name: '睡眠',
+        icon: imgToolSleep,
+        bgColor: '#F4F7FF',
+        path: '/sleep/index'
+      },
+      {
+        feedType: EnumFeedType.FOOD,
+        name: '辅食',
+        icon: imgToolFood,
+        bgColor: '#FEF9F3',
+        path: '/food/index'
+      },
+      {
         feedType: EnumFeedType.VACCINE,
         name: '疫苗',
         icon: imgToolVaccine,
@@ -51,22 +87,33 @@ export default defineComponent({
         icon: imgToolSupplement,
         bgColor: '#F9F6FF',
         path: ''
-      },
-      {
-        feedType: EnumFeedType.SLEEP,
-        name: '睡眠',
-        icon: imgToolSleep,
-        bgColor: '#F4F7FF',
-        path: ''
-      },
-      {
-        feedType: EnumFeedType.BABY_FOOD,
-        name: '辅食',
-        icon: imgToolFood,
-        bgColor: '#FEF9F3',
-        path: ''
       }
+      // {
+      //   feedType: EnumFeedType.SUPPLEMENT,
+      //   name: '用药',
+      //   icon: imgToolSupplement,
+      //   bgColor: '#F9F6FF',
+      //   path: ''
+      // },
+      // {
+      //   feedType: EnumFeedType.SUPPLEMENT,
+      //   name: '体温',
+      //   icon: imgToolSupplement,
+      //   bgColor: '#F9F6FF',
+      //   path: ''
+      // }
     ]
+    const onItemClick = (tool) => {
+      if (tool.path === '') {
+        Taro.showToast({ title: '功能还在开发中,敬请期待!', icon: 'none' })
+        return
+      }
+      navigateTo({
+        path: '/pages/sub-home' + tool.path,
+        query: tool.query
+      })
+      emit('close')
+    }
     return () => {
       return (
         <div class='home-tools-popup'>
@@ -77,15 +124,7 @@ export default defineComponent({
               style={{
                 backgroundColor: tool.bgColor
               }}
-              onClick={() => {
-                if (tool.path === '') {
-                  Taro.showToast({ title: '功能还在开发中,敬请期待!', icon: 'none' })
-                  return
-                }
-                navigateTo({
-                  path: '/pages/sub-home' + tool.path
-                })
-              }}
+              onClick={() => onItemClick(tool)}
             >
               <Image src={tool.icon} class='tool-item-icon'></Image>
               <div class='tool-item-name'>{tool.name}</div>

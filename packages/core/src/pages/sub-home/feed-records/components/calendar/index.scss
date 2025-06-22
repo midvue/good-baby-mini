@@ -127,16 +127,18 @@
   }
 
   .back-top {
-    width: 70px;
-    height: 24px;
-    line-height: 24px;
-    text-align: center;
-    color: #999999;
-    font-size: 11px;
-    border: 1px solid #ff9aaa;
+    width: 60px;
+    height: 25px;
     position: absolute;
     right: 0;
     bottom: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--mv-primary-color);
+    color: #fff;
+    font-size: 11px;
+    border: 1px solid var(--mv-primary-color);
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
   }

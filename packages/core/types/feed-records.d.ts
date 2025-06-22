@@ -1,4 +1,4 @@
-import { EnumFeedType } from '@/dict'
+import { type EnumFeedType } from '@/dict'
 declare global {
   /** 尿布 */
   interface IDiaper {
@@ -43,8 +43,52 @@ declare global {
     footLength: number | undefined
   }
 
+  /** 黄疸 */
+  interface IJaundice {
+    /** 黄疸单位 */
+    unit: string
+    /** 黄疸值 */
+    value: string
+    /** 记录时间 */
+    feedTime: string
+  }
+
+  /** 睡眠 */
+  interface ISleep {
+    /** 开始时间 */
+    feedTime: string
+    /** 结束时间 */
+    endTime: string
+    /** 持续时间 */ å
+    duration: number
+    /** 睡眠质量 */
+    quality: string
+    /** 入睡方式 */
+    sleepType: string
+  }
+
+  /** 辅食 */
+  interface IFood {
+    /** 辅食类型 */
+    type: string
+    /** 辅食形状 */
+    shape: string
+    /** 喂养时间 */
+    feedTime: string
+    /** 食量 */
+    foodAmount: number
+    /** 食量单位 */
+    foodAmountUnit: string
+    /** 持续时间 */
+    duration: string
+    /** 反馈 */
+    feedback: string
+  }
+
   /** 喂养记录 */
-  interface IFeedRecord<T = IMilkBottle | IBreastMilk | IDiaper | IHeightWeight> {
+  interface IFeedRecord<
+    T = IMilkBottle | IBreastMilk | IDiaper | IHeightWeight | IJaundice | ISleep | IFood
+  > {
     id: number
     /** 宝宝id */
     babyId: number

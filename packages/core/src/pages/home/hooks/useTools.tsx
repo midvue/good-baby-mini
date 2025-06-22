@@ -1,12 +1,12 @@
+import { ref } from 'vue'
+import { useDidShow } from '@tarojs/taro'
+import { dateFormat, useDate } from '@mid-vue/shared'
+import { Drag, Image, showPopup } from '@mid-vue/taro-h5-ui'
 import { BabyInfo } from '@/components/baby-info'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictMap } from '@/use'
 import { FEED_RECORD, getBabyInfo, getStorage, HOME_DRAG_OFFSET, setStorage } from '@/utils'
-import { dateFormat, useDate } from '@mid-vue/shared'
-import { Drag, Image, showPopup } from '@mid-vue/taro-h5-ui'
-import { useDidShow } from '@tarojs/taro'
-import { ref } from 'vue'
 import imgFeedDiaper from '../assets/img_feed_diaper.png'
 import imgFeedMilk from '../assets/img_feed_milk.png'
 import imgHomeAdd from '../assets/img_home_add.png'
@@ -34,7 +34,7 @@ export const useTools = () => {
     },
     {
       feedType: EnumFeedType.HEIGHT_WEIGHT,
-      name: '身高体重',
+      name: '生长发育',
       path: '/height-weight/index',
       record: ref({} as IFeedRecord)
     }
@@ -59,8 +59,7 @@ export const useTools = () => {
     getLastList()
   })
 
-  /** 处理工具卡片点击事件的函数 */
-  function onItemClick(index: number) {
+  const isAddBaby = () => {
     if (!getBabyInfo().id) {
       // 未绑定宝宝
       showPopup({
@@ -80,8 +79,15 @@ export const useTools = () => {
           )
         }
       })
-      return
+      return true
+    } else {
+      return false
     }
+  }
+
+  /** 处理工具卡片点击事件的函数 */
+  function onItemClick(index: number) {
+    if (isAddBaby()) return
     const tool = toolsConfList[index]
     const record = getStorage<IFeedRecord>(FEED_RECORD + tool.feedType)
     const feedTime = dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
@@ -139,11 +145,18 @@ export const useTools = () => {
   }
   const offset = ref(getStorage<{ x: number; y: number }>(HOME_DRAG_OFFSET) || { x: -1, y: -1 })
   const onPopShowClick = () => {
+    if (isAddBaby()) return
     showPopup({
       round: true,
-      height: '40%',
-      render() {
-        return <ToolsList></ToolsList>
+      height: '46%',
+      render(scoped) {
+        return (
+          <ToolsList
+            onClose={() => {
+              scoped.close()
+            }}
+          ></ToolsList>
+        )
       }
     })
   }

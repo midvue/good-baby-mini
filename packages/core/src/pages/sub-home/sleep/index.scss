@@ -1,0 +1,98 @@
+.sleep {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(180deg, #e8e5fa 0%, #ffffff 100%);
+  padding: 0 var(--mv-padding-w);
+
+  .sleep-header {
+    width: 100%;
+    .sleep-record {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+      .form-item-card {
+        box-shadow: var(--mv-box-shadow);
+        border-radius: 8px;
+        margin: 12px var(--mv-padding-w 0);
+        padding: 15px;
+
+        &:last-child {
+          margin-bottom: 12px;
+          padding-bottom: 12px;
+        }
+      }
+      .sleep-player {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 32px;
+
+        .sleep-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-width: 110px;
+          flex: none;
+
+          .player-label {
+            font-size: 15px;
+            color: var(--mv-black);
+          }
+        }
+      }
+
+      .sleep-drag-content {
+        width: 72px;
+        height: 40px;
+        background: #ffffff;
+        box-shadow: 0px 0px 3px 0px rgba(255, 93, 158, 0.22);
+        border-radius: 88px 0px 0px 88px;
+        color: var(--mv-title-color3);
+        border: 1px solid #e8e8e8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-left: 5px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.sleep-time {
+  width: 180px;
+  height: 60px;
+  border-radius: 30px;
+  color: #ff7faf;
+  font-size: 20px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  margin-top: 30px;
+}
+
+.tag-item {
+  background: #faf0f0;
+  border-radius: 20px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  color: #675d78;
+  &.active {
+    background: var(--mv-primary-color);
+    color: #fff;
+    .mv-icon {
+      font-size: 10px;
+      margin-right: 10px;
+    }
+  }
+}
