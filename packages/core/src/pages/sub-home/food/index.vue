@@ -16,7 +16,7 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { useRoute, navigateBack, useDictList } from '@/use'
 import { EnumFeedType } from '@/dict'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { getBabyInfo } from '@/utils'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 
 export default defineComponent({
@@ -65,7 +65,6 @@ export default defineComponent({
       const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }

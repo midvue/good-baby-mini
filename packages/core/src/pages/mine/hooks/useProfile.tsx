@@ -66,7 +66,7 @@ export const useProfile = () => {
               <Icon name='arrow' color='#675d78' class='edit-arrow'></Icon>
             </div>
             <div class='register-time'>
-              您加入好宝宝喂养{useDate().diff(userInfo.value.createTime, 'day')}天了
+              您加入奶娃星球{useDate().diff(userInfo.value.createTime, 'day')}天了
             </div>
           </div>
         </div>

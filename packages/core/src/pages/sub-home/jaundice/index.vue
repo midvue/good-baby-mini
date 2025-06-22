@@ -15,7 +15,7 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useRoute } from '@/use'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { getBabyInfo } from '@/utils'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { type IJaundiceState } from './types'
 export default defineComponent({
@@ -139,11 +139,17 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
+      if (!state.form.content.value) {
+        Taro.showToast({
+          title: '请输入黄疸数值!',
+          icon: 'none'
+        })
+        return
+      }
       const apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
       const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }
