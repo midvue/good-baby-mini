@@ -1,5 +1,5 @@
 import http from '@mid-vue/http-client'
-import { IBaby } from './types'
+import { type IBaby } from './types'
 
 /**
  * 添加喂养记录

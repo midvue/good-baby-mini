@@ -1,42 +1,53 @@
-import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
-import imgAvatarMale from '@/assets/images/img_avatar_male.png'
-import { BabyInfo, IBaby } from '@/components/baby-info'
-import { useAppStore } from '@/stores'
-import { navigateTo, reLaunch, useRoute } from '@/use'
+import { computed, reactive, watch } from 'vue'
+import { useDidShow } from '@tarojs/taro'
 import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
-import { useDidShow } from '@tarojs/taro'
-import { computed, reactive, watch } from 'vue'
+import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
+import imgAvatarMale from '@/assets/images/img_avatar_male.png'
+import { BabyInfo, type IBaby } from '@/components/baby-info'
+import { useAppStore } from '@/stores'
+import { navigateTo, reLaunch, useRoute } from '@/use'
 import { apiAddBabyFoster, apiBabyList } from '../api'
 
 export const useHeader = () => {
-  let query = useRoute<{ fid: number }>().query
+  const query = useRoute<{ fid: number; relation: string }>().query
 
-  let appStore = useAppStore()
+  const appStore = useAppStore()
 
-  let currState = reactive({ babyList: [] as IBaby[] })
+  const currState = reactive({ babyList: [] as IBaby[] })
+
+  const hasSameFamilyId = computed(() => {
+    if (!query.fid) return false
+    return currState.babyList.some((baby) => baby.familyId === +query.fid)
+  })
+
   watch(
     () => appStore.isLogin,
     (isLogin) => {
       isLogin && getBabyList()
-      addBabyFoster()
+      if (!hasSameFamilyId.value) {
+        addBabyFoster()
+      }
     }
   )
 
   useDidShow(() => {
     addBabyFoster()
-    getBabyList()
+    if (!hasSameFamilyId.value) {
+      getBabyList()
+    }
   })
 
   /** 添加邀请者一起喂养 */
   function addBabyFoster() {
-    if (query.fid && appStore.familyId !== +query.fid) {
+    if (query.fid && appStore.babyInfo.familyId !== +query.fid) {
       showDialog({
-        title: '提示',
+        title: '邀请',
         render: () => '是否同意加入一起喂养',
         onConfirm: async () => {
           await apiAddBabyFoster({
-            familyId: query.fid
+            familyId: query.fid,
+            relation: query.relation
           })
           reLaunch({
             path: ENV_HOME_URL
@@ -51,7 +62,7 @@ export const useHeader = () => {
     apiBabyList().then((list) => {
       currState.babyList = list || []
       if (!appStore.babyInfo.id) {
-        let babyInfo = list?.[0] || {}
+        const babyInfo = list?.[0] || {}
         appStore.setBabyInfo(babyInfo)
       }
     })
@@ -86,14 +97,14 @@ export const useHeader = () => {
     })
   }
 
-  let birthTimeRef = computed(() => {
-    let { birthDate, birthTime } = appStore.babyInfo
+  const birthTimeRef = computed(() => {
+    const { birthDate, birthTime } = appStore.babyInfo
     if (!birthDate) return ''
-    let now = useDate()
-    let targetDate = useDate(birthDate)
+    const now = useDate()
+    const targetDate = useDate(birthDate)
     const months = now.diff(targetDate, 'month')
     const days = now.diff(useDate(targetDate, 'YYYY-MM-DD').add(months, 'month'), 'day').toString()
-    let diff = now.diff(targetDate.format('YYYY-MM-DD ' + birthTime), 'millisecond')
+    const diff = now.diff(targetDate.format('YYYY-MM-DD ' + birthTime), 'millisecond')
 
     return `${months}个月${days.padStart(2, '0')}天 (${durationFormatNoZero(diff, { format: birthTime ? 'D天H小时' : '第D天' })})`
   })

@@ -6,7 +6,7 @@ import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { useDictList, useDictMap } from '@/use'
-import { apiGetFeedRecordList } from './api'
+import { apiGetFeedRecordDays, apiGetFeedRecordList } from './api'
 import { FeedRecord } from './components/feed-record'
 import Calender from './components/calendar/Calendar.vue'
 import { useCalendar } from './components/calendar/hooks/useCalendar'
@@ -106,8 +106,13 @@ export default defineComponent({
     }
     init()
 
-    const initDate = (date: Date) => {
-      state.clist = useCalendar(date)
+    const initDate = async (date: Date) => {
+      const res = await apiGetFeedRecordDays({
+        startFeedTime: useDate(date).startOf('month').format('YYYY-MM-DD 00:00:00'),
+        endFeedTime: useDate(date).endOf('month').format('YYYY-MM-DD 23:59:59')
+      })
+      const list = res || []
+      state.clist = useCalendar(date, list)
     }
     initDate(state.currentDate)
     const handleDateChange = (date: Date) => {

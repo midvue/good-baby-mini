@@ -1,21 +1,21 @@
 <script lang="tsx">
-import { useAppStore } from '@/stores'
-import { useDictList } from '@/use'
+import { defineComponent, type PropType, reactive, ref } from 'vue'
+import Taro from '@tarojs/taro'
 import { useDate } from '@mid-vue/shared'
 import {
   Button,
   FooterBar,
   Form,
   type FormInstance,
-  IFormItem,
+  type IFormItem,
   Input,
   Picker,
   Tag
 } from '@mid-vue/taro-h5-ui'
-import Taro from '@tarojs/taro'
-import { defineComponent, PropType, reactive, ref } from 'vue'
+import { useAppStore } from '@/stores'
+import { useDictList } from '@/use'
 import { apiBabyCreate, apiBabyUpdate } from './api'
-import { IBaby } from './types'
+import { type IBaby } from './types'
 
 export default defineComponent({
   name: 'BabyInfo',
@@ -27,18 +27,29 @@ export default defineComponent({
   },
   emits: ['close'],
   setup(props, { emit }) {
-    let appStore = useAppStore()
+    const appStore = useAppStore()
     const currState = reactive({
       form: {
         ...props.data,
         gender: props.data.gender ? props.data.gender.toString() : '10',
+        relation: props.data.relation ? props.data.relation.toString() : '100',
         birthDate: props.data.birthDate ? useDate(props.data.birthDate).format('YYYY-MM-DD') : ''
       } as IBaby
     })
 
     const formRef = ref<FormInstance>()
 
-    let genderList = useDictList('GENDER')
+    const genderList = useDictList('GENDER')
+    const parentsList = [
+      {
+        code: '100',
+        name: '妈妈'
+      },
+      {
+        code: '200',
+        name: '爸爸'
+      }
+    ]
 
     const cells: IFormItem<IBaby>[] = [
       {
@@ -101,12 +112,42 @@ export default defineComponent({
                 </>
               )
             }
+          },
+          {
+            label: '与宝宝关系',
+            field: 'relation',
+            attrs: { required: true, border: true },
+            rules: [{ required: true, message: '请选择' }],
+            component: () => {
+              return (
+                <>
+                  {parentsList.map((parents) => {
+                    return (
+                      <Tag
+                        class='w-[60px] mr-[8px]'
+                        round
+                        type='primary'
+                        plain={currState.form.relation !== parents.code}
+                        onClick={() => {
+                          currState.form.relation = parents.code
+                        }}
+                      >
+                        {parents.name}
+                      </Tag>
+                    )
+                  })}
+                </>
+              )
+            }
           }
         ]
       }
     ]
     const onSubmit = async () => {
-      let apiFunc = currState.form.id ? apiBabyUpdate : apiBabyCreate
+      if (appStore.userInfo.familyId) {
+        currState.form.familyId = appStore.userInfo.familyId
+      }
+      const apiFunc = currState.form.id ? apiBabyUpdate : apiBabyCreate
       const res = await apiFunc(currState.form).catch(() => false)
       if (!res) return
       appStore.updateUseInfo()

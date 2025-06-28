@@ -118,3 +118,22 @@
     }
   }
 }
+
+.mv-dialog-content {
+  display: flex;
+  .dialog-item {
+    width: 200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-size: 16px;
+    margin-bottom: 10px;
+    .label {
+      width: 80px;
+      text-align: right;
+    }
+    .value {
+      flex: 1;
+    }
+  }
+}

@@ -321,7 +321,6 @@ export const useRecords = () => {
             </div>
             <div>
               <div class='records-item-title'>
-                辅食:
                 <span class='item-title-duration'>
                   {foodTypeMap[type]?.name}
                   {foodAmount}
@@ -331,7 +330,7 @@ export const useRecords = () => {
               <div class='records-item-content'>
                 <div class='mr-[5px]'></div>
                 <div>
-                  时长:{foodDurationMap[duration]?.name} 宝宝反馈:
+                  用时{foodDurationMap[duration]?.name} 反馈:
                   {foodFeedbackMap[feedback]?.name}
                 </div>
               </div>

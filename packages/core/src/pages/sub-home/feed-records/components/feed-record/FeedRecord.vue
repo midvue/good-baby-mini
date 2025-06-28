@@ -187,19 +187,15 @@ export default defineComponent({
               </div>
               <div>
                 <div class='records-item-title'>
-                  辅食:
                   <span class='item-title-duration'>
                     {foodTypeMap[type]?.name}
                     {foodAmount}({foodAmountUnitMap[foodAmountUnit]?.name})
                   </span>
                 </div>
                 <div class='records-item-content'>
-                  <div class='mr-[5px]'>
-                    时长:
-                    {foodDurationMap[duration]?.name}
-                  </div>
+                  <div class='mr-[5px]'>{foodDurationMap[duration]?.name}</div>
                   <div>
-                    宝宝反馈:
+                    反馈:
                     {foodFeedbackMap[feedback]?.name}
                   </div>
                 </div>

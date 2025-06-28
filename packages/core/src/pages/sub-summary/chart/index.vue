@@ -113,7 +113,7 @@ export default defineComponent({
             .format('YYYY-MM-DD')
         }
       }
-      selectedDateRange.value = 7
+      selectedDateRange.value = 0
       initChart()
     }
 

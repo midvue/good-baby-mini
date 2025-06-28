@@ -91,7 +91,16 @@
           right: 0;
           bottom: 0;
         }
+        .has {
+          width: 4px;
+          height: 4px;
+          position: absolute;
+          bottom: 6px;
+          border-radius: 50%;
+          background-color: #ff9aaa;
+        }
       }
+
       .no-show {
         color: #c9c6c6;
       }
@@ -105,10 +114,6 @@
       .not-current-month {
         border: none;
         background: none;
-
-        .has {
-          display: none;
-        }
 
         .day {
           color: #c9c6c6;

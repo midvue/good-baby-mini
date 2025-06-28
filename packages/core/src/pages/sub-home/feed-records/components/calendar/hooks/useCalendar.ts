@@ -22,17 +22,6 @@ const getEndTime = (date: Date): Date => {
 }
 
 /**
- * 计算指定日期所在月份的天数
- * @param date 输入的日期
- * @returns 该月的天数
- */
-const getDaysInMonth = (date: Date): number => {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  return new Date(year, month, 0).getDate()
-}
-
-/**
  * 创建一个日期对象
  * @param date 日期对象
  * @param day 日期中的日
@@ -43,6 +32,7 @@ const createCalendarItem = (date: Date, day: number, isCurrMonth: boolean): ICal
   const currentDate = useDate(date).date(day)
   return {
     day,
+    count: 0,
     isCurrMonth,
     date: currentDate.toDate()
   }
@@ -53,7 +43,10 @@ const createCalendarItem = (date: Date, day: number, isCurrMonth: boolean): ICal
  * @param date 输入的日期
  * @returns 包含 ICalendarItem 对象的数组，代表完整月视图的日历数据
  */
-export const useCalendar = (date: Date): ICalendarItem[] => {
+export const useCalendar = (
+  date: Date,
+  list: { date: string; count: number }[]
+): ICalendarItem[] => {
   const startOfMonth = getStartTime(date)
   const endOfMonth = getEndTime(date)
   const lastWeekDayOfStartMonth = useDate(startOfMonth).day() || 7
@@ -65,11 +58,13 @@ export const useCalendar = (date: Date): ICalendarItem[] => {
     daysList.push(createCalendarItem(prevDate.toDate(), prevDate.date(), false))
   }
 
-  // 添加当前月的日期
-  const daysInCurrentMonth = getDaysInMonth(date)
-  for (let j = 1; j <= daysInCurrentMonth; j++) {
-    daysList.push(createCalendarItem(date, j, true))
-  }
+  //当前月的数据
+  list.forEach((item) => {
+    daysList.push({
+      ...createCalendarItem(date, useDate(item.date).date(), true),
+      count: item.count
+    })
+  })
 
   // 添加下个月需要显示的日期
   const firstWeekDayOfNextMonth = useDate(endOfMonth).day()

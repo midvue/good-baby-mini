@@ -7,11 +7,12 @@ import {
   Icon,
   type IFormItem,
   Image,
+  Picker,
   showDialog,
   showPopup
 } from '@mid-vue/taro-h5-ui'
 
-import { navigateTo } from '@/use'
+import { navigateTo, useDictList } from '@/use'
 import { getBabyInfo, getUserInfo } from '@/utils'
 import { iconAboutMe, iconBaby, iconInvite, iconWeChat } from '../assets'
 import imgWeChat from '../assets/img_we_chat.png'
@@ -19,6 +20,8 @@ import imgWeChat from '../assets/img_we_chat.png'
 /** 菜单列表 */
 export const useList = () => {
   const formRef = ref<FormInstance>()
+  const parentsList = useDictList('FAMILY_RELATION')
+  const relationRef = ref('')
 
   function renderItem(label: string, icon: string) {
     return (
@@ -63,11 +66,34 @@ export const useList = () => {
               }
               showDialog({
                 confirmOpenType: 'share',
+                title: '邀请家人',
+                confirmText: '邀请',
+                onConfirm: async () => {
+                  if (!relationRef.value) {
+                    Taro.showToast({
+                      title: '请选择邀请关系',
+                      icon: 'none'
+                    })
+                    Taro.hideShareMenu()
+                    return
+                  }
+                },
                 render() {
                   return (
                     <div class='mv-dialog-content'>
-                      <div>当前宝宝：{babyInfo.nickname}</div>
-                      <div>确定邀请家人一起喂养嘛</div>
+                      <div class='dialog-item'>
+                        <div class='label'>当前宝宝：</div>
+                        <div class='value'>{babyInfo.nickname}</div>
+                      </div>
+                      <div class='dialog-item'>
+                        <div class='label'>邀请关系：</div>
+                        <Picker
+                          v-model={relationRef.value}
+                          range={parentsList}
+                          mode='selector'
+                          class='value'
+                        ></Picker>
+                      </div>
                     </div>
                   )
                 }
@@ -137,7 +163,7 @@ export const useList = () => {
       const userInfo = getUserInfo()
       return {
         title: `${userInfo.nickname || ''}邀请您加入一起喂养`,
-        path: `pages/home/index?fid=${userInfo.familyId}`
+        path: `pages/home/index?fid=${userInfo.familyId}&relation=${relationRef.value}`
       }
     }
     return {

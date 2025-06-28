@@ -1,5 +1,3 @@
-import { type EnumPayMode } from '@/dict'
-
 declare global {
   interface IUserInfo {
     /** 用户id */
@@ -12,6 +10,7 @@ declare global {
     gender: number
     /** '头像', length: 128 }) */
     avatar: string
+    /** '创建时间', type: 'timestamp' }) */
     createTime: number
   }
 
@@ -41,6 +40,8 @@ declare global {
 
     /** '性别- 20:男性,10:女性', default: 10 }) */
     gender: string
+    /** '关系- 100:妈妈,200:爸爸', default: 100 }) */
+    relation: numbers
   }
 }
 export {}

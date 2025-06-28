@@ -1,5 +1,5 @@
-import { IBaby } from '@/components/baby-info'
 import http from '@mid-vue/http-client'
+import { type IBaby } from '@/components/baby-info'
 import { type FeedRecordResp } from './types'
 
 /**
@@ -51,7 +51,7 @@ export const apiBabyList = (data = {}) => {
 /**
  * 添加共同喂养人
  */
-export const apiAddBabyFoster = (data: { familyId: number }) => {
+export const apiAddBabyFoster = (data: { familyId: number; relation: string }) => {
   const option = {
     url: '/baby/addFoster',
     data

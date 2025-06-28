@@ -2,6 +2,7 @@ export interface ICalendarItem {
   day: number
   isCurrMonth: boolean
   date: Date
+  count: number
 }
 
 export interface ICListState {
