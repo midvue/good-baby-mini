@@ -93,32 +93,32 @@ const onClick = (event: Event) => {
 $types:
   (
     label: 'primary',
-    color: var(--mv-primary-color),
+    color: var(--mv-white),
     bg-color: var(--mv-primary-color),
     border-color: var(--mv-primary-color)
   ),
   (
     label: 'success',
-    color: var(--mv-success-color),
-    bg-color: var(--mv-primary-color),
+    color: var(--mv-white),
+    bg-color: var(--mv-success-color),
     border-color: var(--mv-success-color)
   ),
   (
     label: 'warning',
-    color: var(--mv-warning-color),
-    bg-color: var(--mv-primary-color),
+    color: var(--mv-white),
+    bg-color: var(--mv-warning-color),
     border-color: var(--mv-warning-color)
   ),
   (
     label: 'danger',
-    color: var(--mv-danger-color),
-    bg-color: var(--mv-primary-color),
+    color: var(--mv-white),
+    bg-color: var(--mv-danger-color),
     border-color: var(--mv-danger-color)
   ),
   (
     label: 'default',
-    color: var(--mv-title-color2),
-    bg-color: var(--mv-help-color),
+    color: var(--mv-white),
+    bg-color: var(--mv-info-color),
     border-color: var(--mv-border-color)
   );
 
@@ -138,7 +138,7 @@ $types:
     &.mv-tag--#{$label} {
       // background-color: transparent;
       background: var(--mv-tag-background);
-      color: $color;
+      color: $bg-color;
       &::before {
         border-color: $border-color;
       }
@@ -177,13 +177,13 @@ $types:
     --mv-tag-border-radius: 6px;
   }
   &--mini {
-    padding: 1px 3px;
+    padding: 2px 4px;
     --mv-tag-border-radius: 6px;
     transform: scale(0.8, 0.8);
   }
 
   &--round {
-    border-radius: 999px;
+    --mv-tag-border-radius: 999px;
   }
   &--round:before {
     content: '';
