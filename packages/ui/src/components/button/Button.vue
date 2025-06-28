@@ -35,12 +35,15 @@ export default defineComponent({
         [prefixCls]: true,
         [`mv-button__${props.size}`]: true,
         ['mv-button__round']: props.round,
-        [props.class]: true
+        ['mv-button__block']: props.block,
+        [props.className]: true
       }
     })
 
     const handleClick = (event: CommonEvent) => {
-      event.stopPropagation()
+      if (props.stopPropagation) {
+        event.stopPropagation()
+      }
       emit('click', event)
     }
     return { bType, handleClick, classes }
@@ -49,112 +52,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-$types:
-  (
-    label: 'primary',
-    color: var(--mv-primary-color)
-  ),
-  (
-    label: 'success',
-    color: var(--mv-success-color)
-  ),
-  (
-    label: 'warning',
-    color: var(--mv-warning-color)
-  ),
-  (
-    label: 'warn',
-    color: var(--mv-warning-color)
-  ),
-  (
-    label: 'danger',
-    color: var(--mv-danger-color)
-  ),
-  (
-    label: 'info',
-    color: var(--mv-info-color)
-  );
-
-button,
-taro-button-core {
-  @each $type in $types {
-    $label: map-get($type, label);
-    $color: map-get($type, color);
-    &[type='mv-#{$label}'] {
-      color: var(--mv-white);
-      background: $color;
-      &::after {
-        border-color: $color;
-      }
-    }
-    &[plain][type='mv-#{$label}'] {
-      background: transparent;
-      color: $color;
-      border: 1px solid $color;
-    }
-  }
-}
-.mv-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  padding: 0;
-  margin: 0;
-  line-height: inherit;
-  overflow: unset;
-  flex: none;
-  background: #fff;
-  border-radius: 8px;
-  &:not([disabled]):active {
-    opacity: 0.7;
-  }
-  &[disabled] {
-    opacity: 0.6;
-  }
-  &[type='mv-default'][disabled] {
-    color: var(--mv-black);
-  }
-
-  &[plain][type='mv-default'] {
-    background: var(--mv-white);
-    color: var(--mv-title-color);
-    border: 1px solid var(--mv-border-color);
-  }
-}
-
-.mv-button__large {
-  height: 44px;
-  width: 100%;
-  border-radius: 8px;
-}
-.mv-button__medium {
-  height: 44px;
-  width: 140px;
-}
-.mv-button__small {
-  height: 40px;
-  width: 100px;
-}
-
-.mv-button__mini {
-  height: 28px;
-  padding: 0 5px;
-  border-radius: 2px;
-  font-size: 15px;
-  & + & {
-    margin-left: 8px;
-  }
-}
-
-.mv-button__round {
-  border-radius: 999px;
-}
-.mv-button__round:after {
-  border-radius: 999px;
-}
-
-button::after {
-  display: none;
-}
+@import './index.scss';
 </style>

@@ -1,0 +1,152 @@
+:root {
+  --mv-button-mini-height: 28px;
+  --mv-button-mini-padding: 0 5px;
+  --mv-button-mini-font-size: 12px;
+  --mv-button-mini-border-radius: 2px;
+
+  --mv-button-small-width: 100px;
+  --mv-button-small-height: 40px;
+  --mv-button-small-padding: 0 5px;
+  --mv-button-small-font-size: 15px;
+  --mv-button-small-border-radius: 8px;
+
+  --mv-button-width: 140px;
+  --mv-button-height: 42px;
+  --mv-button-small-padding: 0 5px;
+  --mv-button-font-size: 16px;
+  --mv-button-border-radius: 8px;
+  --mv-button-font-weight: 500;
+
+  --mv-button-large-width: 100%;
+  --mv-button-large-height: 44px;
+  --mv-button-large-padding: 0 5px;
+  --mv-button-large-font-size: 16px;
+  --mv-button-large-border-radius: 8px;
+
+  --mv-button-border-width: var(--mv-border-width);
+  --mv-button-plain-background: var(--mv-white);
+  --mv-button-disabled-opacity: 0.6;
+}
+
+$types:
+  (
+    label: 'primary',
+    color: var(--mv-primary-color)
+  ),
+  (
+    label: 'success',
+    color: var(--mv-success-color)
+  ),
+  (
+    label: 'warning',
+    color: var(--mv-warning-color)
+  ),
+  (
+    label: 'warn',
+    color: var(--mv-warning-color)
+  ),
+  (
+    label: 'danger',
+    color: var(--mv-danger-color)
+  ),
+  (
+    label: 'info',
+    color: var(--mv-info-color)
+  );
+
+button,
+taro-button-core {
+  padding: 0;
+  margin: 0;
+  @each $type in $types {
+    $label: map-get($type, label);
+    $color: map-get($type, color);
+    &[type='mv-#{$label}'] {
+      color: var(--mv-white);
+      background: $color;
+      &::after {
+        border-color: $color;
+      }
+    }
+    &[plain][type='mv-#{$label}'] {
+      background: var(--mv-button-plain-background);
+      color: $color;
+      border: var(--mv-button-border-width) solid $color;
+    }
+  }
+}
+.mv-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--mv-button-font-size);
+  font-weight: var(--mv-button-font-weight);
+  line-height: inherit;
+  overflow: unset;
+  flex: none;
+  background: #fff;
+  border-radius: var(--mv-button-round-radius);
+  &:not([disabled]):active {
+    opacity: 0.7;
+  }
+  &[disabled] {
+    opacity: var(--mv-button-disabled-opacity);
+  }
+  &[type='mv-default'][disabled] {
+    color: var(--mv-black);
+  }
+
+  &[plain][type='mv-default'] {
+    background: var(--mv-white);
+    color: var(--mv-title-color);
+    border: var(--mv-button-border-width) solid var(--mv-border-color);
+  }
+}
+
+.mv-button__large {
+  width: var(--mv-button-large-width);
+  height: var(--mv-button-large-height);
+  padding: var(--mv-button-large-padding);
+  font-size: var(--mv-button-large-font-size);
+  border-radius: var(--mv-button-large-border-radius);
+}
+
+.mv-button__medium {
+  width: var(--mv-button-width);
+  height: var(--mv-button-height);
+  padding: var(--mv-button-padding);
+  font-size: var(--mv-button-font-size);
+  border-radius: var(--mv-button-border-radius);
+}
+
+.mv-button__small {
+  width: var(--mv-button-small-width);
+  height: var(--mv-button-small-height);
+  padding: var(--mv-button-small-padding);
+  font-size: var(--mv-button-small-font-size);
+  border-radius: var(--mv-button-small-border-radius);
+}
+
+.mv-button__mini {
+  height: var(--mv-button-mini-height);
+  padding: var(--mv-button-mini-padding);
+  font-size: var(--mv-button-mini-font-size);
+  border-radius: var(--mv-button-mini-border-radius);
+  & + & {
+    margin-left: 8px;
+  }
+}
+
+.mv-button__round {
+  border-radius: 999px;
+}
+.mv-button__round:after {
+  border-radius: 999px;
+}
+.mv-button__block {
+  width: 100%;
+}
+
+button::after {
+  display: none;
+}

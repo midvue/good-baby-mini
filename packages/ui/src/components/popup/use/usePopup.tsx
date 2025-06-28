@@ -77,8 +77,8 @@ function mountComponent(option = {} as PopupOptionType) {
   return {
     instance,
     unmount() {
-      page!.removeChild(instance.$el)
-      app.unmount()
+      // page!.removeChild(instance.$el)
+      // app.unmount()
       page = null
     }
   }

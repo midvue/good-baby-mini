@@ -64,7 +64,7 @@ const style = computed<CSSProperties>(() => {
     style.color = props.color
   }
   if (props.plain) {
-    style.background = '#fff'
+    // style.background = '#fff'
     style.borderColor = props.color
   } else if (props.color) {
     style.background = props.color
@@ -79,47 +79,65 @@ const onClick = (event: Event) => {
 </script>
 <style lang="scss">
 @import '../styles/hairline';
+
+:root {
+  --mv-tag-border-radius: 6px;
+  --mv-tag-font-size: 12px;
+  --mv-tag-border-padding: 5px 8px;
+
+  --mv-tag-large-font-size: 13px;
+  --mv-tag-border-large-padding: 8px 12px;
+  --mv-tag-background: #fff;
+}
+
 $types:
   (
     label: 'primary',
     color: var(--mv-primary-color),
+    bg-color: var(--mv-primary-color),
     border-color: var(--mv-primary-color)
   ),
   (
     label: 'success',
     color: var(--mv-success-color),
+    bg-color: var(--mv-primary-color),
     border-color: var(--mv-success-color)
   ),
   (
     label: 'warning',
     color: var(--mv-warning-color),
+    bg-color: var(--mv-primary-color),
     border-color: var(--mv-warning-color)
   ),
   (
     label: 'danger',
     color: var(--mv-danger-color),
+    bg-color: var(--mv-primary-color),
     border-color: var(--mv-danger-color)
   ),
   (
     label: 'default',
-    color: var(--mv-info-color),
+    color: var(--mv-title-color2),
+    bg-color: var(--mv-help-color),
     border-color: var(--mv-border-color)
   );
 
 @each $type in $types {
   $label: map-get($type, label);
   $color: map-get($type, color);
+  $bg-color: map-get($type, bg-color);
   $border-color: map-get($type, border-color);
   .mv-tag--#{$label} {
-    color: var(--mv-white);
-    background-color: $color;
+    color: $color;
+    background: $bg-color;
     &::before {
       border-color: $border-color;
     }
   }
   .mv-tag--plain {
     &.mv-tag--#{$label} {
-      background-color: transparent;
+      // background-color: transparent;
+      background: var(--mv-tag-background);
       color: $color;
       &::before {
         border-color: $border-color;
@@ -139,8 +157,8 @@ $types:
   justify-content: center;
   align-items: center;
   border-radius: var(--mv-tag-border-radius);
-  font-size: 12px;
-  padding: 5px 8px;
+  font-size: var(--mv-tag-font-size);
+  padding: var(--mv-tag-border-padding);
   flex: none;
   @extend %hairline--surround;
 
@@ -150,16 +168,17 @@ $types:
   }
 
   &--large {
-    padding: 8px 10px;
-    border-radius: 6px;
+    font-size: var(--mv-tag-large-font-size);
+    padding: var(--mv-tag-border-large-padding);
+    --mv-tag-border-radius: 8px;
   }
   &--small {
     padding: 2px 6px;
-    border-radius: 6px;
+    --mv-tag-border-radius: 6px;
   }
   &--mini {
     padding: 1px 3px;
-    border-radius: 6px;
+    --mv-tag-border-radius: 6px;
     transform: scale(0.8, 0.8);
   }
 
@@ -169,6 +188,10 @@ $types:
   &--round:before {
     content: '';
     border-radius: 999px;
+  }
+
+  &::before {
+    border-radius: calc(var(--mv-tag-border-radius) * 2);
   }
 }
 </style>

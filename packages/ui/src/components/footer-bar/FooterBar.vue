@@ -1,10 +1,10 @@
 <script lang="tsx">
-import { computed, defineComponent, type PropType, type CSSProperties, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref, type CSSProperties, type PropType } from 'vue'
 import Taro, { useReady } from '@tarojs/taro'
-import { uniqueId } from '@mid-vue/shared'
-import SafeBottom from '../safe-bottom'
 import { useRect } from '../../use/useRect'
+import SafeBottom from '../safe-bottom'
 import { type PositionProperty } from './types'
+import { uniqueId } from '@mid-vue/shared'
 
 export default defineComponent({
   name: 'MvFooterBar',
@@ -16,6 +16,10 @@ export default defineComponent({
     style: {
       type: Object as PropType<CSSProperties>,
       default: () => ({})
+    },
+    class: {
+      type: String,
+      default: ''
     },
     /** 显示上边框 */
     border: {
@@ -58,6 +62,12 @@ export default defineComponent({
       })
     })
 
+    onMounted(() => {
+      Taro.nextTick(() => {
+        getRect()
+      })
+    })
+
     async function getRect() {
       const rect = await useRect(divRef).catch(() => ({ height: 0 }))
       heightRef.value = rect.height
@@ -77,7 +87,7 @@ export default defineComponent({
             ref={divRef}
             id={'mv-footer-bar' + uniId}
           >
-            <div class='mv-footer-bar-wrapper'>{slots.default?.()}</div>
+            <div class={['mv-footer-bar-wrapper', props.class]}>{slots.default?.()}</div>
 
             {props.safeAreaInsetBottom && <SafeBottom height={props.safeHeight} />}
           </div>

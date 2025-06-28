@@ -76,8 +76,8 @@ function mountComponent(option = {} as DialogOptionType) {
   return {
     instance,
     unmount() {
-      page!.removeChild(instance.$el)
-      app.unmount()
+      // page!.removeChild(instance.$el)
+      // app.unmount()
       page = null
     }
   }

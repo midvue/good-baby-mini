@@ -11,9 +11,13 @@ export const buttonProps = {
     type: String as PropType<TButtonSize>,
     default: 'medium'
   },
-  class: {
+  className: {
     type: String,
     default: ''
+  },
+  block: {
+    type: Boolean,
+    default: false
   },
   round: {
     type: Boolean,
@@ -26,6 +30,10 @@ export const buttonProps = {
   disabled: {
     type: Boolean,
     default: false
+  },
+  stopPropagation: {
+    type: Boolean,
+    default: true
   },
 
   /** 微信开放能力

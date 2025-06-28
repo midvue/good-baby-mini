@@ -36,8 +36,7 @@ export const useConfigProvider = (homeUrl?: string) => {
       windowWidth
     } = Taro.getSystemInfoSync() // 获取状态栏高度
     const navBarHeight = statusBarHeight + height + (top - statusBarHeight) * 2
-
-    provide(CONFIG_PROVIDER_KEY, {
+    const systemInfo = {
       screenWidth,
       screenHeight,
       model,
@@ -49,9 +48,14 @@ export const useConfigProvider = (homeUrl?: string) => {
       top,
       homeUrl,
       boundingWidth: width
+    }
+    provide(CONFIG_PROVIDER_KEY, systemInfo)
+    Taro.setStorage({
+      key: CONFIG_PROVIDER_KEY.description!,
+      data: systemInfo
     })
   } else {
-    provide<IConfigProvide>(CONFIG_PROVIDER_KEY, {
+    const systemInfo = {
       top: 0,
       statusBarHeight: 0,
       navBarHeight: 40,
@@ -63,22 +67,26 @@ export const useConfigProvider = (homeUrl?: string) => {
       model: window.navigator.userAgent,
       homeUrl,
       boundingWidth: 0
+    }
+    provide<IConfigProvide>(CONFIG_PROVIDER_KEY, systemInfo)
+    Taro.setStorage({
+      key: CONFIG_PROVIDER_KEY.description!,
+      data: systemInfo
     })
   }
 }
+
+export const setConfigProviderStore = (systemInfo: IConfigProvide) => {
+  Taro.setStorage({
+    key: CONFIG_PROVIDER_KEY.description!,
+    data: systemInfo
+  })
+}
+export const getConfigProviderStore = () => {
+  return Taro.getStorageSync(CONFIG_PROVIDER_KEY.description!)
+}
+
 /** 获取系统数据 */
 export const getConfigProvider = () => {
-  return inject<IConfigProvide>(CONFIG_PROVIDER_KEY, {
-    statusBarHeight: 0,
-    navBarWidth: 0,
-    navBarHeight: 40,
-    top: 0,
-    homeUrl: '',
-    model: '',
-    windowWidth: 0,
-    windowHeight: 0,
-    screenWidth: 0,
-    screenHeight: 0,
-    boundingWidth: 0
-  })
+  return inject<IConfigProvide>(CONFIG_PROVIDER_KEY, getConfigProviderStore())
 }
