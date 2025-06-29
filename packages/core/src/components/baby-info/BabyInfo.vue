@@ -144,9 +144,6 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
-      if (appStore.userInfo.familyId) {
-        currState.form.familyId = appStore.userInfo.familyId
-      }
       const apiFunc = currState.form.id ? apiBabyUpdate : apiBabyCreate
       const res = await apiFunc(currState.form).catch(() => false)
       if (!res) return

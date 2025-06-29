@@ -49,7 +49,6 @@ export default defineComponent({
 
     /**
      * 点击宝宝项时触发的函数，弹出添加或修改宝宝信息的弹窗
-     * @param {IBaby} [baby] - 可选的宝宝信息对象，存在则为修改操作，不存在则为添加操作
      */
     let onBabyClick = (baby?: IBaby) => {
       showPopup({
