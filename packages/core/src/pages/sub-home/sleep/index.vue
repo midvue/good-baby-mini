@@ -103,7 +103,6 @@ export default defineComponent({
         if (state.isManual) {
           state.form.content.duration =
             dateDiff(state.form.content.endTime, state.form.content.feedTime) / 1000
-          console.log('duration', state.form.content.duration)
         }
       }
     )

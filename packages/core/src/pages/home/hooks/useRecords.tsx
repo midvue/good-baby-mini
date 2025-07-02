@@ -2,7 +2,7 @@ import { reactive, watch } from 'vue'
 import { ScrollView } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
 import { dateDiff, durationFormatNoZero, useDate } from '@mid-vue/shared'
-import { Empty, Icon, Image, showDialog, Tag } from '@mid-vue/taro-h5-ui'
+import { Empty, Icon, Image, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import { useCtxState } from '@mid-vue/use'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
@@ -14,7 +14,8 @@ import iconFeedBreast from '@/assets/images/icon_feed_breast.png'
 import iconFeedFood from '@/assets/images/icon_feed_food.png'
 import iconFeedJaundice from '@/assets/images/icon_feed_jaundice.png'
 import iconFeedSleep from '@/assets/images/icon_feed_sleep.png'
-import { apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
+import { BabyInfo } from '@/components/baby-info'
+import { apiBabyList, apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
 import { type SummaryFeedRecord, type IHomeState } from '../types'
 
 /**  喂养记录 */
@@ -299,11 +300,11 @@ export const useRecords = () => {
             </div>
             <div>
               <div class='records-item-title'>
-                睡眠时长: {durationFormatNoZero(duration, { unit: 's', format: 'H小时m分钟s秒' })}
+                睡眠: {durationFormatNoZero(duration, { unit: 's', format: 'H小时m分钟s秒' })}
               </div>
               <div class='records-item-content'>
-                <span>入睡方式: {sleepTypeMap[sleepType]?.name}</span>
-                <span> 睡眠质量: {sleepQualityMap[quality]?.name}</span>
+                <span> {sleepTypeMap[sleepType]?.name}</span>
+                <span> 质量: {sleepQualityMap[quality]?.name}</span>
               </div>
             </div>
           </div>
@@ -364,6 +365,35 @@ export const useRecords = () => {
     })
   }
 
+  function getBabyList() {
+    if (!appStore.isLogin) return
+    apiBabyList().then((list) => {
+      if (!appStore.babyInfo.id) {
+        const babyInfo = list?.[0] || {}
+        appStore.setBabyInfo(babyInfo)
+      }
+    })
+  }
+
+  function onAddBaby() {
+    // 未绑定宝宝
+    showPopup({
+      round: true,
+      height: '60%',
+      title: '添加宝宝',
+      render(scoped) {
+        return (
+          <BabyInfo
+            onClose={() => {
+              scoped.close()
+              getBabyList()
+            }}
+          ></BabyInfo>
+        )
+      }
+    })
+  }
+
   return {
     render: () => {
       return (
@@ -387,7 +417,14 @@ export const useRecords = () => {
             scrollTop={0}
           >
             <div class='home-records-scroll'>
-              {!state.feedRecords.length && <Empty message='暂无喂养记录,请添加或刷新重试'></Empty>}
+              {!appStore.babyInfo.id && (
+                <Tag type='primary' round onClick={onAddBaby} size='large'>
+                  请添加宝宝
+                </Tag>
+              )}
+              {appStore.babyInfo.id && !state.feedRecords.length && (
+                <Empty message='暂无喂养记录,请添加或刷新重试'></Empty>
+              )}
               {state.feedRecords.map((record, index) => {
                 if (!feedTypeList) return null
                 if ('feedType' in record) {

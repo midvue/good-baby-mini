@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro'
-import { ISerie, DataSet, ChartOpt } from './types'
 import { isFunction, isNullOrUnDef } from '@mid-vue/shared'
+import { type ISerie, type DataSet, type ChartOpt } from './types'
 
 // 定义线条类型枚举
 // 修改枚举名称为 EnumLineType
@@ -12,7 +12,7 @@ export enum EnumLineType {
 let sysInfo: Taro.getSystemInfoSync.Result | null = null
 
 export class Chart {
-  private canvasId: string = ''
+  private canvasId = ''
   private chartOpt: ChartOpt = {
     chartPieCount: 0,
     hideXYAxis: false,
@@ -78,7 +78,7 @@ export class Chart {
     this.canvasId = canvasId
     this.checkData(data)
 
-    let ctx: Taro.CanvasContext = this.initCanvas(canvasId)
+    const ctx: Taro.CanvasContext = this.initCanvas(canvasId)
     this.drawChart(ctx)
   }
 
@@ -107,13 +107,13 @@ export class Chart {
     this.dataSet.series = data.series
 
     // 用于存储所有系列数据中的数值
-    let yValues: number[] = []
+    const yValues: number[] = []
     // 遍历全局数据集的系列数据
     for (let i = 0; i < this.dataSet.series.length; i++) {
       // 获取当前系列数据
-      let serie: ISerie = this.dataSet.series[i]
+      const serie: ISerie = this.dataSet.series[i]
       // 获取当前系列数据的长度
-      let itemLength: number = serie.data.length
+      const itemLength: number = serie.data.length
       // 若当前系列数据的长度大于之前记录的最大柱状图长度，则更新最大柱状图长度
       if (itemLength > this.chartOpt.barLength) {
         this.chartOpt.barLength = itemLength
@@ -139,9 +139,9 @@ export class Chart {
     }
 
     // 计算所有数值中的最小值
-    let minNum: number = Math.min(...yValues)
+    const minNum: number = Math.min(...yValues)
     // 计算所有数值中的最大值
-    let maxNum: number = Math.max(...yValues)
+    const maxNum: number = Math.max(...yValues)
     // 调用工具函数计算 Y 轴刻度尺数据，将结果存储到全局图表配置中
     this.chartOpt.axisYMarks = this.calculateY(minNum, maxNum, 5)
   }
@@ -152,7 +152,7 @@ export class Chart {
    * @returns Taro 的 Canvas 上下文对象
    */
   private initCanvas(canvasId: string): Taro.CanvasContext {
-    let ctx: Taro.CanvasContext = Taro.createCanvasContext(canvasId)
+    const ctx: Taro.CanvasContext = Taro.createCanvasContext(canvasId)
     if (!sysInfo) {
       sysInfo = Taro.getSystemInfoSync()
     }
@@ -168,8 +168,8 @@ export class Chart {
     this.chartOpt.bottom = this.chartOpt.chartHeight - this.chartOpt.chartSpace
 
     // 3 个数字的文字长度
-    let textWidth: number = this.measureText('100', this.dataSet.xAxis.size)
-    let legendHeight: number =
+    const textWidth: number = this.measureText('100', this.dataSet.xAxis.size)
+    const legendHeight: number =
       this.dataSet.series.length > 1 ? this.chartOpt.legendHeight + this.chartOpt.chartSpace * 2 : 0
 
     this.chartOpt.axisLeft =
@@ -218,9 +218,9 @@ export class Chart {
    * @param ctx - Taro 的 Canvas 上下文对象
    */
   private drawTitle(ctx: Taro.CanvasContext): void {
-    let title = this.dataSet.title
+    const title = this.dataSet.title
     if (title.text !== '') {
-      let textWidth = this.measureText(title.text, title.size)
+      const textWidth = this.measureText(title.text, title.size)
       ctx.setFillStyle(title.color)
       ctx.setFontSize(title.size)
       ctx.setTextAlign('left')
@@ -244,14 +244,14 @@ export class Chart {
     ctx.lineTo(this.chartOpt.right, this.chartOpt.axisBottom)
     ctx.stroke()
 
-    let width = (this.chartOpt.right - this.chartOpt.axisLeft) / this.chartOpt.barLength
-    let data = this.dataSet.xAxis.data
+    const width = (this.chartOpt.right - this.chartOpt.axisLeft) / this.chartOpt.barLength
+    const data = this.dataSet.xAxis.data
     // 绘制 X 轴显示文字
     for (let i = 0; i < data.length; i++) {
-      let show = this.dataSet.xAxis.show
-      let isShow = isFunction(show) ? show(i) : show
+      const show = this.dataSet.xAxis.show
+      const isShow = isFunction(show) ? show(i) : show
       if (isShow) {
-        let textX = width * (i + 1) - width / 2 + this.chartOpt.axisLeft
+        const textX = width * (i + 1) - width / 2 + this.chartOpt.axisLeft
         ctx.setFillStyle(this.dataSet.xAxis.color)
         ctx.setFontSize(this.dataSet.xAxis.size)
         ctx.setTextAlign('center')
@@ -273,12 +273,12 @@ export class Chart {
     ctx.setLineWidth(0.5)
     ctx.setLineCap('round')
 
-    let height =
+    const height =
       (this.chartOpt.axisBottom - this.chartOpt.axisTop) / (this.chartOpt.axisYMarks.length - 1)
 
     // 绘制 Y 轴显示数字
     for (let i = 0; i < this.chartOpt.axisYMarks.length; i++) {
-      let y = this.chartOpt.axisBottom - height * i
+      const y = this.chartOpt.axisBottom - height * i
       if (i > 0) {
         ctx.setStrokeStyle(this.chartOpt.lineColor)
         this.drawDashLine(ctx, this.chartOpt.axisLeft, y, this.chartOpt.right, y)
@@ -302,20 +302,20 @@ export class Chart {
    * @param ctx - Taro 的 Canvas 上下文对象
    */
   private drawLegend(ctx: Taro.CanvasContext): void {
-    let series = this.dataSet.series
+    const series = this.dataSet.series
 
     for (let i = 0; i < series.length; i++) {
-      let names = series[i].name
-      let isPie = series[i].category === 'pie'
-      let textWidth = this.measureText(isPie ? names[0] : names, this.dataSet.xAxis.size)
-      let legendWidth = this.chartOpt.legendWidth + textWidth + this.chartOpt.chartSpace * 2
-      let startX =
+      const names = series[i].name
+      const isPie = series[i].category === 'pie'
+      const textWidth = this.measureText(isPie ? names[0] : names, this.dataSet.xAxis.size)
+      const legendWidth = this.chartOpt.legendWidth + textWidth + this.chartOpt.chartSpace * 2
+      const startX =
         this.chartOpt.chartWidth / 2 - (legendWidth * (isPie ? names.length : series.length)) / 2
 
       if (series[i].category === 'pie') {
         for (let k = 0; k < names.length; k++) {
-          let x = startX + legendWidth * k
-          let y = this.chartOpt.bottom - this.chartOpt.legendHeight
+          const x = startX + legendWidth * k
+          const y = this.chartOpt.bottom - this.chartOpt.legendHeight
 
           ctx.setFillStyle(this.dataSet.xAxis.color)
           ctx.setFontSize(this.dataSet.legend.size)
@@ -326,13 +326,13 @@ export class Chart {
             this.chartOpt.bottom
           )
 
-          let color = this.getColor(k)
+          const color = this.getColor(k)
           ctx.setFillStyle(color)
           ctx.fillRect(x, y + 1, this.chartOpt.legendWidth, this.chartOpt.legendHeight)
         }
       } else {
-        let x = startX + legendWidth * i + this.chartOpt.legendWidth * i
-        let y = this.chartOpt.bottom - this.chartOpt.legendHeight
+        const x = startX + legendWidth * i + this.chartOpt.legendWidth * i
+        const y = this.chartOpt.bottom - this.chartOpt.legendHeight
 
         ctx.setFillStyle(this.dataSet.xAxis.color)
         ctx.setFontSize(this.dataSet.legend.size)
@@ -343,15 +343,15 @@ export class Chart {
           this.chartOpt.bottom
         )
 
-        let color = this.getColor(i)
+        const color = this.getColor(i)
         ctx.setFillStyle(color)
         ctx.setLineWidth(2)
         ctx.setStrokeStyle(color)
         if (series[i].category === 'bar') {
           ctx.fillRect(x, y + 1, this.chartOpt.legendWidth, this.chartOpt.legendHeight)
         } else if (series[i].category === 'line') {
-          let lx = x + this.chartOpt.legendWidth / 2
-          let ly = y + this.chartOpt.legendHeight / 2 + 1
+          const lx = x + this.chartOpt.legendWidth / 2
+          const ly = y + this.chartOpt.legendHeight / 2 + 1
           ctx.beginPath()
           ctx.moveTo(x, ly)
           ctx.lineTo(x + this.chartOpt.legendWidth, ly)
@@ -390,12 +390,12 @@ export class Chart {
    * @param ctx - Taro 的 Canvas 上下文对象
    */
   private drawCharts(ctx: Taro.CanvasContext): void {
-    let series = this.dataSet.series
+    const series = this.dataSet.series
     for (let i = 0; i < series.length; i++) {
-      let category = series[i].category
+      const category = series[i].category
       let barWidth = (this.chartOpt.right - this.chartOpt.axisLeft) / this.chartOpt.barLength
-      let barHeight = this.chartOpt.axisBottom - this.chartOpt.axisTop
-      let maxMark = this.chartOpt.axisYMarks[this.chartOpt.axisYMarks.length - 1]
+      const barHeight = this.chartOpt.axisBottom - this.chartOpt.axisTop
+      const maxMark = this.chartOpt.axisYMarks[this.chartOpt.axisYMarks.length - 1]
 
       if (category === 'bar') {
         barWidth = barWidth - this.chartOpt.chartSpace
@@ -425,19 +425,19 @@ export class Chart {
     barHeight: number,
     maxMark: number
   ): void {
-    let item = series[i]
-    let itemWidth = barWidth / this.chartOpt.barNum
+    const item = series[i]
+    const itemWidth = barWidth / this.chartOpt.barNum
 
     for (let k = 0; k < item.data.length; k++) {
-      let itemHeight = barHeight * ((item.data[k] as number) / maxMark)
-      let x =
+      const itemHeight = barHeight * ((item.data[k] as number) / maxMark)
+      const x =
         barWidth * k +
         this.chartOpt.axisLeft +
         k * this.chartOpt.chartSpace +
         this.chartOpt.chartSpace / 2 +
         i * itemWidth
-      let y = this.chartOpt.axisBottom - itemHeight
-      let color = this.getColor(series.length <= 1 ? k : i)
+      const y = this.chartOpt.axisBottom - itemHeight
+      const color = this.getColor(series.length <= 1 ? k : i)
       ctx.setFillStyle(color)
       ctx.fillRect(x, y, itemWidth, itemHeight)
 
@@ -466,10 +466,10 @@ export class Chart {
     barWidth: number,
     barHeight: number
   ): void {
-    let item = series[i]
+    const item = series[i]
     // 更新枚举引用
     const lineType = item.type || EnumLineType.SOLID
-    let color = this.getColor(i)
+    const color = this.getColor(i)
     ctx.setLineWidth(2)
     ctx.setStrokeStyle(color)
     ctx.beginPath()
@@ -477,7 +477,7 @@ export class Chart {
     let prevPoint: { x: number; y: number } | null = null
     for (let k = 0; k < item.data.length; k++) {
       if (isNullOrUnDef(item.data[k])) continue
-      let point = this.getLinePoint(k, item, barWidth, barHeight)
+      const point = this.getLinePoint(k, item, barWidth, barHeight)
       if (k === 0) {
         ctx.moveTo(point.x, point.y)
       } else {
@@ -497,14 +497,14 @@ export class Chart {
     if (!item.toolTips?.show) return
     for (let k = 0; k < item.data.length; k++) {
       if (isNullOrUnDef(item.data[k])) continue
-      let isShow = isFunction(item.toolTips.show) ? item.toolTips.show(k) : item.toolTips.show
+      const isShow = isFunction(item.toolTips.show) ? item.toolTips.show(k) : item.toolTips.show
       if (isShow) {
-        let point = this.getLinePoint(k, item, barWidth, barHeight)
+        const point = this.getLinePoint(k, item, barWidth, barHeight)
         this.drawPoint(ctx, point.x, point.y, 3, color)
         this.drawPoint(ctx, point.x, point.y, 1, this.chartOpt.bgColor)
-        let label = item.toolTips.formatter?.(item.data) || (item.data[k] as number).toString()
-        let x = point.x + (item.toolTips.offset?.[0] || 0)
-        let y = point.y + (item.toolTips.offset?.[1] || 0)
+        const label = item.toolTips.formatter?.(item.data) || (item.data[k] as number).toString()
+        const x = point.x + (item.toolTips.offset?.[0] || 0)
+        const y = point.y + (item.toolTips.offset?.[1] || 0)
         this.drawToolTips(ctx, label, x, y - this.chartOpt.chartSpace, color)
       }
     }
@@ -524,10 +524,10 @@ export class Chart {
     barWidth: number,
     barHeight: number
   ): { x: number; y: number } {
-    let maxY = this.chartOpt.axisYMarks[this.chartOpt.axisYMarks.length - 1]
-    let minY = this.chartOpt.axisYMarks[0]
-    let x = barWidth * k + this.chartOpt.axisLeft + barWidth / 2
-    let y =
+    const maxY = this.chartOpt.axisYMarks[this.chartOpt.axisYMarks.length - 1]
+    const minY = this.chartOpt.axisYMarks[0]
+    const x = barWidth * k + this.chartOpt.axisLeft + barWidth / 2
+    const y =
       this.chartOpt.axisBottom - barHeight * (((item.data[k] as number) - minY) / (maxY - minY))
 
     return { x, y }
@@ -562,18 +562,18 @@ export class Chart {
    * @param series - 系列数据
    */
   private drawPieChart(ctx: Taro.CanvasContext, i: number, series: ISerie[]): void {
-    let item = series[i]
+    const item = series[i]
 
-    let x = (this.chartOpt.right - this.chartOpt.left) / 2 + this.chartOpt.left
-    let radius = (this.chartOpt.axisBottom - this.chartOpt.axisTop) / 3
-    let y = (this.chartOpt.axisBottom - this.chartOpt.axisTop) / 2 + this.chartOpt.axisTop
+    const x = (this.chartOpt.right - this.chartOpt.left) / 2 + this.chartOpt.left
+    const radius = (this.chartOpt.axisBottom - this.chartOpt.axisTop) / 3
+    const y = (this.chartOpt.axisBottom - this.chartOpt.axisTop) / 2 + this.chartOpt.axisTop
 
     let lastAngel = 0
     for (let k = 0; k < item.data.length; k++) {
-      let color = this.getColor(k)
+      const color = this.getColor(k)
 
-      let curAngel = (2 / this.chartOpt.chartPieCount) * (item.data[k] as number)
-      let precent = (100 / this.chartOpt.chartPieCount) * (item.data[k] as number)
+      const curAngel = (2 / this.chartOpt.chartPieCount) * (item.data[k] as number)
+      const precent = (100 / this.chartOpt.chartPieCount) * (item.data[k] as number)
 
       this.drawPieToolTips(
         ctx,
@@ -617,14 +617,14 @@ export class Chart {
     lastAngel: number,
     curAngel: number
   ): void {
-    let textWidth = this.measureText(value, this.dataSet.xAxis.size)
-    let cosc = Math.cos((lastAngel - 0.5 + curAngel / 2) * Math.PI)
-    let sinc = Math.sin((lastAngel - 0.5 + curAngel / 2) * Math.PI)
-    let x1 = radius * cosc + x
-    let y1 = radius * sinc + y
+    const textWidth = this.measureText(value, this.dataSet.xAxis.size)
+    const cosc = Math.cos((lastAngel - 0.5 + curAngel / 2) * Math.PI)
+    const sinc = Math.sin((lastAngel - 0.5 + curAngel / 2) * Math.PI)
+    const x1 = radius * cosc + x
+    const y1 = radius * sinc + y
 
-    let x2 = (radius + 20) * cosc + x
-    let y2 = (radius + 20) * sinc + y
+    const x2 = (radius + 20) * cosc + x
+    const y2 = (radius + 20) * sinc + y
 
     ctx.setFillStyle(color)
     ctx.setTextAlign(x2 < x1 ? 'right' : 'left')
@@ -656,7 +656,7 @@ export class Chart {
    * @returns 颜色值
    */
   private getColor(index: number): string {
-    let cLength = this.dataSet.colors.length
+    const cLength = this.dataSet.colors.length
     if (index >= cLength) {
       return this.dataSet.colors[index % cLength]
     } else {
@@ -672,7 +672,6 @@ export class Chart {
     Taro.canvasToTempFilePath({
       canvasId: this.canvasId,
       success: function (res) {
-        console.log(res.tempFilePath)
         // Taro.previewImage({
         //   urls: [res.tempFilePath],
         // })
@@ -692,8 +691,8 @@ export class Chart {
    * 方法并不能准确居中显示
    */
   private measureText(text: string, textSize: number) {
-    let ratio = textSize / 20
-    let texts = text.split('')
+    const ratio = textSize / 20
+    const texts = text.split('')
     let width = 0
     texts.forEach(function (item) {
       if (/[a-zA-Z]/.test(item)) {
@@ -724,24 +723,24 @@ export class Chart {
     }
     dDelta = dMax - dMin
 
-    let iExp = parseInt((Math.log(dDelta) / Math.log(10.0)).toString()) - 2
-    let dMultiplier = Math.pow(10, iExp)
-    let dSolutions = [1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 250, 500]
+    const iExp = parseInt((Math.log(dDelta) / Math.log(10.0)).toString()) - 2
+    const dMultiplier = Math.pow(10, iExp)
+    const dSolutions = [1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 250, 500]
     let i
     for (i = 0; i < dSolutions.length; i++) {
-      let dMultiCal = dMultiplier * dSolutions[i]
+      const dMultiCal = dMultiplier * dSolutions[i]
       if (parseInt((dDelta / dMultiCal).toString()) + 1 <= iMaxAxisNum) {
         break
       }
     }
 
-    let dInterval = dMultiplier * dSolutions[i]
+    const dInterval = dMultiplier * dSolutions[i]
 
-    let dStartPoint = (parseInt((dMin / dInterval).toString()) - 1) * dInterval
-    let yIndex = [] as number[]
+    const dStartPoint = (parseInt((dMin / dInterval).toString()) - 1) * dInterval
+    const yIndex = [] as number[]
     let iAxisIndex
     for (iAxisIndex = 1; true; iAxisIndex++) {
-      let y = dStartPoint + dInterval * iAxisIndex
+      const y = dStartPoint + dInterval * iAxisIndex
       yIndex.push(y)
       if (y > dMax) break
     }
@@ -760,13 +759,13 @@ export class Chart {
     dashLen?: number
   ) {
     dashLen = dashLen === undefined ? 4 : dashLen
-    let beveling = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-    let num = Math.floor(beveling / dashLen)
+    const beveling = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+    const num = Math.floor(beveling / dashLen)
 
     ctx.beginPath()
     for (let i = 0; i < num; i++) {
-      let x = x1 + ((x2 - x1) / num) * i
-      let y = y1 + ((y2 - y1) / num) * i
+      const x = x1 + ((x2 - x1) / num) * i
+      const y = y1 + ((y2 - y1) / num) * i
       if (i % 2 == 0) {
         ctx.moveTo(x, y)
       } else {

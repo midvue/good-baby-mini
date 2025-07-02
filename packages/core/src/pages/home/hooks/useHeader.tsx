@@ -1,13 +1,14 @@
 import { computed, reactive, watch } from 'vue'
-import { useDidShow } from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import { Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { BabyInfo, type IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
-import { navigateTo, reLaunch, useRoute } from '@/use'
+import { navigateTo, reLaunch, switchTab, useRoute } from '@/use'
 import { apiAddBabyFoster, apiBabyList } from '../api'
+import { setBabyInfo } from '@/utils'
 
 export const useHeader = () => {
   const query = useRoute<{ fid: number; relation: string }>().query
@@ -24,42 +25,66 @@ export const useHeader = () => {
   watch(
     () => appStore.isLogin,
     (isLogin) => {
-      isLogin && getBabyList()
-      if (!hasSameFamilyId.value) {
+      if (!isLogin) return
+      getBabyList().then(() => {
         addBabyFoster()
-      }
+      })
     }
   )
 
   useDidShow(() => {
-    addBabyFoster()
     if (!hasSameFamilyId.value) {
-      getBabyList()
+      getBabyList().then(() => {
+        addBabyFoster()
+      })
     }
   })
 
   /** 添加邀请者一起喂养 */
   function addBabyFoster() {
-    if (query.fid && appStore.babyInfo.familyId !== +query.fid) {
+    const babyInfo = currState.babyList.find((baby) => baby.familyId == query.fid)
+
+    // 如果存在则切换到当前baby
+    if (babyInfo) {
+      setBabyInfo(babyInfo)
+      appStore.setBabyInfo(babyInfo)
+      switchTab({
+        path: '/pages/home/index'
+      })
+      return
+    }
+    if (query.fid) {
       showDialog({
         title: '邀请',
         render: () => '是否同意加入一起喂养',
         onConfirm: async () => {
-          await apiAddBabyFoster({
-            familyId: query.fid,
-            relation: query.relation
-          })
-          reLaunch({
-            path: ENV_HOME_URL
-          })
+          try {
+            // 尝试调用 apiAddBabyFoster 接口
+            await apiAddBabyFoster({
+              familyId: query.fid,
+              relation: query.relation
+            })
+            reLaunch({
+              path: ENV_HOME_URL
+            })
+          } catch (error) {
+            console.error('apiAddBabyFoster 接口调用失败:', error)
+            // 接口报错时弹出提示框
+            Taro.showToast({
+              title: '不可重复添加宝宝哦',
+              icon: 'none',
+              duration: 2000
+            })
+          }
         }
       })
     }
   }
   function getBabyList() {
-    if (!appStore.isLogin) return
-
-    apiBabyList().then((list) => {
+    if (!appStore.isLogin) {
+      return Promise.resolve()
+    }
+    return apiBabyList().then((list) => {
       currState.babyList = list || []
       if (!appStore.babyInfo.id) {
         const babyInfo = list?.[0] || {}

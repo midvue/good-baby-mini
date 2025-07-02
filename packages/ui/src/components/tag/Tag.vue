@@ -136,7 +136,6 @@ $types:
   }
   .mv-tag--plain {
     &.mv-tag--#{$label} {
-      // background-color: transparent;
       background: var(--mv-tag-background);
       color: $bg-color;
       &::before {
@@ -147,6 +146,15 @@ $types:
       background-color: #f3f4f6;
       border: 1px solid #d7d7db;
       color: #868392;
+    }
+  }
+  // 为每个类型添加更具优先级的 disabled 样式
+  .mv-tag--#{$label}.mv-tag--disabled {
+    background-color: #f3f4f6;
+    border: 1px solid #d7d7db;
+    color: #868392;
+    &::before {
+      border-color: #d7d7db;
     }
   }
 }

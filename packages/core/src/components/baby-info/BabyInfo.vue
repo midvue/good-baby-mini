@@ -23,6 +23,10 @@ export default defineComponent({
     data: {
       type: Object as PropType<IBaby>,
       default: () => ({})
+    },
+    relation: {
+      type: String,
+      default: ''
     }
   },
   emits: ['close'],
@@ -32,7 +36,11 @@ export default defineComponent({
       form: {
         ...props.data,
         gender: props.data.gender ? props.data.gender.toString() : '10',
-        relation: props.data.relation ? props.data.relation.toString() : '100',
+        relation: props.data.relation
+          ? props.data.relation.toString()
+          : props.relation
+            ? props.relation
+            : '100',
         birthDate: props.data.birthDate ? useDate(props.data.birthDate).format('YYYY-MM-DD') : ''
       } as IBaby
     })
@@ -116,6 +124,7 @@ export default defineComponent({
           {
             label: '与宝宝关系',
             field: 'relation',
+            show: () => ['100', '200'].includes(currState.form.relation),
             attrs: { required: true, border: true },
             rules: [{ required: true, message: '请选择' }],
             component: () => {

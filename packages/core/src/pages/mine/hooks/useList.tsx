@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import Taro, { useShareAppMessage } from '@tarojs/taro'
+import Taro, { useDidShow, useShareAppMessage } from '@tarojs/taro'
 import {
   CopyButton,
   Form,
@@ -7,22 +7,36 @@ import {
   Icon,
   type IFormItem,
   Image,
-  Picker,
   showDialog,
-  showPopup
+  showPopup,
+  Tag
 } from '@mid-vue/taro-h5-ui'
 
 import { navigateTo, useDictList } from '@/use'
 import { getBabyInfo, getUserInfo } from '@/utils'
 import { iconAboutMe, iconBaby, iconInvite, iconWeChat } from '../assets'
 import imgWeChat from '../assets/img_we_chat.png'
+import { apiPostRelation } from '../api'
+import { useAppStore } from '@/stores'
 
 /** 菜单列表 */
 export const useList = () => {
   const formRef = ref<FormInstance>()
   const parentsList = useDictList('FAMILY_RELATION')
   const relationRef = ref('')
+  const acceptableRelations = ['100', '200']
+  const familyList = ref<any[]>([])
+  const appStore = useAppStore()
 
+  const getFamilyList = () => {
+    apiPostRelation({
+      id: getBabyInfo().familyId
+    }).then((res) => (familyList.value = res))
+  }
+  useDidShow(() => {
+    if (!getBabyInfo().familyId) return
+    getFamilyList()
+  })
   function renderItem(label: string, icon: string) {
     return (
       <div class='mine-list-item'>
@@ -60,13 +74,21 @@ export const useList = () => {
               if (!babyInfo.id) {
                 Taro.showToast({
                   title: '请先添加宝宝',
+                  icon: 'none',
+                  duration: 2000
+                })
+                return
+              }
+              if (!acceptableRelations.includes(babyInfo.relation)) {
+                Taro.showToast({
+                  title: `只有${babyInfo.nickname}的爸爸妈妈才能邀请家人哦`,
                   icon: 'none'
                 })
                 return
               }
               showDialog({
                 confirmOpenType: 'share',
-                title: '邀请家人',
+                title: `${babyInfo.nickname}${babyInfo.relation === '100' ? '爸爸' : '妈妈'}邀请喂养`,
                 confirmText: '邀请',
                 onConfirm: async () => {
                   if (!relationRef.value) {
@@ -82,17 +104,27 @@ export const useList = () => {
                   return (
                     <div class='mv-dialog-content'>
                       <div class='dialog-item'>
-                        <div class='label'>当前宝宝：</div>
-                        <div class='value'>{babyInfo.nickname}</div>
-                      </div>
-                      <div class='dialog-item'>
-                        <div class='label'>邀请关系：</div>
-                        <Picker
-                          v-model={relationRef.value}
-                          range={parentsList}
-                          mode='selector'
-                          class='value'
-                        ></Picker>
+                        {parentsList.map((item) => (
+                          <Tag
+                            class='ml-[5px]'
+                            size='large'
+                            round
+                            type='primary'
+                            disabled={familyList.value.some(
+                              (family) => family.relation === item.code
+                            )}
+                            plain={relationRef.value !== item.code}
+                            onClick={() => {
+                              if (
+                                !familyList.value.some((family) => family.relation === item.code)
+                              ) {
+                                relationRef.value = item.code
+                              }
+                            }}
+                          >
+                            {item.name}
+                          </Tag>
+                        ))}
                       </div>
                     </div>
                   )
@@ -163,12 +195,16 @@ export const useList = () => {
       const userInfo = getUserInfo()
       return {
         title: `${userInfo.nickname || ''}邀请您加入一起喂养`,
-        path: `pages/home/index?fid=${userInfo.familyId}&relation=${relationRef.value}`
+        path: `pages/home/index?fid=${appStore.babyInfo.familyId}&relation=${relationRef.value}`,
+        imageUrl:
+          'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/share.jpg'
       }
     }
     return {
       title: '宝宝喂养，生肖，五行，家谱，点开查看！！',
-      path: 'pages/home/index'
+      path: 'pages/home/index',
+      imageUrl:
+        'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/share.jpg'
     }
   })
 

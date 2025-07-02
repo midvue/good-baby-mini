@@ -51,6 +51,11 @@ export default defineComponent({
      * 点击宝宝项时触发的函数，弹出添加或修改宝宝信息的弹窗
      */
     let onBabyClick = (baby?: IBaby) => {
+      let relation = ''
+      if (!baby) {
+        const matchedItem = currState.list.find((item) => item.familyId === appStore.familyId)
+        relation = matchedItem?.relation || ''
+      }
       showPopup({
         round: true,
         height: '60%',
@@ -59,6 +64,7 @@ export default defineComponent({
           return (
             <BabyInfo
               data={baby}
+              relation={relation}
               onClose={() => {
                 scoped.close()
                 // 关闭弹窗后重新获取宝宝列表

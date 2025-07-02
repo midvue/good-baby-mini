@@ -1,10 +1,10 @@
 import '@/assets/icon/iconfont.css'
+import { createApp } from 'vue'
+import Taro from '@tarojs/taro'
+import { createPinia } from 'pinia'
 import Http, { defaultInterceptors, type HttpResponse } from '@mid-vue/http-client'
 import { throttle } from '@mid-vue/shared'
 import { useConfigProvider } from '@mid-vue/taro-h5-ui'
-import Taro from '@tarojs/taro'
-import { createPinia } from 'pinia'
-import { createApp } from 'vue'
 import './app.scss'
 import { EnumEnvVersion } from './dict'
 import { useAppStore } from './stores'
@@ -40,7 +40,7 @@ const App = createApp({
 
 App.use(createPinia())
 
-let appStore = useAppStore()
+const appStore = useAppStore()
 
 // 节流,防止多次跳转登录页
 const reLaunch = throttle(

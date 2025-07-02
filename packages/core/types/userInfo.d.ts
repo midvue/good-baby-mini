@@ -41,7 +41,7 @@ declare global {
     /** '性别- 20:男性,10:女性', default: 10 }) */
     gender: string
     /** '关系- 100:妈妈,200:爸爸', default: 100 }) */
-    relation: numbers
+    relation: string
   }
 }
 export {}

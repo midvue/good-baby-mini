@@ -43,6 +43,14 @@ export default defineComponent({
         </div>
       )
     }
+  },
+  onShareAppMessage() {
+    return {
+      title: '奶娃星球邀请您加入喂养', // 分享标题
+      path: '/pages/home/index', // 分享路径
+      imageUrl:
+        'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/share.jpg' // 分享图片路径
+    }
   }
 })
 </script>
