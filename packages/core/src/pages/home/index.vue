@@ -4,6 +4,7 @@ import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
+import { stringify } from 'postcss'
 
 export default defineComponent({
   name: 'Home',
@@ -28,10 +29,38 @@ export default defineComponent({
           : hideLoading()
       }
     )
-
     const { render: renderHeader } = useHeader()
     const { render: renderTools } = useTools()
     const { render: renderRecords } = useRecords()
+    console.log(
+      JSON.stringify({
+        summary: {
+          sort: 3,
+          children: [
+            {
+              label: '次数',
+              code: '10'
+            },
+            {
+              label: '喂养量',
+              code: '20'
+            },
+            {
+              label: '时段',
+              code: '30'
+            }
+          ]
+        },
+        tool: {
+          icon: 'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/home/icon_tool_breast.png',
+          bgColor: '#FFF7F8',
+          path: '/feed-milk/index',
+          query: {
+            feedType: '20'
+          }
+        }
+      })
+    )
 
     return () => {
       return (

@@ -38,12 +38,12 @@ export enum EnumFeedType {
   SLEEP = 60,
   /** 辅食 */
   FOOD = 70,
-  /** 补剂 */
-  SUPPLEMENT = 80,
-  // /** 疫苗 */
-  VACCINE = 90
-  // /** 用药 */
-  // MEDICINE = 100,
   // /** 体温 */
-  // TEMPERATURE = 110
+  DEGRESS = 80,
+  /** 补剂 */
+  SUPPLEMENT = 90,
+  // /** 疫苗 */
+  VACCINE = 100,
+  // /** 用药 */
+  MEDICINE = 110
 }

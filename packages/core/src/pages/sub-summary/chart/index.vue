@@ -29,7 +29,8 @@ export default defineComponent({
 
     const initTabList = () => {
       const feedTypeList = useDictList('FEED_TYPE')
-      return feedTypeList
+      const slicedFeedTypeList = feedTypeList.slice(0, 4)
+      return slicedFeedTypeList
         .filter((feedType) => !!feedType.ext)
         .map((feedType) => {
           const { ext, ...rest } = feedType

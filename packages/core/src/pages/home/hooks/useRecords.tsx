@@ -14,6 +14,7 @@ import iconFeedBreast from '@/assets/images/icon_feed_breast.png'
 import iconFeedFood from '@/assets/images/icon_feed_food.png'
 import iconFeedJaundice from '@/assets/images/icon_feed_jaundice.png'
 import iconFeedSleep from '@/assets/images/icon_feed_sleep.png'
+import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
 import { BabyInfo } from '@/components/baby-info'
 import { apiBabyList, apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
 import { type SummaryFeedRecord, type IHomeState } from '../types'
@@ -334,6 +335,27 @@ export const useRecords = () => {
                   用时{foodDurationMap[duration]?.name} 反馈:
                   {foodFeedbackMap[feedback]?.name}
                 </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    },
+    [EnumFeedType.DEGRESS]: {
+      path: '/pages/sub-home/degress/index',
+      render: (content: IFeedRecord['content']) => {
+        const { temperature } = content as IDegress
+        return (
+          <div class='home-records-item-wrapper'>
+            <div class='record-item-logo'>
+              <Image src={iconFeedDegress} class='item-logo-img'></Image>
+            </div>
+            <div>
+              <div class='records-item-title'>
+                <span class='item-title-duration'>体温</span>
+              </div>
+              <div class='records-item-content'>
+                <div class='mr-[5px]'> {temperature}℃</div>
               </div>
             </div>
           </div>

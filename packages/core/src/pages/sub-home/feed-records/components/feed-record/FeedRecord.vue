@@ -11,6 +11,7 @@ import iconFeedBreast from '@/assets/images/icon_feed_breast.png'
 import iconFeedFood from '@/assets/images/icon_feed_food.png'
 import iconFeedJaundice from '@/assets/images/icon_feed_jaundice.png'
 import iconFeedSleep from '@/assets/images/icon_feed_sleep.png'
+import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
 export default defineComponent({
   name: 'FeedRecord',
   props: {
@@ -198,6 +199,27 @@ export default defineComponent({
                     反馈:
                     {foodFeedbackMap[feedback]?.name}
                   </div>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      } /** 血糖 */,
+      [EnumFeedType.DEGRESS]: {
+        path: '/pages/sub-home/degress/index',
+        render: (content: IFeedRecord['content']) => {
+          const { temperature } = content as IDegress
+          return (
+            <div class='feed-record-item-wrapper'>
+              <div class='record-item-logo'>
+                <Image src={iconFeedDegress} class='item-logo-img'></Image>
+              </div>
+              <div>
+                <div class='records-item-title'>
+                  <span class='item-title-duration'>体温</span>
+                </div>
+                <div class='records-item-content'>
+                  <div class='mr-[5px]'> {temperature}℃</div>
                 </div>
               </div>
             </div>

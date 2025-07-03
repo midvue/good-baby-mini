@@ -85,9 +85,16 @@ declare global {
     feedback: string
   }
 
+  interface IDegress {
+    /** 喂养时间 */
+    feedTime: string
+    /** 温度 */
+    temperature: string
+  }
+
   /** 喂养记录 */
   interface IFeedRecord<
-    T = IMilkBottle | IBreastMilk | IDiaper | IHeightWeight | IJaundice | ISleep | IFood
+    T = IMilkBottle | IBreastMilk | IDiaper | IHeightWeight | IJaundice | ISleep | IFood | IDegress
   > {
     id: number
     /** 宝宝id */

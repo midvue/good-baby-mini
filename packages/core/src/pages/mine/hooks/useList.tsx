@@ -27,11 +27,23 @@ export const useList = () => {
   const acceptableRelations = ['100', '200']
   const familyList = ref<any[]>([])
   const appStore = useAppStore()
+  const existingRelations = ref<any[]>([])
+  const nonExistingRelations = ref<any[]>([])
 
   const getFamilyList = () => {
     apiPostRelation({
       id: getBabyInfo().familyId
-    }).then((res) => (familyList.value = res))
+    }).then((res) => {
+      familyList.value = res
+      const existingRelationCodes = res.map((item: { relation: any }) => item.relation)
+      existingRelations.value = parentsList.filter((item) =>
+        existingRelationCodes.includes(item.code)
+      )
+      nonExistingRelations.value = parentsList.filter(
+        (item) => !existingRelationCodes.includes(item.code)
+      )
+      relationRef.value = nonExistingRelations.value[0].code
+    })
   }
   useDidShow(() => {
     if (!getBabyInfo().familyId) return
@@ -104,27 +116,32 @@ export const useList = () => {
                   return (
                     <div class='mv-dialog-content'>
                       <div class='dialog-item'>
-                        {parentsList.map((item) => (
-                          <Tag
-                            class='ml-[5px]'
-                            size='large'
-                            round
-                            type='primary'
-                            disabled={familyList.value.some(
-                              (family) => family.relation === item.code
-                            )}
-                            plain={relationRef.value !== item.code}
-                            onClick={() => {
-                              if (
-                                !familyList.value.some((family) => family.relation === item.code)
-                              ) {
+                        <span>当前家人:</span>
+                        <div class='tag'>
+                          {existingRelations.value.map((item) => (
+                            <Tag class='ml-[5px] tag' size='large' type='primary' plain={false}>
+                              {item.name}
+                            </Tag>
+                          ))}
+                        </div>
+                      </div>
+                      <div class='dialog-item'>
+                        <span>可邀请家人:</span>
+                        <div class='tag'>
+                          {nonExistingRelations.value.map((item) => (
+                            <Tag
+                              class='ml-[5px]'
+                              size='large'
+                              type='primary'
+                              plain={relationRef.value !== item.code}
+                              onClick={() => {
                                 relationRef.value = item.code
-                              }
-                            }}
-                          >
-                            {item.name}
-                          </Tag>
-                        ))}
+                              }}
+                            >
+                              {item.name}
+                            </Tag>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )

@@ -28,11 +28,21 @@ export const useProfile = () => {
     },
     {
       icon: iconAchieve,
-      title: '成就'
+      title: '成就',
+      click: () => {
+        navigateTo({
+          path: '/pages/sub-home/report/index'
+        })
+      }
     },
     {
       icon: iconCredit,
-      title: '积分'
+      title: '积分',
+      click: () => {
+        navigateTo({
+          path: '/pages/sub-mine/credit/index'
+        })
+      }
     }
   ]
 

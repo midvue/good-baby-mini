@@ -122,7 +122,7 @@ export default defineComponent({
             }
           },
           {
-            label: '与宝宝关系',
+            label: '宝宝喊我',
             field: 'relation',
             show: () => ['100', '200'].includes(currState.form.relation),
             attrs: { required: true, border: true },

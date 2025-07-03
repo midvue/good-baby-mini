@@ -1,0 +1,42 @@
+// 已有样式
+.degress {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(180deg, #e8e5fa 0%, #ffffff 100%);
+  padding: 0 var(--mv-padding-w);
+
+  .degress-form {
+    width: 100%;
+
+    .form-item-card {
+      box-shadow: var(--mv-box-shadow);
+      border-radius: 8px;
+      margin: 12px var(--mv-padding-w 0);
+      padding: 15px;
+
+      &:last-child {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+      }
+    }
+  }
+  .center-input {
+    text-align: center;
+  }
+
+  .large-text {
+    font-size: 25px;
+  }
+
+  .append-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    font-size: 25px;
+  }
+}
