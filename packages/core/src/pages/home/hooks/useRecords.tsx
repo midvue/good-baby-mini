@@ -440,7 +440,7 @@ export const useRecords = () => {
           >
             <div class='home-records-scroll'>
               {!appStore.babyInfo.id && (
-                <Tag type='primary' round onClick={onAddBaby} size='large'>
+                <Tag class='home-records-tag' type='primary' round onClick={onAddBaby} size='large'>
                   请添加宝宝
                 </Tag>
               )}

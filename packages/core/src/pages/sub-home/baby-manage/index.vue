@@ -34,7 +34,7 @@ export default defineComponent({
 
     // 获取性别字典映射
     let genderMap = useDictMap('GENDER')
-
+    const familyRelationMap = useDictMap('FAMILY_RELATION')
     /**
      * 格式化宝宝出生时间，计算从出生到现在的时长
      * @param {BabyInfo} baby - 宝宝信息对象
@@ -135,6 +135,7 @@ export default defineComponent({
                       </Tag>
                     </div>
                     <div class='tags'>
+                      <span>{familyRelationMap[baby.relation].name}</span>
                       <Tag size='mini' type='success' plain round>
                         {appStore.familyId === baby.familyId ? '我创建' : '受邀人'}
                       </Tag>

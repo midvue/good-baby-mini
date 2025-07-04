@@ -100,7 +100,7 @@ export const useList = () => {
               }
               showDialog({
                 confirmOpenType: 'share',
-                title: `${babyInfo.nickname}${babyInfo.relation === '100' ? '爸爸' : '妈妈'}邀请喂养`,
+                title: `${babyInfo.nickname}${babyInfo.relation === '100' ? '妈妈' : '爸爸'}邀请喂养`,
                 confirmText: '邀请',
                 onConfirm: async () => {
                   if (!relationRef.value) {

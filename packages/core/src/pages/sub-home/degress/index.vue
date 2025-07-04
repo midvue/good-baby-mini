@@ -56,7 +56,7 @@ export default defineComponent({
                 type='digit'
                 v-model={state.form.content.temperature}
                 placeholder='请输入数值'
-                maxlength='3'
+                maxlength='4'
                 class='center-input large-text'
               ></Input>
             ),

@@ -164,8 +164,7 @@ export default defineComponent({
               </div>
               <div>
                 <div class='records-item-title'>
-                  睡眠:
-                  {durationFormatNoZero(duration, { unit: 's', format: 'm分钟s秒' })}
+                  睡眠: {durationFormatNoZero(duration, { unit: 's', format: 'H小时m分钟s秒' })}
                 </div>
                 <div class='records-item-content'>
                   <span>{sleepTypeMap[sleepType]?.name}</span>
