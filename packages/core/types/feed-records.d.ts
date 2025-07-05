@@ -65,6 +65,8 @@ declare global {
     quality: string
     /** 入睡方式 */
     sleepType: string
+    /** 睡眠质量 */
+    starRating: number
   }
 
   /** 辅食 */

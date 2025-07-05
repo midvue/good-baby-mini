@@ -144,6 +144,7 @@
     --mv-item-title-color: var(--mv-success-color);
     .records-item-content {
       display: flex;
+      align-items: center;
     }
     .item-title-duration {
       font-size: var(--mv-font-size-1);

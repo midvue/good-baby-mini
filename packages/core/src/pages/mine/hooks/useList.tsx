@@ -116,7 +116,7 @@ export const useList = () => {
                   return (
                     <div class='mv-dialog-content'>
                       <div class='dialog-item'>
-                        <span>当前家人:</span>
+                        <span>已加入:</span>
                         <div class='tag'>
                           {existingRelations.value.map((item) => (
                             <Tag class='ml-[5px] tag' size='large' type='primary' plain={false}>
@@ -126,7 +126,7 @@ export const useList = () => {
                         </div>
                       </div>
                       <div class='dialog-item'>
-                        <span>可邀请家人:</span>
+                        <span>可邀请:</span>
                         <div class='tag'>
                           {nonExistingRelations.value.map((item) => (
                             <Tag

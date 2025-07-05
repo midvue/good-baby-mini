@@ -12,6 +12,9 @@ import iconFeedFood from '@/assets/images/icon_feed_food.png'
 import iconFeedJaundice from '@/assets/images/icon_feed_jaundice.png'
 import iconFeedSleep from '@/assets/images/icon_feed_sleep.png'
 import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
+import { calculateBabyMonths, DegressBtn } from '@/components/degress-btn'
+import { getBabyInfo } from '@/utils'
+import { StarRating } from '@/components/starrating'
 export default defineComponent({
   name: 'FeedRecord',
   props: {
@@ -156,7 +159,7 @@ export default defineComponent({
       [EnumFeedType.SLEEP]: {
         path: '/pages/sub-home/sleep/index',
         render: (content: IFeedRecord['content']) => {
-          const { duration, sleepType, quality } = content as ISleep
+          const { duration, sleepType, quality, starRating } = content as ISleep
           return (
             <div class='feed-record-item-wrapper'>
               <div class='record-item-logo'>
@@ -168,7 +171,8 @@ export default defineComponent({
                 </div>
                 <div class='records-item-content'>
                   <span>{sleepTypeMap[sleepType]?.name}</span>
-                  <span> 质量: {sleepQualityMap[quality]?.name}</span>
+                  {quality && <span> 质量: {sleepQualityMap[quality]?.name}</span>}
+                  {starRating && <StarRating size='small' v-model={starRating} />}
                 </div>
               </div>
             </div>
@@ -218,7 +222,14 @@ export default defineComponent({
                   <span class='item-title-duration'>体温</span>
                 </div>
                 <div class='records-item-content'>
-                  <div class='mr-[5px]'> {temperature}℃</div>
+                  <div class='mr-[5px]'>
+                    <span class='mr-[10px]'>{temperature}℃</span>
+                    <DegressBtn
+                      key={temperature}
+                      age={calculateBabyMonths(getBabyInfo().birthDate)}
+                      temperature={Number(temperature)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

@@ -18,6 +18,9 @@ import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
 import { BabyInfo } from '@/components/baby-info'
 import { apiBabyList, apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
 import { type SummaryFeedRecord, type IHomeState } from '../types'
+import { calculateBabyMonths, DegressBtn } from '@/components/degress-btn'
+import { getBabyInfo } from '@/utils'
+import { StarRating } from '@/components/starrating'
 
 /**  喂养记录 */
 export const useRecords = () => {
@@ -293,7 +296,7 @@ export const useRecords = () => {
     [EnumFeedType.SLEEP]: {
       path: '/pages/sub-home/sleep/index',
       render: (content: IFeedRecord['content']) => {
-        const { duration, sleepType, quality } = content as ISleep
+        const { duration, sleepType, quality, starRating } = content as ISleep
         return (
           <div class='home-records-item-wrapper'>
             <div class='record-item-logo'>
@@ -304,8 +307,9 @@ export const useRecords = () => {
                 睡眠: {durationFormatNoZero(duration, { unit: 's', format: 'H小时m分钟s秒' })}
               </div>
               <div class='records-item-content'>
-                <span> {sleepTypeMap[sleepType]?.name}</span>
-                <span> 质量: {sleepQualityMap[quality]?.name}</span>
+                <span class='mr-[10px]'> {sleepTypeMap[sleepType]?.name}</span>
+                {quality && <span> 质量: {sleepQualityMap[quality]?.name}</span>}
+                {starRating && <StarRating size='small' v-model={starRating} />}
               </div>
             </div>
           </div>
@@ -355,7 +359,14 @@ export const useRecords = () => {
                 <span class='item-title-duration'>体温</span>
               </div>
               <div class='records-item-content'>
-                <div class='mr-[5px]'> {temperature}℃</div>
+                <div class='mr-[5px]'>
+                  <span class='mr-[10px]'>{temperature}℃</span>
+                  <DegressBtn
+                    key={temperature}
+                    age={calculateBabyMonths(getBabyInfo().birthDate)}
+                    temperature={Number(temperature)}
+                  />
+                </div>
               </div>
             </div>
           </div>

@@ -18,7 +18,7 @@ export default defineComponent({
     const appStore = useAppStore()
 
     const state = reactive({
-      tabActive: EnumFeedType.MILK_BOTTLE,
+      tabActive: -1,
       feedRecords: [] as (IFeedRecord | SummaryFeedRecord)[],
       pagination: {
         current: 1,
@@ -29,7 +29,14 @@ export default defineComponent({
       expended: false,
       clist: [] as ICalendarItem[]
     })
-    const feedTypeList = useDictList('FEED_TYPE')
+    let feedTypeList = useDictList('FEED_TYPE')
+    feedTypeList = [
+      {
+        code: '-1',
+        name: '全部'
+      },
+      ...feedTypeList
+    ]
     const milkTypeMap = useDictMap('MILK_TYPE')
 
     let dayMap = {} as Record<string, SummaryFeedRecord>
@@ -37,7 +44,7 @@ export default defineComponent({
     async function init() {
       dayMap = {}
       const res = await apiGetFeedRecordList({
-        feedType: state.tabActive,
+        ...(state.tabActive !== -1 && { feedType: state.tabActive }),
         startFeedTime: useDate(state.currentDate).format('YYYY-MM-DD 00:00:00'),
         endFeedTime: useDate(state.currentDate).format('YYYY-MM-DD 23:59:59'),
         babyId: appStore.babyInfo.id,

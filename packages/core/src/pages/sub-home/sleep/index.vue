@@ -17,6 +17,7 @@ import { useRoute, navigateBack, useDictList } from '@/use'
 import { EnumFeedType } from '@/dict'
 import { getBabyInfo } from '@/utils'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
+import { StarRating } from '@/components/starrating'
 
 export default defineComponent({
   name: 'Sleep',
@@ -31,8 +32,8 @@ export default defineComponent({
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
         duration: 0,
         endTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
-        quality: '10',
-        sleepType: '10'
+        sleepType: '10',
+        starRating: 3
       } as ISleep
     }
     const state = reactive({
@@ -43,7 +44,6 @@ export default defineComponent({
       timer: null as ReturnType<typeof setInterval> | null
     })
     const sleepTypeList = useDictList('SLEEP_TYPE')
-    const qualityList = useDictList('SLEEP_QUALITY')
     let timer: NodeJS.Timeout
 
     /** 点击计时 */
@@ -202,23 +202,12 @@ export default defineComponent({
           },
           {
             label: '睡眠质量',
-            field: 'quality',
+            field: 'starRating',
             attrs: {
               labelAlign: 'top',
               class: 'pb-[10px]'
             },
-            component: () => (
-              <div class='grid grid-cols-3 gap-10 size-full'>
-                {qualityList.map((item) => (
-                  <div
-                    class={{ 'tag-item': true, active: state.form.content.quality === item.code }}
-                    onClick={() => (state.form.content.quality = item.code)}
-                  >
-                    {item.name}
-                  </div>
-                ))}
-              </div>
-            )
+            component: () => <StarRating v-model={state.form.content.starRating} />
           }
         ]
       },
