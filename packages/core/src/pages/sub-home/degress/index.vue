@@ -38,7 +38,14 @@ export default defineComponent({
     const state = reactive<IDegressState>({
       form: { ...defaultDgress, ...query }
     })
+    const imageUrl =
+      'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/img_degress.png'
 
+    const handleImageClick = () => {
+      Taro.previewImage({
+        urls: [imageUrl]
+      })
+    }
     const formRef = ref<FormInstance>()
 
     const cells: IFormItem<IDegress>[] = [
@@ -103,11 +110,8 @@ export default defineComponent({
               labelAlign: 'top'
             },
             component: () => (
-              <div>
-                <Image
-                  mode='widthFix'
-                  src='https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/img_degress.png'
-                />
+              <div class='w-full flex flex-col items-center justify-center'>
+                <Image onClick={handleImageClick} mode='widthFix' src={imageUrl} />
                 <div class='text-[10px] mt-[6px]'>
                   数据仅供参考，若体温异常，建议带宝宝及时就诊，以医生诊断为准。
                 </div>
