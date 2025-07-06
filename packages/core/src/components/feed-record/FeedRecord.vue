@@ -15,7 +15,8 @@ import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
 import { calculateBabyMonths, DegressBtn } from '@/components/degress-btn'
 import { getBabyInfo } from '@/utils'
 import { StarRating } from '@/components/star-rating'
-import { SummaryFeedRecord } from './types'
+import { type SummaryFeedRecord } from './types'
+import { apiDeleteFeedRecord } from './api'
 export default defineComponent({
   name: 'FeedRecord',
   props: {
@@ -24,7 +25,8 @@ export default defineComponent({
       default: () => ({})
     }
   },
-  setup(props) {
+  emits: ['deleted'],
+  setup(props, { emit }) {
     const feedTypeList = useDictList('FEED_TYPE')
     const feedTypeMap = useDictMap('FEED_TYPE')
     const milkTypeMap = useDictMap('MILK_TYPE')
@@ -264,7 +266,7 @@ export default defineComponent({
         render: () => '确认删除 \n' + record.feedTimeStr + ' 的记录吗？',
         onConfirm: async () => {
           await apiDeleteFeedRecord(record.id)
-          getRecordList()
+          emit('deleted', record)
         }
       })
     }
@@ -275,7 +277,12 @@ export default defineComponent({
         const feedType = record.feedType
         const strategy = feedTypeStrategy[feedType]
         return (
-          <div class={['feed-record-item', 'record-item-' + feedType]}>
+          <div
+            class={['feed-record-item', 'record-item-' + feedType]}
+            //@ts-ignore
+            onLongpress={() => onDeleteRecord(record)}
+            onClick={() => onRecordsItemClick(record)}
+          >
             <div class='record-item-time'>{record.feedTimeStr}</div>
             {strategy?.render(record.content)}
           </div>
@@ -328,7 +335,7 @@ export default defineComponent({
       )
     }
 
-    return () => <div class='feed-record'>{renderContent()}</div>
+    return () => <> {renderContent()}</>
   }
 })
 </script>
