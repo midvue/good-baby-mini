@@ -43,10 +43,7 @@ const createCalendarItem = (date: Date, day: number, isCurrMonth: boolean): ICal
  * @param date 输入的日期
  * @returns 包含 ICalendarItem 对象的数组，代表完整月视图的日历数据
  */
-export const useCalendar = (
-  date: Date,
-  list: { date: string; count: number }[]
-): ICalendarItem[] => {
+export const useCalendar = (date: Date, list: ICalendarItem[]) => {
   const startOfMonth = getStartTime(date)
   const endOfMonth = getEndTime(date)
   const lastWeekDayOfStartMonth = useDate(startOfMonth).day() || 7

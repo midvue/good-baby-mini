@@ -114,12 +114,11 @@ export default defineComponent({
     init()
 
     const initDate = async (date: Date) => {
-      const res = await apiGetFeedRecordDays({
+      const list = await apiGetFeedRecordDays({
         startFeedTime: useDate(date).startOf('month').format('YYYY-MM-DD 00:00:00'),
         endFeedTime: useDate(date).endOf('month').format('YYYY-MM-DD 23:59:59')
       })
-      const list = res || []
-      state.clist = useCalendar(date, list)
+      state.clist = useCalendar(date, list || [])
     }
     initDate(state.currentDate)
     const handleDateChange = (date: Date) => {

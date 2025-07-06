@@ -1,5 +1,6 @@
 import http from '@mid-vue/http-client'
 import { type FeedRecordResp } from './types'
+import { ICalendarItem } from './components/calendar/type'
 
 /**
  * 获取喂养记录列表
@@ -22,5 +23,5 @@ export const apiGetFeedRecordDays = (data = {}) => {
     data: data,
     ignoreToast: [401]
   }
-  return http.post<FeedRecordResp>(option)
+  return http.post<ICalendarItem[]>(option)
 }
