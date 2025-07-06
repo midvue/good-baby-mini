@@ -2,10 +2,7 @@
 import iconLogo from '@/assets/images/icon_logo.png'
 import { Image, Navbar } from '@mid-vue/taro-h5-ui'
 import { defineComponent } from 'vue'
-import imgAvatarFly from './assets/img_avatar_fly.jpg'
-import imgAvatarGarbao from './assets/img_avatar_garbao.jpg'
-import imgAvatarPoetek from './assets/img_avatar_poetek.jpg'
-import imgAvatarSpig from './assets/img_avatar_spig.jpg'
+import { getFullImageUrl } from '@/utils'
 
 export default defineComponent({
   name: 'family-manage',
@@ -13,19 +10,19 @@ export default defineComponent({
     let teams = [
       {
         name: 'Spig',
-        avatar: imgAvatarSpig
+        avatar: getFullImageUrl('about/img_avatar_spig.jpg')
       },
       {
         name: 'Fly',
-        avatar: imgAvatarFly
+        avatar: getFullImageUrl('about/img_avatar_fly.jpg')
       },
       {
         name: 'Garbao',
-        avatar: imgAvatarGarbao
+        avatar: getFullImageUrl('about/img_avatar_garbao.jpg')
       },
       {
         name: 'Poetek',
-        avatar: imgAvatarPoetek
+        avatar: getFullImageUrl('about/img_avatar_poetek.jpg')
       }
     ]
 

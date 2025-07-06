@@ -15,7 +15,7 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useRoute } from '@/use'
-import { getBabyInfo } from '@/utils'
+import { getBabyInfo, getFullImageUrl } from '@/utils'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import { IDegressState } from './types'
 import { useDate } from '@mid-vue/shared'
@@ -38,8 +38,7 @@ export default defineComponent({
     const state = reactive<IDegressState>({
       form: { ...defaultDgress, ...query }
     })
-    const imageUrl =
-      'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/img_degress.png'
+    const imageUrl = getFullImageUrl('img_degress.png')
 
     const handleImageClick = () => {
       Taro.previewImage({

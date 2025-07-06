@@ -4,7 +4,7 @@ import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
-import { stringify } from 'postcss'
+import { getFullImageUrl } from '@/utils'
 
 export default defineComponent({
   name: 'Home',
@@ -48,8 +48,7 @@ export default defineComponent({
     return {
       title: '奶娃星球邀请您加入喂养', // 分享标题
       path: '/pages/home/index', // 分享路径
-      imageUrl:
-        'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/share.jpg' // 分享图片路径
+      imageUrl: getFullImageUrl('share.jpg')
     }
   }
 })

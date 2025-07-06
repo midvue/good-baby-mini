@@ -13,9 +13,8 @@ import {
 } from '@mid-vue/taro-h5-ui'
 
 import { navigateTo, useDictList } from '@/use'
-import { getBabyInfo, getUserInfo } from '@/utils'
+import { getBabyInfo, getFullImageUrl, getUserInfo } from '@/utils'
 import { iconAboutMe, iconBaby, iconInvite, iconWeChat } from '../assets'
-import imgWeChat from '../assets/img_we_chat.png'
 import { apiPostRelation } from '../api'
 import { useAppStore } from '@/stores'
 
@@ -190,7 +189,7 @@ export const useList = () => {
                       </div>
                       <Image
                         class='w-[160px] h-[160px] mt-[30px]'
-                        src={imgWeChat}
+                        src={getFullImageUrl('mine/img_we_chat.png')}
                         show-menu-by-longpress
                       ></Image>
                     </div>
@@ -213,15 +212,13 @@ export const useList = () => {
       return {
         title: `${userInfo.nickname || ''}邀请您加入一起喂养`,
         path: `pages/home/index?fid=${appStore.babyInfo.familyId}&relation=${relationRef.value}`,
-        imageUrl:
-          'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/share.jpg'
+        imageUrl: getFullImageUrl('share.jpg')
       }
     }
     return {
       title: '宝宝喂养，生肖，五行，家谱，点开查看！！',
       path: 'pages/home/index',
-      imageUrl:
-        'https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/share.jpg'
+      imageUrl: getFullImageUrl('share.jpg')
     }
   })
 

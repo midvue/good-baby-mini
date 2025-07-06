@@ -4,6 +4,7 @@ import Taro from '@tarojs/taro'
 import { Image } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateTo, useDictList, useDictMap } from '@/use'
+import { getFullImageUrl } from '@/utils'
 
 export default defineComponent({
   name: 'ToolsList',
@@ -41,7 +42,7 @@ export default defineComponent({
                 }}
                 onClick={() => onItemClick(tool)}
               >
-                <Image src={tool?.icon} class='tool-item-icon'></Image>
+                <Image src={getFullImageUrl(tool?.icon)} class='tool-item-icon'></Image>
                 <div class='tool-item-name'>{dict.name}</div>
               </div>
             )

@@ -4,6 +4,7 @@ import { Button, Image, Navbar } from '@mid-vue/taro-h5-ui'
 import { apiPointList, apiPointSummary, apiUpdatePoint } from './api'
 import { Point } from './types'
 import { EnumPointStatus, pointStatusStrategy } from './dict'
+import { getFullImageUrl } from '@/utils'
 
 export default defineComponent({
   name: 'Credit',
@@ -39,10 +40,7 @@ export default defineComponent({
         <div class='credit'>
           <Navbar position='fixed' clearfix={false} autoTheme></Navbar>
           <div class='credit-contain'>
-            <Image
-              src='https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/img_credit_bg.png'
-              class='credit-bg'
-            />
+            <Image src={getFullImageUrl('img_credit_bg.png')} class='credit-bg' />
             <div class='credit-content'>
               <div class='credit-content-left'>
                 <span class='credit-title'>我的积分</span>

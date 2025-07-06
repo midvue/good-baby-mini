@@ -1,4 +1,3 @@
-export { default as bgMineHeader } from './bg_mine_header.png'
 export { default as iconBaby } from './icon_baby.png'
 export { default as iconInvite } from './icon_invite.png'
 export { default as iconAged } from './icon_aged.png'

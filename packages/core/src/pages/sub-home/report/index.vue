@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 import { Image, Navbar } from '@mid-vue/taro-h5-ui'
 import itemIcon from '@/assets/images/img_baby_avatar.png'
+import { getFullImageUrl } from '@/utils'
 
 export default defineComponent({
   name: 'Report',
@@ -58,10 +59,7 @@ export default defineComponent({
         <div class='report'>
           <Navbar position='fixed' clearfix={false}></Navbar>
           <div class='baby-report'>
-            <Image
-              src='https://app-1359622524.cos.ap-guangzhou.myqcloud.com/good-baby-mini/image/img_report_bg.png'
-              class='baby-report-bg'
-            ></Image>
+            <Image src={getFullImageUrl('img_report_bg.png')} class='baby-report-bg'></Image>
             <div class='baby-report-title'>宝宝周报 </div>
             <div class='baby-report-date'>2023.3.5-3.15</div>
           </div>
