@@ -17,7 +17,7 @@ import { useRoute, navigateBack, useDictList } from '@/use'
 import { EnumFeedType } from '@/dict'
 import { getBabyInfo } from '@/utils'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
-import { StarRating } from '@/components/starrating'
+import { StarRating } from '@/components/star-rating'
 
 export default defineComponent({
   name: 'Sleep',

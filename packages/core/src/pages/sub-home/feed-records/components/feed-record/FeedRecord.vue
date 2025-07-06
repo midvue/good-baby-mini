@@ -14,7 +14,7 @@ import iconFeedSleep from '@/assets/images/icon_feed_sleep.png'
 import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
 import { calculateBabyMonths, DegressBtn } from '@/components/degress-btn'
 import { getBabyInfo } from '@/utils'
-import { StarRating } from '@/components/starrating'
+import { StarRating } from '@/components/star-rating'
 export default defineComponent({
   name: 'FeedRecord',
   props: {

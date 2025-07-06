@@ -20,7 +20,7 @@ import { apiBabyList, apiDeleteFeedRecord, apiGetFeedRecordList } from '../api'
 import { type SummaryFeedRecord, type IHomeState } from '../types'
 import { calculateBabyMonths, DegressBtn } from '@/components/degress-btn'
 import { getBabyInfo } from '@/utils'
-import { StarRating } from '@/components/starrating'
+import { StarRating } from '@/components/star-rating'
 
 /**  喂养记录 */
 export const useRecords = () => {
