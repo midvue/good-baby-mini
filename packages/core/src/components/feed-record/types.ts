@@ -1,4 +1,4 @@
-import { EnumFeedType } from '@/dict'
+import { type EnumFeedType } from '@/dict'
 
 type SummaryEnumFeedType = {
   [key in EnumFeedType]?: {

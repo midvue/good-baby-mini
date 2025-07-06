@@ -1,5 +1,5 @@
 import FeedRecord from './FeedRecord.vue'
-import { SummaryFeedRecord } from './types'
+import { type SummaryFeedRecord } from './types'
 
 export { FeedRecord }
 
