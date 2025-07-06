@@ -6,12 +6,12 @@ import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { useDictList, useDictMap } from '@/use'
+import { FeedRecord } from '@/components/feed-record'
 import { apiGetFeedRecordDays, apiGetFeedRecordList } from './api'
 import Calender from './components/calendar/Calendar.vue'
 import { useCalendar } from './components/calendar/hooks/useCalendar'
 import { type ICalendarItem } from './components/calendar/type'
 import type { SummaryFeedRecord } from './types'
-import { FeedRecord } from '@/components/feed-record'
 export default defineComponent({
   name: 'FeedRecords',
   setup() {
@@ -180,7 +180,7 @@ export default defineComponent({
           <ScrollView class='feed-records-wrapper' scroll-y scrollTop={0}>
             {!state.feedRecords.length && <Empty></Empty>}
             {state.feedRecords.map((record, index) => {
-              return <FeedRecord data={record} key={index}></FeedRecord>
+              return <FeedRecord data={record} key={index} onDeleted={init}></FeedRecord>
             })}
           </ScrollView>
         </div>

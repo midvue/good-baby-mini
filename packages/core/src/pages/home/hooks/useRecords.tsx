@@ -224,7 +224,13 @@ export const useRecords = () => {
               )}
               {state.feedRecords.map((record, index) => {
                 if (!feedTypeList) return null
-                return <FeedRecord data={record} key={index + record.feedTime}></FeedRecord>
+                return (
+                  <FeedRecord
+                    data={record}
+                    key={index + record.feedTime}
+                    onDeleted={getRecordList}
+                  ></FeedRecord>
+                )
               })}
             </div>
           </ScrollView>
