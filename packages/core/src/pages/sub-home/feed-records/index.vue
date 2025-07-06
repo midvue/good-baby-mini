@@ -7,11 +7,11 @@ import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { useDictList, useDictMap } from '@/use'
 import { apiGetFeedRecordDays, apiGetFeedRecordList } from './api'
-import { FeedRecord } from './components/feed-record'
 import Calender from './components/calendar/Calendar.vue'
 import { useCalendar } from './components/calendar/hooks/useCalendar'
 import { type ICalendarItem } from './components/calendar/type'
 import type { SummaryFeedRecord } from './types'
+import { FeedRecord } from '@/components/feed-record'
 export default defineComponent({
   name: 'FeedRecords',
   setup() {

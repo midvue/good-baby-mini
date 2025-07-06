@@ -1,9 +1,9 @@
 <script lang="tsx">
 import { defineComponent, type PropType } from 'vue'
-import { Image } from '@mid-vue/taro-h5-ui'
+import { Image, showDialog, Tag } from '@mid-vue/taro-h5-ui'
 import { durationFormatNoZero } from '@mid-vue/shared'
 import { EnumFeedType } from '@/dict'
-import { useDictList, useDictMap } from '@/use'
+import { navigateTo, useDictList, useDictMap } from '@/use'
 import IconFeedDiaper from '@/assets/images/icon_feed_diaper.png'
 import iconFeedHeight from '@/assets/images/icon_feed_height.png'
 import iconFeedMilk from '@/assets/images/icon_feed_milk.png'
@@ -15,11 +15,12 @@ import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
 import { calculateBabyMonths, DegressBtn } from '@/components/degress-btn'
 import { getBabyInfo } from '@/utils'
 import { StarRating } from '@/components/star-rating'
+import { SummaryFeedRecord } from './types'
 export default defineComponent({
   name: 'FeedRecord',
   props: {
     data: {
-      type: Object as PropType<IFeedRecord>,
+      type: Object as PropType<IFeedRecord | SummaryFeedRecord>,
       default: () => ({})
     }
   },
@@ -49,8 +50,8 @@ export default defineComponent({
                 <Image src={iconFeedMilk} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>{milkTypeMap[type]?.name}</div>
-                <div class='records-item-content'>
+                <div class='record-item-title'>{milkTypeMap[type]?.name}</div>
+                <div class='record-item-content'>
                   总量:<span class='content-volume'> {volume}</span> ml
                 </div>
               </div>
@@ -69,14 +70,14 @@ export default defineComponent({
                 <Image src={iconFeedBreast} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>
+                <div class='record-item-title'>
                   母乳亲喂
                   <span class='item-title-duration'>
                     (总时长:
                     {durationFormatNoZero(duration, { unit: 's', format: 'm分钟s秒' })})
                   </span>
                 </div>
-                <div class='records-item-content'>
+                <div class='record-item-content'>
                   <div v-show={leftDuration} class='mr-[5px]'>
                     左侧:
                     <span>
@@ -106,8 +107,8 @@ export default defineComponent({
                 <Image src={IconFeedDiaper} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>{diaperTypeMap[type]?.name}</div>
-                <div class='records-item-content content-diaper'>
+                <div class='record-item-title'>{diaperTypeMap[type]?.name}</div>
+                <div class='record-item-content content-diaper'>
                   {poopTypeMap[poopType]?.name}{' '}
                   <span
                     class='diaper-color'
@@ -129,8 +130,8 @@ export default defineComponent({
                 <Image src={iconFeedHeight} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>身高: {height} cm</div>
-                <div class='records-item-content'>体重: {weight} kg</div>
+                <div class='record-item-title'>身高: {height} cm</div>
+                <div class='record-item-content'>体重: {weight} kg</div>
               </div>
             </div>
           )
@@ -147,7 +148,7 @@ export default defineComponent({
                 <Image src={iconFeedJaundice} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>
+                <div class='record-item-title'>
                   黄疸: {value} {unit}
                 </div>
               </div>
@@ -166,10 +167,10 @@ export default defineComponent({
                 <Image src={iconFeedSleep} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>
+                <div class='record-item-title'>
                   睡眠: {durationFormatNoZero(duration, { unit: 's', format: 'H小时m分钟s秒' })}
                 </div>
-                <div class='records-item-content'>
+                <div class='record-item-content'>
                   <span>{sleepTypeMap[sleepType]?.name}</span>
                   {quality && <span> 质量: {sleepQualityMap[quality]?.name}</span>}
                   {starRating && <StarRating size='small' v-model={starRating} />}
@@ -190,13 +191,13 @@ export default defineComponent({
                 <Image src={iconFeedFood} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>
+                <div class='record-item-title'>
                   <span class='item-title-duration'>
                     {foodTypeMap[type]?.name}
                     {foodAmount}({foodAmountUnitMap[foodAmountUnit]?.name})
                   </span>
                 </div>
-                <div class='records-item-content'>
+                <div class='record-item-content'>
                   <div class='mr-[5px]'>{foodDurationMap[duration]?.name}</div>
                   <div>
                     反馈:
@@ -218,10 +219,10 @@ export default defineComponent({
                 <Image src={iconFeedDegress} class='item-logo-img'></Image>
               </div>
               <div>
-                <div class='records-item-title'>
+                <div class='record-item-title'>
                   <span class='item-title-duration'>体温</span>
                 </div>
-                <div class='records-item-content'>
+                <div class='record-item-content'>
                   <div class='mr-[5px]'>
                     <span class='mr-[10px]'>{temperature}℃</span>
                     <DegressBtn
@@ -235,8 +236,38 @@ export default defineComponent({
             </div>
           )
         }
+      },
+      [EnumFeedType.SUPPLEMENT]: {
+        path: '/pages/sub-home/supplement/index',
+        render: () => null
+      },
+      [EnumFeedType.VACCINE]: {
+        path: '/pages/sub-home/supplement/index',
+        render: () => null
+      },
+      [EnumFeedType.MEDICINE]: {
+        path: '/pages/sub-home/supplement/index',
+        render: () => null
       }
     } as const
+
+    const onRecordsItemClick = (record: IFeedRecord) => {
+      const strategy = feedTypeStrategy[record.feedType]
+      navigateTo({
+        path: strategy.path,
+        query: record
+      })
+    }
+    const onDeleteRecord = (record: IFeedRecord) => {
+      showDialog({
+        title: '删除记录',
+        render: () => '确认删除 \n' + record.feedTimeStr + ' 的记录吗？',
+        onConfirm: async () => {
+          await apiDeleteFeedRecord(record.id)
+          getRecordList()
+        }
+      })
+    }
 
     const renderContent = () => {
       const record = props.data
@@ -244,15 +275,15 @@ export default defineComponent({
         const feedType = record.feedType
         const strategy = feedTypeStrategy[feedType]
         return (
-          <div class={['feed-record-item', 'records-item-' + feedType]}>
-            <div class='records-item-time'>{record.feedTimeStr}</div>
+          <div class={['feed-record-item', 'record-item-' + feedType]}>
+            <div class='record-item-time'>{record.feedTimeStr}</div>
             {strategy?.render(record.content)}
           </div>
         )
       }
       return (
         <div class='feed-record-summary'>
-          <span class='records-summary-time'>{record.feedTimeStr}</span>
+          <span class='record-summary-time'>{record.feedTimeStr}</span>
           <div class='feed-record-summary-wrapper '>
             {feedTypeList.map((dict, index) => {
               const code = dict.code as `${EnumFeedType}`
@@ -267,6 +298,27 @@ export default defineComponent({
                       <span class='ml-[5px]'>({summary.content.label}: </span>
                       <span class='content-number'>{summary.content.volume}</span> ml)
                     </>
+                  )}
+                  {[
+                    EnumFeedType.MILK_BOTTLE,
+                    EnumFeedType.BREAST_FEED_DIRECT,
+                    EnumFeedType.HEIGHT_WEIGHT,
+                    EnumFeedType.DIAPER
+                  ].includes(summary.label) && (
+                    <Tag
+                      size='small'
+                      class='ml-[5px]'
+                      onClick={() => {
+                        navigateTo({
+                          path: '/pages/sub-summary/chart/index',
+                          query: {
+                            feedType: code
+                          }
+                        })
+                      }}
+                    >
+                      分析
+                    </Tag>
                   )}
                 </div>
               )

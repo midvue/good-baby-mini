@@ -57,7 +57,7 @@
     flex: none;
     position: relative;
 
-    .records-item-time {
+    .record-item-time {
       color: var(--mv-title-color3);
       font-size: var(--mv-font-size-1);
       margin-bottom: 8px;
@@ -99,12 +99,12 @@
           max-height: 32px;
         }
       }
-      .records-item-title {
+      .record-item-title {
         font-size: var(--mv-font-size-2);
         color: var(--mv-item-title-color);
         font-weight: bold;
       }
-      .records-item-content {
+      .record-item-content {
         color: var(--mv-title-color3);
         font-size: var(--mv-font-size-1);
         margin-top: 6px;
@@ -127,19 +127,19 @@
       position: absolute;
       left: 0;
       top: -22px;
-      bottom: 22px;
+      bottom: 0px;
       width: 1px;
       background-color: #e8e8e8;
     }
   }
 
-  .records-item-10 {
+  .record-item-10 {
     .content-volume {
       font-family: DIN;
       font-size: 14px;
     }
   }
-  .records-item-20 {
+  .record-item-20 {
     --mv-item-time-color: var(--mv-success-color);
     --mv-item-title-color: var(--mv-success-color);
     .records-item-content {
@@ -152,15 +152,15 @@
       margin-left: 2px;
     }
   }
-  .records-item-30,
-  .records-item-50 {
+  .record-item-30,
+  .record-item-50 {
     --mv-item-time-color: #ffda8b;
     --mv-item-title-color: #ffc118;
     --mv-item-logo-bg: #fff3f3;
   }
-  .records-item-40,
-  .records-item-60,
-  .records-item-80 {
+  .record-item-40,
+  .record-item-60,
+  .record-item-80 {
     --mv-item-time-color: #c4caff;
     --mv-item-title-color: #9492fc;
 

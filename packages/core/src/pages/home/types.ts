@@ -1,4 +1,4 @@
-import { EnumFeedType } from '@/dict'
+import { type SummaryFeedRecord } from '@/components/feed-record'
 
 export interface FeedRecordResp {
   count: number
@@ -13,17 +13,4 @@ export interface IHomeState {
     size: number
     total: number
   }
-}
-
-type SummaryEnumFeedType = {
-  [key in EnumFeedType]?: {
-    content: { label: string | number; volume: number }
-    count: number
-    label: EnumFeedType
-  }
-}
-
-export interface SummaryFeedRecord extends SummaryEnumFeedType {
-  feedTime: string
-  feedTimeStr: string
 }
