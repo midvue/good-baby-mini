@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, onUnmounted, type PropType, reactive, ref, watch } from 'vue'
 import Taro from '@tarojs/taro'
-import { dateFormat, durationFormat, durationFormatNoZero, useNumber } from '@mid-vue/shared'
+import { dateFormat, durationFormat, durationFormatNoZero } from '@mid-vue/shared'
 import {
   Button,
   DateTimePicker,
@@ -11,12 +11,11 @@ import {
   type FormInstance,
   type IFormItem,
   Image,
-  Input,
   Textarea
 } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateBack } from '@/use'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { getBabyInfo } from '@/utils'
 import { TimeInput } from '../time-input'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 import imgMilkEnd from './assets/img_milk_end.png'
@@ -214,7 +213,6 @@ export default defineComponent({
       const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }

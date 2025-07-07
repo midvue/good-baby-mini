@@ -98,6 +98,7 @@ declare global {
   interface IFeedRecord<
     T = IMilkBottle | IBreastMilk | IDiaper | IHeightWeight | IJaundice | ISleep | IFood | IDegress
   > {
+    type: import('/Users/fly/ppy/good-baby/good-baby-mini/packages/core/src/pages/sub-home/diapering/types').EnumDiaperType
     id: number
     /** 宝宝id */
     babyId: number

@@ -12,9 +12,10 @@ import {
   Tag
 } from '@mid-vue/taro-h5-ui'
 
-import { navigateTo, useDictList } from '@/use'
+import { navigateTo, reLaunch, useDictList } from '@/use'
 import { getBabyInfo, getUserInfo } from '@/utils'
 import { useAppStore } from '@/stores'
+import { BabyInfo } from '@/components/baby-info'
 import { iconAboutMe, iconBaby, iconInvite, iconWeChat } from '../assets'
 import { apiPostRelation } from '../api'
 
@@ -57,6 +58,30 @@ export const useList = () => {
       </div>
     )
   }
+  //如果没有拿到宝宝id先添加
+  const hasBaby = () => {
+    if (!getBabyInfo().id) {
+      showPopup({
+        round: true,
+        height: '60%',
+        title: '添加宝宝',
+        render(scoped) {
+          return (
+            <BabyInfo
+              onClose={() => {
+                scoped.close()
+                reLaunch({
+                  path: '/pages/home/index'
+                })
+              }}
+            ></BabyInfo>
+          )
+        }
+      })
+      return false
+    }
+    return true
+  }
 
   const cells: IFormItem[] = [
     {
@@ -70,6 +95,7 @@ export const useList = () => {
             border: true,
             clickable: true,
             onClick() {
+              if (!hasBaby()) return
               navigateTo({
                 path: '/pages/sub-home/baby-manage/index'
               })
@@ -82,14 +108,7 @@ export const useList = () => {
             border: true,
             onClick() {
               const babyInfo = getBabyInfo()
-              if (!babyInfo.id) {
-                Taro.showToast({
-                  title: '请先添加宝宝',
-                  icon: 'none',
-                  duration: 2000
-                })
-                return
-              }
+              if (!hasBaby()) return
               if (!acceptableRelations.includes(babyInfo.relation)) {
                 Taro.showToast({
                   title: `只有${babyInfo.nickname}的爸爸妈妈才能邀请家人哦`,

@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref } from 'vue'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
@@ -15,8 +15,8 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useRoute } from '@/use'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
-import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
+import { getBabyInfo } from '@/utils'
+import { apiAddFeedRecord, apiGetLatestFeedRecords, apiUpdateFeedRecord } from './api'
 import { type IHeightWeightState } from './types'
 export default defineComponent({
   name: 'HeightWeight',
@@ -42,6 +42,20 @@ export default defineComponent({
     })
 
     const formRef = ref<FormInstance>()
+
+    useDidShow(() => {
+      if (query.id) return
+      apiGetLatestFeedRecords({
+        babyId: getBabyInfo().id,
+        feedTypes: [EnumFeedType.HEIGHT_WEIGHT]
+      }).then((list) => {
+        if (!list[0]) return
+        state.form.content = {
+          ...list[0]?.content,
+          feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+        }
+      })
+    })
 
     const cells: IFormItem<IHeightWeight>[] = [
       {
@@ -138,7 +152,6 @@ export default defineComponent({
       const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }

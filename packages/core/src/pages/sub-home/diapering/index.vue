@@ -1,7 +1,7 @@
 <script lang="tsx">
-import { EnumFeedType } from '@/dict'
-import { navigateBack, useDictList, useRoute } from '@/use'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
+import { defineComponent, reactive, ref } from 'vue'
+import { ScrollView } from '@tarojs/components'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
@@ -9,36 +9,50 @@ import {
   FooterBar,
   Form,
   Icon,
-  IFormItem,
+  type IFormItem,
   Navbar,
   Textarea,
   type FormInstance
 } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
-import { ScrollView } from '@tarojs/components'
-import Taro from '@tarojs/taro'
-import { defineComponent, ref } from 'vue'
-import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
-import { EnumDiaperType, type IFeedMilkState } from './types'
+import { EnumFeedType } from '@/dict'
+import { navigateBack, useDictList, useRoute } from '@/use'
+import { getBabyInfo } from '@/utils'
+import { apiAddFeedRecord, apiGetLatestFeedRecords, apiUpdateFeedRecord } from './api'
+import { EnumDiaperType, type IDiaperState } from './types'
 
 export default defineComponent({
-  name: 'feed-milk',
+  name: 'FeedMilk',
   setup() {
     const { query } = useRoute<IFeedRecord<IDiaper>>()
-    const [state] = defineCtxState<IFeedMilkState>({
-      id: query.id,
-      babyId: query.babyId || getBabyInfo().id,
+    const babyInfo = getBabyInfo()
+
+    const defaultDiaper = {
       feedType: EnumFeedType.DIAPER,
-      remark: query.remark,
-      form: {
-        ...{
-          feedTime: dateFormat(Date.now(), `YYYY-MM-DD HH:mm`),
-          type: '10',
-          poopType: '10',
-          poopColor: '10'
-        },
-        ...query.content
-      }
+      remark: '',
+      babyId: babyInfo.id,
+      content: {
+        feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
+        type: '10',
+        poopType: '10',
+        poopColor: '10'
+      } as IDiaper
+    }
+    const state = reactive<IDiaperState>({
+      form: { ...defaultDiaper, ...query }
+    })
+
+    useDidShow(() => {
+      if (query.id) return
+      apiGetLatestFeedRecords({
+        babyId: getBabyInfo().id,
+        feedTypes: [EnumFeedType.DIAPER]
+      }).then((list) => {
+        if (!list[0]) return
+        state.form.content = {
+          ...list[0]?.content,
+          feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+        }
+      })
     })
 
     const formRef = ref<FormInstance>()
@@ -46,7 +60,7 @@ export default defineComponent({
     const poopTypeList = useDictList('POOP_TYPE')
     const poopColorList = useDictList('POOP_COLOR')
     const diaperTypeList = useDictList('DIAPER_TYPE')
-    const cells: IFormItem<IFeedMilkState['form']>[] = [
+    const cells: IFormItem<IDiaper>[] = [
       {
         attrs: {
           class: 'form-item-card'
@@ -66,11 +80,16 @@ export default defineComponent({
                 <div class='grid grid-cols-4 gap-10 size-full'>
                   {diaperTypeList.map((item) => (
                     <div
-                      class={{ 'diaper-type-item': true, active: state.form.type === item.code }}
-                      onClick={() => (state.form.type = item.code)}
+                      class={{
+                        'diaper-type-item': true,
+                        active: state.form.content.type === item.code
+                      }}
+                      onClick={() => (state.form.content.type = item.code)}
                     >
                       <div class={'diaper-type-image ' + item.ext}>
-                        {state.form.type === item.code && <Icon name='mv-icon-checked'></Icon>}
+                        {state.form.content.type === item.code && (
+                          <Icon name='mv-icon-checked'></Icon>
+                        )}
                       </div>
                       {item.name}
                     </div>
@@ -91,8 +110,8 @@ export default defineComponent({
               <div class='grid grid-cols-3 gap-10 size-full'>
                 {poopTypeList.map((item) => (
                   <div
-                    class={{ 'tag-item': true, active: state.form.poopType === item.code }}
-                    onClick={() => (state.form.poopType = item.code)}
+                    class={{ 'tag-item': true, active: state.form.content.poopType === item.code }}
+                    onClick={() => (state.form.content.poopType = item.code)}
                   >
                     {item.name}
                   </div>
@@ -116,9 +135,9 @@ export default defineComponent({
                     <div
                       class='color-item'
                       style={{ background: item.ext }}
-                      onClick={() => (state.form.poopColor = item.code)}
+                      onClick={() => (state.form.content.poopColor = item.code)}
                     >
-                      {state.form.poopColor === item.code ? (
+                      {state.form.content.poopColor === item.code ? (
                         <Icon name='mv-icon-checked'></Icon>
                       ) : (
                         <></>
@@ -134,7 +153,7 @@ export default defineComponent({
             label: '更换时间',
             field: 'feedTime',
             attrs: { required: true },
-            component: () => <DateTimePicker v-model={state.form.feedTime}></DateTimePicker>
+            component: () => <DateTimePicker v-model={state.form.content.feedTime}></DateTimePicker>
           }
         ]
       },
@@ -150,29 +169,16 @@ export default defineComponent({
             attrs: {
               labelAlign: 'top'
             },
-            component: () => <Textarea v-model={state.remark} placeholder='请输入'></Textarea>
+            component: () => <Textarea v-model={state.form.remark} placeholder='请输入'></Textarea>
           }
         ]
       }
     ]
     const onSubmit = async () => {
-      let content = { ...state.form }
-      if (state.form.type === EnumDiaperType.PEE) {
-        content.poopType = ''
-        content.poopColor = ''
-      }
-      let apiFunc = state.id ? apiUpdateFeedRecord : apiAddFeedRecord
-      let record = {
-        id: state.id,
-        babyId: state.babyId,
-        feedType: state.feedType,
-        remark: state.remark,
-        feedTime: content.feedTime,
-        content: state.form
-      }
+      const apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
+      const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }

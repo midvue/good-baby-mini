@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref, watch } from 'vue'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { dateDiff, dateFormat, durationFormatNoZero, EnumYesNoPlus } from '@mid-vue/shared'
 import {
   Button,
@@ -15,9 +15,9 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { useRoute, navigateBack, useDictList } from '@/use'
 import { EnumFeedType } from '@/dict'
-import { getBabyInfo, getStorage, removeStorage, setStorage } from '@/utils'
+import { clearSleepStartTime, getBabyInfo, getSleepStartTime, setSleepStartTime } from '@/utils'
 import { StarRating } from '@/components/star-rating'
-import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
+import { apiAddFeedRecord, apiGetLatestFeedRecords, apiUpdateFeedRecord } from './api'
 
 export default defineComponent({
   name: 'Sleep',
@@ -29,7 +29,7 @@ export default defineComponent({
       remark: '',
       babyId: babyInfo.id,
       content: {
-        feedTime: getStorage('START_SLEEP')?.feedTime || dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
+        feedTime: getSleepStartTime()?.feedTime || dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
         duration: 0,
         endTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
         sleepType: '10',
@@ -37,7 +37,7 @@ export default defineComponent({
       } as ISleep
     }
     const state = reactive({
-      isManual: !!query.id || getStorage('START_SLEEP'), //是否手动录入
+      isManual: !!query.id || getSleepStartTime()?.feedTime || false, //是否手动录入
       form: {
         ...defaultSleep,
         ...query
@@ -48,8 +48,8 @@ export default defineComponent({
 
     /** 点击计时 */
     const onStartClick = () => {
-      setStorage('START_SLEEP', {
-        feedTime: defaultSleep.content.feedTime
+      setSleepStartTime({
+        feedTime: state.form.content.feedTime
       })
       Taro.showToast({ title: '保存成功' })
       setTimeout(() => {
@@ -77,7 +77,7 @@ export default defineComponent({
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
       Taro.showToast({ title: '保存成功' })
-      !query.id && removeStorage('START_SLEEP') // 手动添加成功时，移除 START_SLEEP
+      !query.id && clearSleepStartTime() // 手动添加成功时，移除 SLEEP_START_TIME
       navigateBack()
     }
     watch(
@@ -107,6 +107,22 @@ export default defineComponent({
         }
       }
     }
+
+    useDidShow(() => {
+      if (query.id) return
+      apiGetLatestFeedRecords({
+        babyId: getBabyInfo().id,
+        feedTypes: [EnumFeedType.SLEEP]
+      }).then((list) => {
+        if (!list[0]) return
+        state.form.content = {
+          ...list[0]?.content,
+          feedTime: getSleepStartTime()?.feedTime || dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
+          endTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+        }
+      })
+    })
+
     const cells: IFormItem<ISleep>[] = [
       {
         attrs: {

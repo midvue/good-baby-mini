@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref } from 'vue'
-import Taro from '@tarojs/taro'
-import { useDate } from '@mid-vue/shared'
+import Taro, { useDidShow } from '@tarojs/taro'
+import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
   DateTimePicker,
@@ -17,7 +17,7 @@ import {
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
-import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
+import { apiAddFeedRecord, apiGetLatestFeedRecords, apiUpdateFeedRecord } from './api'
 import { type IDegressState } from './types'
 export default defineComponent({
   name: 'Degress',
@@ -31,7 +31,7 @@ export default defineComponent({
       babyId: babyInfo.id,
       content: {
         temperature: '',
-        feedTime: useDate().format('YYYY-MM-DD HH:mm')
+        feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
       } as IDegress
     }
 
@@ -40,6 +40,20 @@ export default defineComponent({
     })
 
     const formRef = ref<FormInstance>()
+
+    useDidShow(() => {
+      if (query.id) return
+      apiGetLatestFeedRecords({
+        babyId: getBabyInfo().id,
+        feedTypes: [EnumFeedType.DEGRESS]
+      }).then((list) => {
+        if (!list[0]) return
+        state.form.content = {
+          ...list[0]?.content,
+          feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+        }
+      })
+    })
 
     const cells: IFormItem<IDegress>[] = [
       {

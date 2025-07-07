@@ -21,3 +21,15 @@ export const apiUpdateFeedRecord = (data: Partial<IFeedRecord>) => {
   }
   return http.put(option)
 }
+
+/**
+ * 获取最后一条喂养记录
+ */
+export const apiGetLatestFeedRecords = (data = {}) => {
+  const option = {
+    url: '/baby/feedRecord/latestFeedRecords',
+    data: data,
+    ignoreToast: [401]
+  }
+  return http.post<IFeedRecord<IHeightWeight>[]>(option)
+}

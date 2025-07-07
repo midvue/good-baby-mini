@@ -1,26 +1,26 @@
 <script lang="tsx">
+import { defineComponent, reactive } from 'vue'
+import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@mid-vue/shared'
+import { Button, FooterBar, Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
-import { BabyInfo, IBaby } from '@/components/baby-info'
+import { BabyInfo, type IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
 import { navigateBack, useDictMap, useRoute } from '@/use'
 import { setBabyInfo } from '@/utils'
-import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@mid-vue/shared'
-import { Button, FooterBar, Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
-import { defineComponent, reactive } from 'vue'
 import { apiBabyList } from './api'
 
 export default defineComponent({
-  name: 'baby-manage',
+  name: 'BabyManage',
   setup() {
     // 获取路由参数，判断是否是切换操作
-    let query = useRoute<{ isChange: EnumYesNoPlus }>().query
+    const query = useRoute<{ isChange: EnumYesNoPlus }>().query
     // 定义响应式状态，存储宝宝列表
-    let currState = reactive({
+    const currState = reactive({
       list: [] as BabyInfo[]
     })
     // 获取应用状态管理实例
-    let appStore = useAppStore()
+    const appStore = useAppStore()
 
     /**
      * 获取宝宝列表数据
@@ -33,24 +33,24 @@ export default defineComponent({
     getList()
 
     // 获取性别字典映射
-    let genderMap = useDictMap('GENDER')
+    const genderMap = useDictMap('GENDER')
     const familyRelationMap = useDictMap('FAMILY_RELATION')
     /**
      * 格式化宝宝出生时间，计算从出生到现在的时长
      * @param {BabyInfo} baby - 宝宝信息对象
      * @returns {string} - 格式化后的时长字符串
      */
-    let formatBirthTime = (baby: BabyInfo) => {
-      let now = useDate()
-      let targetDate = useDate(baby.birthDate)
-      let diff = now.diff(targetDate.format('YYYY-MM-DD ' + baby.birthTime), 'millisecond')
+    const formatBirthTime = (baby: BabyInfo) => {
+      const now = useDate()
+      const targetDate = useDate(baby.birthDate)
+      const diff = now.diff(targetDate.format('YYYY-MM-DD ' + baby.birthTime), 'millisecond')
       return `${durationFormatNoZero(diff, { format: baby.birthTime ? 'D天H小时' : '第D天' })}`
     }
 
     /**
      * 点击宝宝项时触发的函数，弹出添加或修改宝宝信息的弹窗
      */
-    let onBabyClick = (baby?: IBaby) => {
+    const onBabyClick = (baby?: IBaby) => {
       let relation = ''
       if (!baby) {
         const matchedItem = currState.list.find((item) => item.familyId === appStore.familyId)
@@ -80,7 +80,7 @@ export default defineComponent({
      * 切换宝宝喂养时触发的函数，弹出确认对话框
      * @param {IBaby} baby - 要切换喂养的宝宝信息对象
      */
-    let onBabyChange = (baby: IBaby) => {
+    const onBabyChange = (baby: IBaby) => {
       showDialog({
         title: '切换宝宝喂养',
         render: () => (

@@ -1,25 +1,24 @@
 <script lang="tsx">
-import { navigateBack, useDictList } from '@/use'
+import { defineComponent, type PropType, reactive, ref } from 'vue'
+import Taro, { useDidShow } from '@tarojs/taro'
 import {
   Button,
   DateTimePicker,
   FooterBar,
   Form,
-  FormInstance,
-  IFormItem,
+  type FormInstance,
+  type IFormItem,
   Image,
-  Picker,
   PickerView,
   Tag,
   Textarea
 } from '@mid-vue/taro-h5-ui'
-import Taro from '@tarojs/taro'
-import { defineComponent, PropType, reactive, ref } from 'vue'
-import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
-import bgMilkVolume from './assets/bg_milk_volume.png'
-import { FEED_RECORD, getBabyInfo, setStorage } from '@/utils'
-import { EnumFeedType } from '@/dict'
 import { dateFormat } from '@mid-vue/shared'
+import { navigateBack, useDictList } from '@/use'
+import { getBabyInfo } from '@/utils'
+import { EnumFeedType } from '@/dict'
+import { apiAddFeedRecord, apiGetLatestFeedRecords, apiUpdateFeedRecord } from './api'
+import bgMilkVolume from './assets/bg_milk_volume.png'
 
 export default defineComponent({
   name: 'MilkBottleFeed',
@@ -32,13 +31,13 @@ export default defineComponent({
   setup(props) {
     /** 奶瓶喂养 */
 
-    let babyInfo = getBabyInfo()
-    let defaultMilk = {
+    const babyInfo = getBabyInfo()
+    const defaultMilk = {
       feedType: EnumFeedType.MILK_BOTTLE,
       remark: '',
       babyId: babyInfo.id,
       content: {
-        type: 10,
+        type: '10',
         volume: 90,
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
       } as IMilkBottle
@@ -64,6 +63,20 @@ export default defineComponent({
       return volumeList
     }
     const volumeList = initVolumeList()
+
+    useDidShow(() => {
+      if (!props.data?.id) return
+      apiGetLatestFeedRecords({
+        babyId: getBabyInfo().id,
+        feedTypes: [EnumFeedType.MILK_BOTTLE]
+      }).then((list) => {
+        if (!list[0]) return
+        state.form.content = {
+          ...list[0]?.content,
+          feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+        }
+      })
+    })
 
     const cells: IFormItem<IMilkBottle>[] = [
       {
@@ -99,7 +112,21 @@ export default defineComponent({
             label: '喂养类型',
             field: 'type',
             attrs: { required: true },
-            component: () => <Picker v-model={state.form.content.type} range={milkList}></Picker>
+            component: () => (
+              <div>
+                {milkList.map((item) => (
+                  <Tag
+                    class='mr-[8px]'
+                    size='medium'
+                    type='primary'
+                    plain={state.form.content.type !== item.code}
+                    onClick={() => (state.form.content.type = item.code)}
+                  >
+                    {item.name}
+                  </Tag>
+                ))}
+              </div>
+            )
           }
         ]
       },
@@ -127,11 +154,10 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
-      let apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
-      let record = { ...state.form, feedTime: state.form.content.feedTime }
+      const apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
+      const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      setStorage(FEED_RECORD + record.feedType, record)
       Taro.showToast({ title: '添加成功' })
       navigateBack()
     }

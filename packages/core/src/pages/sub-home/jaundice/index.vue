@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref } from 'vue'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { dateFormat } from '@mid-vue/shared'
 import {
   Button,
@@ -16,7 +16,7 @@ import {
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'
-import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
+import { apiAddFeedRecord, apiGetLatestFeedRecords, apiUpdateFeedRecord } from './api'
 import { type IJaundiceState } from './types'
 export default defineComponent({
   name: 'Jaundice',
@@ -47,6 +47,20 @@ export default defineComponent({
     const selectUnit = (value: string) => {
       state.form.content.unit = value
     }
+
+    useDidShow(() => {
+      if (query.id) return
+      apiGetLatestFeedRecords({
+        babyId: getBabyInfo().id,
+        feedTypes: [EnumFeedType.JAUNDICE]
+      }).then((list) => {
+        if (!list[0]) return
+        state.form.content = {
+          ...list[0]?.content,
+          feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
+        }
+      })
+    })
     const cells: IFormItem<IJaundice>[] = [
       {
         attrs: {

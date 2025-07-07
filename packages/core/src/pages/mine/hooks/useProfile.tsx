@@ -1,11 +1,12 @@
 import { ref } from 'vue'
 import { useDidShow } from '@tarojs/taro'
-import { Icon, Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { Icon, Image, Navbar, showPopup } from '@mid-vue/taro-h5-ui'
 import { useDate } from '@mid-vue/shared'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
-import { navigateTo } from '@/use'
+import { navigateTo, reLaunch } from '@/use'
 import { useAppStore } from '@/stores'
-import { getUserInfo } from '@/utils'
+import { getBabyInfo, getUserInfo } from '@/utils'
+import { BabyInfo } from '@/components/baby-info'
 import { iconAchieve, iconFamily, iconCredit } from '../assets'
 /** 用户信息 */
 export const useProfile = () => {
@@ -15,12 +16,37 @@ export const useProfile = () => {
   useDidShow(() => {
     userInfo.value = appstore.userInfo
   })
+  //如果没有拿到宝宝id先添加
+  const hasBaby = () => {
+    if (!getBabyInfo().id) {
+      showPopup({
+        round: true,
+        height: '60%',
+        title: '添加宝宝',
+        render(scoped) {
+          return (
+            <BabyInfo
+              onClose={() => {
+                scoped.close()
+                reLaunch({
+                  path: '/pages/home/index'
+                })
+              }}
+            ></BabyInfo>
+          )
+        }
+      })
+      return false
+    }
+    return true
+  }
 
   const panels = [
     {
       icon: iconFamily,
       title: '家庭成员',
       click: () => {
+        if (!hasBaby()) return
         navigateTo({
           path: '/pages/sub-mine/family-manage/index'
         })
@@ -30,6 +56,7 @@ export const useProfile = () => {
       icon: iconAchieve,
       title: '成就',
       click: () => {
+        if (!hasBaby()) return
         navigateTo({
           path: '/pages/sub-home/report/index'
         })
@@ -39,6 +66,7 @@ export const useProfile = () => {
       icon: iconCredit,
       title: '积分',
       click: () => {
+        if (!hasBaby()) return
         navigateTo({
           path: '/pages/sub-mine/credit/index'
         })

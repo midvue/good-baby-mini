@@ -6,6 +6,7 @@ const USER_INFO_ID_KEY = 'userId'
 const TOKEN_KEY = 'token'
 const ENV_VERSION_KEY = 'envVersion'
 const USER_BABY_KEY = 'babyInfo'
+const SLEEP_START_TIME = 'sleepStartTime'
 
 /** 喂养类型 */
 export const FEED_RECORD = 'feedRecord'
@@ -90,6 +91,20 @@ export function getMetaEnv(): MetaEnvType {
 
 export function clearMetaEnv() {
   removeStorage(ENV_VERSION_KEY)
+}
+
+/* ------------------睡眠开始时间--------------------- */
+
+export function setSleepStartTime(content: Record<string, any> | string | number | boolean) {
+  return Taro.setStorage({ key: SLEEP_START_TIME, data: content })
+}
+
+export function getSleepStartTime() {
+  return Taro.getStorageSync<Record<string, any>>(SLEEP_START_TIME)
+}
+
+export function clearSleepStartTime() {
+  return Taro.removeStorage({ key: SLEEP_START_TIME })
 }
 
 /* ****************************** 包装方法 ******************************* */
