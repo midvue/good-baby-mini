@@ -7,8 +7,8 @@ import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { BabyInfo, type IBaby } from '@/components/baby-info'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, switchTab, useRoute } from '@/use'
-import { apiAddBabyFoster, apiBabyList } from '../api'
 import { setBabyInfo } from '@/utils'
+import { apiAddBabyFoster, apiBabyList } from '../api'
 
 export const useHeader = () => {
   const query = useRoute<{ fid: number; relation: string }>().query

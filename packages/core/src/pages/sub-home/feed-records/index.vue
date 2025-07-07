@@ -6,12 +6,11 @@ import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { useDictList, useDictMap } from '@/use'
-import { FeedRecord } from '@/components/feed-record'
+import { FeedRecord, type SummaryFeedRecord } from '@/components/feed-record'
 import { apiGetFeedRecordDays, apiGetFeedRecordList } from './api'
 import Calender from './components/calendar/Calendar.vue'
 import { useCalendar } from './components/calendar/hooks/useCalendar'
 import { type ICalendarItem } from './components/calendar/type'
-import type { SummaryFeedRecord } from './types'
 export default defineComponent({
   name: 'FeedRecords',
   setup() {
@@ -95,7 +94,8 @@ export default defineComponent({
         feedTypeItem = {
           content: {
             label: '',
-            volume: 0
+            volume: 0,
+            duration: 0
           },
           count: 0,
           label: feedType
@@ -108,6 +108,10 @@ export default defineComponent({
         const { volume, type } = record.content as IMilkBottle
         feedTypeItem.content.label = milkTypeMap[type]?.name || ''
         feedTypeItem.content.volume += volume
+      }
+      if (feedType === EnumFeedType.SLEEP) {
+        const { duration } = record.content as ISleep
+        feedTypeItem.content.duration += duration
       }
       return { isAdd, summary }
     }

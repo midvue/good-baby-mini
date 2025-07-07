@@ -173,7 +173,7 @@ export default defineComponent({
                   睡眠: {durationFormatNoZero(duration, { unit: 's', format: 'H小时m分钟s秒' })}
                 </div>
                 <div class='record-item-content'>
-                  <span>{sleepTypeMap[sleepType]?.name}</span>
+                  <span class='mr-[10px]'>{sleepTypeMap[sleepType]?.name}</span>
                   {quality && <span> 质量: {sleepQualityMap[quality]?.name}</span>}
                   {starRating && <StarRating size='small' v-model={starRating} />}
                 </div>
@@ -210,7 +210,7 @@ export default defineComponent({
             </div>
           )
         }
-      } /** 血糖 */,
+      } /** 体温 */,
       [EnumFeedType.DEGRESS]: {
         path: '/pages/sub-home/degress/index',
         render: (content: IFeedRecord['content']) => {
@@ -304,6 +304,18 @@ export default defineComponent({
                     <>
                       <span class='ml-[5px]'>({summary.content.label}: </span>
                       <span class='content-number'>{summary.content.volume}</span> ml)
+                    </>
+                  )}
+                  {!!summary.content.duration && (
+                    <>
+                      <span class='ml-[5px]'>(总时长: </span>
+                      <span class='content-number'>
+                        {durationFormatNoZero(summary.content.duration, {
+                          unit: 's',
+                          format: 'H小时m分钟s秒'
+                        })}
+                      </span>
+                      )
                     </>
                   )}
                   {[

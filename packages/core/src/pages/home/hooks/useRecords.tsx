@@ -76,6 +76,7 @@ export const useRecords = () => {
         const isToday = feedDay.isSame(useDate(), 'day')
         const yesterday = feedDay.isSame(useDate().subtract(1, 'day'), 'day')
         const key = isToday ? '今天' : yesterday ? '昨天' : feedDay.format('MM月DD日')
+
         /** 处理汇总 */
         const { isAdd, summary } = formatSummary(key, record)
         if (isAdd) {
@@ -112,6 +113,7 @@ export const useRecords = () => {
     const feedType = record.feedType
     let isAdd = false
     /** 每日汇总 */
+
     let summary = dayMap[key] as SummaryFeedRecord
     if (!summary) {
       summary = {
@@ -127,7 +129,8 @@ export const useRecords = () => {
       feedTypeItem = {
         content: {
           label: '',
-          volume: 0
+          volume: 0,
+          duration: 0
         },
         count: 0,
         label: feedType
@@ -140,6 +143,10 @@ export const useRecords = () => {
       const { volume, type } = record.content as IMilkBottle
       feedTypeItem.content.label = milkTypeMap[type]?.name || ''
       feedTypeItem.content.volume += volume
+    }
+    if (feedType === EnumFeedType.SLEEP) {
+      const { duration } = record.content as ISleep
+      feedTypeItem.content.duration += duration
     }
     return { isAdd, summary }
   }

@@ -2,7 +2,11 @@ import { type EnumFeedType } from '@/dict'
 
 type SummaryEnumFeedType = {
   [key in EnumFeedType]?: {
-    content: { label: string | number; volume: number }
+    content: {
+      duration: any
+      label: string | number
+      volume: number
+    }
     count: number
     label: EnumFeedType
   }

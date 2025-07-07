@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, reactive, ref, onUnmounted, watch } from 'vue'
+import { defineComponent, reactive, ref, watch } from 'vue'
 import Taro from '@tarojs/taro'
 import { dateDiff, dateFormat, durationFormatNoZero, EnumYesNoPlus } from '@mid-vue/shared'
 import {
@@ -15,7 +15,7 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { useRoute, navigateBack, useDictList } from '@/use'
 import { EnumFeedType } from '@/dict'
-import { getBabyInfo } from '@/utils'
+import { getBabyInfo, getStorage, removeStorage, setStorage } from '@/utils'
 import { StarRating } from '@/components/star-rating'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
 
@@ -29,7 +29,7 @@ export default defineComponent({
       remark: '',
       babyId: babyInfo.id,
       content: {
-        feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
+        feedTime: getStorage('START_SLEEP')?.feedTime || dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
         duration: 0,
         endTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
         sleepType: '10',
@@ -37,31 +37,27 @@ export default defineComponent({
       } as ISleep
     }
     const state = reactive({
-      isManual: !!query.id, //是否手动录入
-      isStart: false,
-      isRightStat: false,
-      form: { ...defaultSleep, ...query } as IFeedRecord<ISleep>,
+      isManual: !!query.id || getStorage('START_SLEEP'), //是否手动录入
+      form: {
+        ...defaultSleep,
+        ...query
+      } as IFeedRecord<ISleep>,
       timer: null as ReturnType<typeof setInterval> | null
     })
     const sleepTypeList = useDictList('SLEEP_TYPE')
-    let timer: NodeJS.Timeout
 
     /** 点击计时 */
-    const onClick = () => {
-      if (timer) {
-        clearInterval(timer)
-      }
-      state.isStart = !state.isStart
-      if (!state.isStart) return
-      timer = setInterval(() => {
-        state.form.content.duration++
+    const onStartClick = () => {
+      setStorage('START_SLEEP', {
+        feedTime: defaultSleep.content.feedTime
+      })
+      Taro.showToast({ title: '保存成功' })
+      setTimeout(() => {
+        navigateBack()
       }, 1000)
     }
-
     const onClickDrag = () => {
-      clearInterval(timer)
       state.isManual = !state.isManual
-      state.isStart = false
     }
     const onSubmit = async () => {
       if (state.form.content.duration === 0) {
@@ -71,32 +67,19 @@ export default defineComponent({
         })
         return
       }
-      if (state.isStart) {
-        Taro.showToast({
-          title: '请先结束计时',
-          icon: 'none'
-        })
-        return
-      }
       // 若不是手动录入，计算 endTime
-      if (!state.isManual) {
-        const feedTime = new Date(state.form.content.feedTime)
-        // 将 duration 转换为毫秒后加到 feedTime 上
-        const endTime = new Date(feedTime.getTime() + state.form.content.duration * 1000)
-        state.form.content.endTime = dateFormat(endTime, 'YYYY-MM-DD HH:mm')
-      }
+      const feedTime = new Date(state.form.content.feedTime)
+      // 将 duration 转换为毫秒后加到 feedTime 上
+      const endTime = new Date(feedTime.getTime() + state.form.content.duration * 1000)
+      state.form.content.endTime = dateFormat(endTime, 'YYYY-MM-DD HH:mm')
       const apiFunc = state.form.id ? apiUpdateFeedRecord : apiAddFeedRecord
       const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      Taro.showToast({ title: '添加成功' })
+      Taro.showToast({ title: '保存成功' })
+      !query.id && removeStorage('START_SLEEP') // 手动添加成功时，移除 START_SLEEP
       navigateBack()
     }
-
-    onUnmounted(() => {
-      clearInterval(timer)
-    })
-
     watch(
       () => [state.form.content.feedTime, state.form.content.endTime],
       () => {
@@ -104,9 +87,11 @@ export default defineComponent({
           state.form.content.duration =
             dateDiff(state.form.content.endTime, state.form.content.feedTime) / 1000
         }
+      },
+      {
+        immediate: true
       }
     )
-
     /**
      *  监听日期选择的变化，重新渲染图表
      */
@@ -122,7 +107,6 @@ export default defineComponent({
         }
       }
     }
-
     const cells: IFormItem<ISleep>[] = [
       {
         attrs: {
@@ -155,7 +139,7 @@ export default defineComponent({
           {
             label: '睡眠时长',
             field: 'duration',
-            attrs: { required: true, border: true },
+            show: () => state.isManual,
             component: () => (
               <span>
                 {durationFormatNoZero(state.form.content.duration, {
@@ -165,17 +149,14 @@ export default defineComponent({
               </span>
             )
           },
-
           {
             show: () => !state.isManual,
             render: () => {
               return (
-                <div class='sleep-record'>
-                  <div class='sleep-item'>
-                    <div class={'sleep-time }'} onClick={onClick}>
-                      {state.isStart ? '结束计时' : '开始计时'}
-                    </div>
-                  </div>
+                <div class='mt-[50px] flex justify-center'>
+                  <Button type='primary' size='medium' round onClick={onStartClick}>
+                    开始记录
+                  </Button>
                 </div>
               )
             }
@@ -187,6 +168,7 @@ export default defineComponent({
               labelAlign: 'top',
               class: 'pb-[10px]'
             },
+            show: () => state.isManual,
             component: () => (
               <div class='grid grid-cols-3 gap-10 size-full'>
                 {sleepTypeList.map((item) => (
@@ -207,11 +189,13 @@ export default defineComponent({
               labelAlign: 'top',
               class: 'pb-[10px]'
             },
+            show: () => state.isManual,
             component: () => <StarRating v-model={state.form.content.starRating} />
           }
         ]
       },
-      {
+      // 类型过滤
+      state.isManual && {
         attrs: {
           class: 'form-item-card'
         },
@@ -226,10 +210,8 @@ export default defineComponent({
           }
         ]
       }
-    ]
-
+    ] as IFormItem<ISleep>[]
     const formRef = ref<FormInstance>()
-
     return () => {
       return (
         <div class='sleep'>
@@ -243,11 +225,13 @@ export default defineComponent({
           <div class='sleep-header'>
             <div class='sleep-record'>
               <Form ref={formRef} cells={cells} v-model={state.form}></Form>
-              <FooterBar>
-                <Button type='primary' size='large' round onClick={onSubmit}>
-                  保存
-                </Button>
-              </FooterBar>
+              {state.isManual && (
+                <FooterBar>
+                  <Button type='primary' size='large' round onClick={onSubmit}>
+                    保存
+                  </Button>
+                </FooterBar>
+              )}
               <Drag gap={{ x: 1, y: 80 }} offset={{ x: -1, y: 430 }}>
                 <div class='sleep-drag-content' onClick={onClickDrag}>
                   <span>{state.isManual ? '自动计时' : '手动输入'}</span>
