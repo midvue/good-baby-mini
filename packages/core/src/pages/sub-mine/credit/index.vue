@@ -2,14 +2,13 @@
 import { defineComponent, reactive } from 'vue'
 import { Button, Image, Navbar } from '@mid-vue/taro-h5-ui'
 import { apiPointList, apiPointSummary, apiUpdatePoint } from './api'
-import { Point } from './types'
+import { type Point } from './types'
 import { EnumPointStatus, pointStatusStrategy } from './dict'
-import { getFullImageUrl } from '@/utils'
 
 export default defineComponent({
   name: 'Credit',
   setup() {
-    let state = reactive({
+    const state = reactive({
       summary: {
         totalPoints: 0,
         todayPoints: 0
@@ -40,7 +39,7 @@ export default defineComponent({
         <div class='credit'>
           <Navbar position='fixed' clearfix={false} autoTheme></Navbar>
           <div class='credit-contain'>
-            <Image src={getFullImageUrl('img_credit_bg.png')} class='credit-bg' />
+            <Image src='mine/img_credit_bg.png' class='credit-bg' />
             <div class='credit-content'>
               <div class='credit-content-left'>
                 <span class='credit-title'>我的积分</span>
@@ -55,7 +54,7 @@ export default defineComponent({
           </div>
           <div class='credit-list'>
             {state.pointList.map((item, index) => {
-              let strategy = pointStatusStrategy[item.status]
+              const strategy = pointStatusStrategy[item.status]
 
               return (
                 <div class='credit-item' key={index}>

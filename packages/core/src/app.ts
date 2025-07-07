@@ -1,6 +1,6 @@
 import '@/assets/icon/iconfont.css'
 import { createApp } from 'vue'
-import Taro from '@tarojs/taro'
+import Taro, { useShareAppMessage } from '@tarojs/taro'
 import { createPinia } from 'pinia'
 import Http, { defaultInterceptors, type HttpResponse } from '@mid-vue/http-client'
 import { throttle } from '@mid-vue/shared'

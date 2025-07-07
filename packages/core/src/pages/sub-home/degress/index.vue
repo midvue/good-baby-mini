@@ -1,6 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
+import { useDate } from '@mid-vue/shared'
 import {
   Button,
   DateTimePicker,
@@ -15,10 +16,9 @@ import {
 } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useRoute } from '@/use'
-import { getBabyInfo, getFullImageUrl } from '@/utils'
+import { getBabyInfo } from '@/utils'
 import { apiAddFeedRecord, apiUpdateFeedRecord } from './api'
-import { IDegressState } from './types'
-import { useDate } from '@mid-vue/shared'
+import { type IDegressState } from './types'
 export default defineComponent({
   name: 'Degress',
   setup() {
@@ -38,13 +38,7 @@ export default defineComponent({
     const state = reactive<IDegressState>({
       form: { ...defaultDgress, ...query }
     })
-    const imageUrl = getFullImageUrl('img_degress.png')
 
-    const handleImageClick = () => {
-      Taro.previewImage({
-        urls: [imageUrl]
-      })
-    }
     const formRef = ref<FormInstance>()
 
     const cells: IFormItem<IDegress>[] = [
@@ -110,7 +104,15 @@ export default defineComponent({
             },
             component: () => (
               <div class='w-full flex flex-col items-center justify-center'>
-                <Image onClick={handleImageClick} mode='widthFix' src={imageUrl} />
+                <Image
+                  onClick={(e) => {
+                    Taro.previewImage({
+                      urls: [e.detail]
+                    })
+                  }}
+                  mode='widthFix'
+                  src='home/img_degress.png'
+                />
                 <div class='text-[10px] mt-[6px]'>
                   数据仅供参考，若体温异常，建议带宝宝及时就诊，以医生诊断为准。
                 </div>

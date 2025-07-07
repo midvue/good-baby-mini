@@ -7,7 +7,7 @@
 import { computed, defineComponent, type PropType } from 'vue'
 import { Image, type BaseEventOrig, type ImageProps } from '@tarojs/components'
 
-const BASE_URL = 'https://kydl.kyslb.com/mid-vue/xiaochengxu/good-baby-mini/'
+const BASE_URL = `${ENV_CDN_BASE}image/`
 
 export default defineComponent({
   name: 'MvImage',
@@ -23,20 +23,24 @@ export default defineComponent({
       default: ''
     },
     onClick: {
-      type: Function as PropType<(event: BaseEventOrig) => void>
+      type: Function as PropType<(event: BaseEventOrig<string>) => void>
     }
   },
   setup(props) {
-    const regImgPrefix = /^(wxfile|http|https|data):/
+    // 网络地址,base64,file地址,/开头不带: 的地址都不加cdn前缀
+
+    const regImgPrefix = /^(wxfile:|http:|https:|data:|\/)/
+
+    // 不以/开头的地址,都加上前缀
 
     const imgSrc = computed(() => {
-      // return regImgPrefix.test(props.src) ? props.src : `${BASE_URL}${props.src}`
-      return props.src
+      return regImgPrefix.test(props.src) ? props.src : `${BASE_URL}${props.src}`
     })
 
     const handleTap = (event: BaseEventOrig) => {
       if (props.onClick) {
         event.stopPropagation()
+        event.detail = imgSrc.value
         props.onClick(event)
       }
     }

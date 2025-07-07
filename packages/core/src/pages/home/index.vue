@@ -1,10 +1,11 @@
 <script lang="tsx">
 import { defineComponent, watch } from 'vue'
+
+import { useShareAppMessage } from '@tarojs/taro'
 import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
-import { getFullImageUrl } from '@/utils'
 
 export default defineComponent({
   name: 'Home',
@@ -32,7 +33,13 @@ export default defineComponent({
     const { render: renderHeader } = useHeader()
     const { render: renderTools } = useTools()
     const { render: renderRecords } = useRecords()
-
+    useShareAppMessage(() => {
+      return {
+        title: '奶娃星球邀请您加入喂养',
+        path: '/pages/home/index',
+        imageUrl: `${ENV_CDN_BASE}image/home/share.jpg`
+      }
+    })
     return () => {
       return (
         <div class='home'>
@@ -42,13 +49,6 @@ export default defineComponent({
           <SafeBottom></SafeBottom>
         </div>
       )
-    }
-  },
-  onShareAppMessage() {
-    return {
-      title: '奶娃星球邀请您加入喂养', // 分享标题
-      path: '/pages/home/index', // 分享路径
-      imageUrl: getFullImageUrl('share.jpg')
     }
   }
 })

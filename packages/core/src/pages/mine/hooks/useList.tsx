@@ -13,10 +13,10 @@ import {
 } from '@mid-vue/taro-h5-ui'
 
 import { navigateTo, useDictList } from '@/use'
-import { getBabyInfo, getFullImageUrl, getUserInfo } from '@/utils'
+import { getBabyInfo, getUserInfo } from '@/utils'
+import { useAppStore } from '@/stores'
 import { iconAboutMe, iconBaby, iconInvite, iconWeChat } from '../assets'
 import { apiPostRelation } from '../api'
-import { useAppStore } from '@/stores'
 
 /** 菜单列表 */
 export const useList = () => {
@@ -189,7 +189,7 @@ export const useList = () => {
                       </div>
                       <Image
                         class='w-[160px] h-[160px] mt-[30px]'
-                        src={getFullImageUrl('mine/img_we_chat.png')}
+                        src='mine/img_we_chat.png'
                         show-menu-by-longpress
                       ></Image>
                     </div>
@@ -207,18 +207,20 @@ export const useList = () => {
   ]
 
   useShareAppMessage((res) => {
-    if (res.from === 'button') {
-      const userInfo = getUserInfo()
-      return {
-        title: `${userInfo.nickname || ''}邀请您加入一起喂养`,
-        path: `pages/home/index?fid=${appStore.babyInfo.familyId}&relation=${relationRef.value}`,
-        imageUrl: getFullImageUrl('share.jpg')
-      }
-    }
+    const userInfo = getUserInfo()
+    const title =
+      res.from === 'button'
+        ? `${userInfo.nickname || ''}邀请您加入一起喂养`
+        : '宝宝喂养，生肖，五行，家谱，点开查看！！'
+    const path =
+      res.from === 'button'
+        ? `pages/home/index?fid=${appStore.babyInfo.familyId}&relation=${relationRef.value}`
+        : 'pages/home/index'
+
     return {
-      title: '宝宝喂养，生肖，五行，家谱，点开查看！！',
-      path: 'pages/home/index',
-      imageUrl: getFullImageUrl('share.jpg')
+      title,
+      path,
+      imageUrl: `${ENV_CDN_BASE}image/home/share.jpg`
     }
   })
 

@@ -54,6 +54,8 @@ declare module '@umengfe/mini-apm' {
 declare const ENV_HOME_URL: string
 /** webview的地址 */
 declare const ENV_WEBVIEW_URL: string
+/** cdn地址 */
+declare const ENV_CDN_BASE: string
 
 const META_ENV: {
   /** baseApi */

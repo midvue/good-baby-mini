@@ -1,28 +1,27 @@
 <script lang="tsx">
-import iconLogo from '@/assets/images/icon_logo.png'
-import { Image, Navbar } from '@mid-vue/taro-h5-ui'
 import { defineComponent } from 'vue'
-import { getFullImageUrl } from '@/utils'
+import { Image, Navbar } from '@mid-vue/taro-h5-ui'
+import iconLogo from '@/assets/images/icon_logo.png'
 
 export default defineComponent({
-  name: 'family-manage',
+  name: 'FamilyManage',
   setup() {
-    let teams = [
+    const teams = [
       {
         name: 'Spig',
-        avatar: getFullImageUrl('about/img_avatar_spig.jpg')
+        avatar: 'about/img_avatar_spig.jpg'
       },
       {
         name: 'Fly',
-        avatar: getFullImageUrl('about/img_avatar_fly.jpg')
+        avatar: 'about/img_avatar_fly.jpg'
       },
       {
         name: 'Garbao',
-        avatar: getFullImageUrl('about/img_avatar_garbao.jpg')
+        avatar: 'about/img_avatar_garbao.jpg'
       },
       {
         name: 'Poetek',
-        avatar: getFullImageUrl('about/img_avatar_poetek.jpg')
+        avatar: 'about/img_avatar_poetek.jpg'
       }
     ]
 

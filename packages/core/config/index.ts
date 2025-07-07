@@ -45,6 +45,7 @@ export default defineConfig<'webpack5'>(async (merge) => {
       ENV_HOME_URL: '"/pages/home/index"',
       /** webview的地址 */
       ENV_WEBVIEW_URL: '"/pages/sub-mine/web-page/index"',
+      ENV_CDN_BASE: '"https://cos-app.xfy-66.com/good-baby-mini/"',
       META_ENV_MAP: JSON.stringify({
         uat: uatConfig,
         stg: stgConfig,

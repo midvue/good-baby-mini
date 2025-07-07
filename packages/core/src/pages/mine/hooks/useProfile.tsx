@@ -5,7 +5,7 @@ import { useDate } from '@mid-vue/shared'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { navigateTo } from '@/use'
 import { useAppStore } from '@/stores'
-import { getFullImageUrl, getUserInfo } from '@/utils'
+import { getUserInfo } from '@/utils'
 import { iconAchieve, iconFamily, iconCredit } from '../assets'
 /** 用户信息 */
 export const useProfile = () => {
@@ -63,7 +63,7 @@ export const useProfile = () => {
   return {
     render: () => (
       <div class='mine-profile'>
-        <Image src={getFullImageUrl('mine/bg_mine_header.png')} class='profile-bg'></Image>
+        <Image src='mine/bg_mine_header.png' class='profile-bg'></Image>
         <Navbar leftArrow={false} showHome={false}></Navbar>
         <div
           class='profile-content'
