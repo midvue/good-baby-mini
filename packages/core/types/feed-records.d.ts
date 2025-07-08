@@ -94,11 +94,43 @@ declare global {
     temperature: string
   }
 
+  //补剂
+  interface ISupplement {
+    /** 补剂名称 */
+    name: string
+    /** 补剂时间 */
+    feedTime: string
+  }
+
+  //用药
+  interface IMedicine {
+    /** 用药名称 */
+    name: string
+    /** 用药时间 */
+    feedTime: string
+  }
+
+  interface IVaccine {
+    /** 疫苗名称 */
+    name: string
+    /** 疫苗时间 */
+    feedTime: string
+  }
   /** 喂养记录 */
   interface IFeedRecord<
-    T = IMilkBottle | IBreastMilk | IDiaper | IHeightWeight | IJaundice | ISleep | IFood | IDegress
+    T =
+      | IMilkBottle
+      | IBreastMilk
+      | IDiaper
+      | IHeightWeight
+      | IJaundice
+      | ISleep
+      | IFood
+      | IDegress
+      | ISupplement
+      | IMedicine
+      | IVaccine
   > {
-    type: import('/Users/fly/ppy/good-baby/good-baby-mini/packages/core/src/pages/sub-home/diapering/types').EnumDiaperType
     id: number
     /** 宝宝id */
     babyId: number

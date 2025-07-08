@@ -37,7 +37,7 @@ export default defineComponent({
       remark: '',
       babyId: babyInfo.id,
       content: {
-        type: '10',
+        type: 10,
         volume: 90,
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
       } as IMilkBottle
@@ -65,7 +65,7 @@ export default defineComponent({
     const volumeList = initVolumeList()
 
     useDidShow(() => {
-      if (!props.data?.id) return
+      if (props.data?.id) return
       apiGetLatestFeedRecords({
         babyId: getBabyInfo().id,
         feedTypes: [EnumFeedType.MILK_BOTTLE]
@@ -119,7 +119,7 @@ export default defineComponent({
                     class='mr-[8px]'
                     size='medium'
                     type='primary'
-                    plain={state.form.content.type !== item.code}
+                    plain={state.form.content.type != item.code}
                     onClick={() => (state.form.content.type = item.code)}
                   >
                     {item.name}

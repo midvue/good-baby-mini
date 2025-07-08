@@ -12,6 +12,9 @@ import iconFeedFood from '@/assets/images/icon_feed_food.png'
 import iconFeedJaundice from '@/assets/images/icon_feed_jaundice.png'
 import iconFeedSleep from '@/assets/images/icon_feed_sleep.png'
 import iconFeedDegress from '@/assets/images/icon_feed_degress.png'
+import iconFeedSupplement from '@/assets/images/icon_feed_supplement.png'
+import iconFeedMedicine from '@/assets/images/icon_feed_medicine.png'
+
 import { calculateBabyMonths, DegressBtn } from '@/components/degress-btn'
 import { getBabyInfo } from '@/utils'
 import { StarRating } from '@/components/star-rating'
@@ -241,15 +244,41 @@ export default defineComponent({
       },
       [EnumFeedType.SUPPLEMENT]: {
         path: '/pages/sub-home/supplement/index',
-        render: () => null
+        render: (content: IFeedRecord['content'], remark?: string) => {
+          const { name } = content as ISupplement
+          return (
+            <div class='feed-record-item-wrapper'>
+              <div class='record-item-logo'>
+                <Image src={iconFeedSupplement} class='item-logo-img'></Image>
+              </div>
+              <div>
+                <div class='record-item-title'>补剂: {name}</div>
+                <div class='record-item-content'>{remark}</div>
+              </div>
+            </div>
+          )
+        }
       },
       [EnumFeedType.VACCINE]: {
-        path: '/pages/sub-home/supplement/index',
+        path: '/pages/sub-home/vaccine/index',
         render: () => null
       },
       [EnumFeedType.MEDICINE]: {
-        path: '/pages/sub-home/supplement/index',
-        render: () => null
+        path: '/pages/sub-home/medicine/index',
+        render: (content: IFeedRecord['content'], remark?: string) => {
+          const { name } = content as IMedicine
+          return (
+            <div class='feed-record-item-wrapper'>
+              <div class='record-item-logo'>
+                <Image src={iconFeedMedicine} class='item-logo-img'></Image>
+              </div>
+              <div>
+                <div class='record-item-title'>药物: {name}</div>
+                <div class='record-item-content'>{remark}</div>
+              </div>
+            </div>
+          )
+        }
       }
     } as const
 
@@ -284,7 +313,7 @@ export default defineComponent({
             onClick={() => onRecordsItemClick(record)}
           >
             <div class='record-item-time'>{record.feedTimeStr}</div>
-            {strategy?.render(record.content)}
+            {strategy?.render(record.content, record.remark)}
           </div>
         )
       }
