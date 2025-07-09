@@ -199,7 +199,8 @@ export default defineComponent({
                 <div class='record-item-title'>
                   <span class='item-title-duration'>
                     {foodTypeMap[type]?.name}
-                    {foodAmount}({foodAmountUnitMap[foodAmountUnit]?.name})
+                    {foodAmount}
+                    {foodAmountUnitMap[foodAmountUnit]?.name}
                   </span>
                 </div>
                 <div class='record-item-content'>

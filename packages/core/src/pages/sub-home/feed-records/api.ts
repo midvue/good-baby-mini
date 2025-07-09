@@ -1,6 +1,6 @@
 import http from '@mid-vue/http-client'
 import { type FeedRecordResp } from './types'
-import { ICalendarItem } from './components/calendar/type'
+import { type ICalendarItem } from './components/calendar/type'
 
 /**
  * 获取喂养记录列表

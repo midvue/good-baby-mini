@@ -113,11 +113,11 @@ export default defineComponent({
             field: 'type',
             attrs: { required: true },
             component: () => (
-              <div>
+              <div class='flex flex-wrap align-center'>
                 {milkList.map((item) => (
                   <Tag
-                    class='mr-[8px]'
-                    size='medium'
+                    class='mr-[8px] mt-[8px]'
+                    size='large'
                     type='primary'
                     plain={state.form.content.type != item.code}
                     onClick={() => (state.form.content.type = item.code)}

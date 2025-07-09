@@ -11,6 +11,7 @@ import {
   type FormInstance,
   type IFormItem,
   Navbar,
+  Tag,
   Textarea
 } from '@mid-vue/taro-h5-ui'
 import { useRoute, navigateBack, useDictList } from '@/use'
@@ -186,15 +187,21 @@ export default defineComponent({
             },
             show: () => state.isManual,
             component: () => (
-              <div class='grid grid-cols-3 gap-10 size-full'>
-                {sleepTypeList.map((item) => (
-                  <div
-                    class={{ 'tag-item': true, active: state.form.content.sleepType === item.code }}
-                    onClick={() => (state.form.content.sleepType = item.code)}
-                  >
-                    {item.name}
-                  </div>
-                ))}
+              <div class='flex flex-wrap align-center'>
+                {sleepTypeList.map((item) => {
+                  return (
+                    <Tag
+                      class='w-[70px] h-[30px] mr-[8px] mt-[8px]'
+                      key={item.code}
+                      round
+                      type='primary'
+                      onClick={() => (state.form.content.sleepType = item.code)}
+                      plain={state.form.content.sleepType !== item.code}
+                    >
+                      {item.name}
+                    </Tag>
+                  )
+                })}
               </div>
             )
           },
@@ -238,23 +245,20 @@ export default defineComponent({
               backgroundColor: 'transparent'
             }}
           ></Navbar>
-          <div class='sleep-header'>
-            <div class='sleep-record'>
-              <Form ref={formRef} cells={cells} v-model={state.form}></Form>
-              {state.isManual && (
-                <FooterBar>
-                  <Button type='primary' size='large' round onClick={onSubmit}>
-                    保存
-                  </Button>
-                </FooterBar>
-              )}
-              <Drag gap={{ x: 1, y: 80 }} offset={{ x: -1, y: 430 }}>
-                <div class='sleep-drag-content' onClick={onClickDrag}>
-                  <span>{state.isManual ? '自动计时' : '手动输入'}</span>
-                </div>
-              </Drag>
+
+          <Form ref={formRef} cells={cells} v-model={state.form}></Form>
+          {state.isManual && (
+            <FooterBar>
+              <Button type='primary' size='large' round onClick={onSubmit}>
+                保存
+              </Button>
+            </FooterBar>
+          )}
+          <Drag gap={{ x: 1, y: 80 }} offset={{ x: -1, y: 430 }}>
+            <div class='sleep-drag-content' onClick={onClickDrag}>
+              <span>{state.isManual ? '自动计时' : '手动输入'}</span>
             </div>
-          </div>
+          </Drag>
         </div>
       )
     }

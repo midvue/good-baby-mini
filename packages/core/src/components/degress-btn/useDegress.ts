@@ -7,49 +7,61 @@ const HEALTH_STATUS = {
   INVALID_AGE: '年龄输入无效'
 } as const
 
-// 定义策略接口
-interface TemperatureStrategy {
-  check(temperature: number): (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS]
-}
-
-// 0 - 3 个月的策略
-class ZeroToThreeMonthsStrategy implements TemperatureStrategy {
-  check(temperature: number): (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS] {
-    if (temperature >= 35.8 && temperature <= 37.4) {
-      return HEALTH_STATUS.NORMAL
-    } else if (temperature > 37.4) {
-      return HEALTH_STATUS.HIGH_FEVER
-    }
-    return HEALTH_STATUS.ABNORMAL
+// 提取温度范围常量
+const TEMPERATURE_RANGES = {
+  ZERO_TO_THREE: {
+    MIN: 35.8,
+    MAX: 37.4
+  },
+  THREE_TO_THIRTY_SIX: {
+    MIN: 35.4,
+    MAX: 37.6,
+    FEVER_MAX: 38.5
+  },
+  THIRTY_SIX_AND_ABOVE: {
+    MIN: 35.4,
+    MAX: 37.7,
+    FEVER_MAX: 39.4
   }
-}
+} as const
 
-// 3 - 36 个月的策略
-class ThreeToThirtySixMonthsStrategy implements TemperatureStrategy {
-  check(temperature: number): (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS] {
-    if (temperature >= 35.4 && temperature <= 37.6) {
+// 通用策略函数
+const createTemperatureStrategy = (min: number, max: number, feverMax?: number) => {
+  return (temperature: number) => {
+    if (temperature >= min && temperature <= max) {
       return HEALTH_STATUS.NORMAL
-    } else if (temperature > 37.6 && temperature <= 38.5) {
+    } else if (feverMax && temperature > max && temperature <= feverMax) {
       return HEALTH_STATUS.FEVER
-    } else if (temperature > 38.5) {
+    } else if ((feverMax && temperature > feverMax) || temperature > max) {
       return HEALTH_STATUS.HIGH_FEVER
     }
     return HEALTH_STATUS.ABNORMAL
   }
 }
 
-// 36 个月以上的策略
-class ThirtySixMonthsAndAboveStrategy implements TemperatureStrategy {
-  check(temperature: number): (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS] {
-    if (temperature >= 35.4 && temperature <= 37.7) {
-      return HEALTH_STATUS.NORMAL
-    } else if (temperature > 37.7 && temperature <= 39.4) {
-      return HEALTH_STATUS.FEVER
-    } else if (temperature > 39.4) {
-      return HEALTH_STATUS.HIGH_FEVER
-    }
-    return HEALTH_STATUS.ABNORMAL
-  }
+// 创建策略
+const ZeroToThreeMonthsStrategy = createTemperatureStrategy(
+  TEMPERATURE_RANGES.ZERO_TO_THREE.MIN,
+  TEMPERATURE_RANGES.ZERO_TO_THREE.MAX
+)
+
+const ThreeToThirtySixMonthsStrategy = createTemperatureStrategy(
+  TEMPERATURE_RANGES.THREE_TO_THIRTY_SIX.MIN,
+  TEMPERATURE_RANGES.THREE_TO_THIRTY_SIX.MAX,
+  TEMPERATURE_RANGES.THREE_TO_THIRTY_SIX.FEVER_MAX
+)
+
+const ThirtySixMonthsAndAboveStrategy = createTemperatureStrategy(
+  TEMPERATURE_RANGES.THIRTY_SIX_AND_ABOVE.MIN,
+  TEMPERATURE_RANGES.THIRTY_SIX_AND_ABOVE.MAX,
+  TEMPERATURE_RANGES.THIRTY_SIX_AND_ABOVE.FEVER_MAX
+)
+
+// 年龄策略映射
+const ageStrategyMap = {
+  '0-3': ZeroToThreeMonthsStrategy,
+  '3-36': ThreeToThirtySixMonthsStrategy,
+  '36+': ThirtySixMonthsAndAboveStrategy
 }
 
 /**
@@ -58,23 +70,20 @@ class ThirtySixMonthsAndAboveStrategy implements TemperatureStrategy {
  * @param temperature 宝宝体温，单位：摄氏度
  * @returns 宝宝的健康状态，如 '正常'、'发烧'、'高烧'
  */
-function checkBabyTemperature(
-  age: number,
-  temperature: number
-): (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS] {
-  let strategy: TemperatureStrategy
-
+function checkBabyTemperature(age: number, temperature: number) {
+  let strategyKey: keyof typeof ageStrategyMap | null = null
   if (age >= 0 && age < 3) {
-    strategy = new ZeroToThreeMonthsStrategy()
+    strategyKey = '0-3'
   } else if (age >= 3 && age < 36) {
-    strategy = new ThreeToThirtySixMonthsStrategy()
+    strategyKey = '3-36'
   } else if (age >= 36) {
-    strategy = new ThirtySixMonthsAndAboveStrategy()
-  } else {
-    return HEALTH_STATUS.INVALID_AGE
+    strategyKey = '36+'
   }
 
-  return strategy.check(temperature)
+  if (strategyKey) {
+    return ageStrategyMap[strategyKey](temperature)
+  }
+  return HEALTH_STATUS.INVALID_AGE
 }
 
 export { checkBabyTemperature, HEALTH_STATUS }

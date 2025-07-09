@@ -7,54 +7,13 @@
   position: relative;
   background: linear-gradient(180deg, #ffe0e5 0%, #ffffff 100%);
   padding: 0 var(--mv-padding-w) var(--mv-padding-w);
-}
-.food-header {
-  width: 100%;
-  .food-record {
+
+  .food-form {
     width: 100%;
-    display: flex;
-    justify-content: center;
-    .diapering-form {
-      width: 100%;
-      .form-item-card {
-        box-shadow: var(--mv-box-shadow);
-        border-radius: 8px;
-        padding: 15px;
-      }
-      .food-player {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 32px;
-
-        .food-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          min-width: 110px;
-          flex: none;
-
-          .player-label {
-            font-size: 15px;
-            color: var(--mv-black);
-          }
-        }
-      }
-
-      .food-drag-content {
-        width: 72px;
-        height: 40px;
-        background: #ffffff;
-        box-shadow: 0px 0px 3px 0px rgba(255, 93, 158, 0.22);
-        border-radius: 88px 0px 0px 88px;
-        color: var(--mv-title-color3);
-        border: 1px solid #e8e8e8;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-left: 5px;
-        font-weight: bold;
-      }
+    .form-item-card {
+      box-shadow: var(--mv-box-shadow);
+      border-radius: 8px;
+      padding: 15px;
     }
   }
 }

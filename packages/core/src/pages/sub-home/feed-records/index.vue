@@ -1,6 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive, nextTick, watch } from 'vue'
 import { ScrollView } from '@tarojs/components'
+import { useDidShow } from '@tarojs/taro'
 import { useDate } from '@mid-vue/shared'
 import { Empty, Navbar, TabPane, Tabs } from '@mid-vue/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
@@ -115,19 +116,28 @@ export default defineComponent({
       }
       return { isAdd, summary }
     }
-    init()
+
+    useDidShow(() => {
+      init()
+    })
 
     const initDate = async (date: Date) => {
       const list = await apiGetFeedRecordDays({
         startFeedTime: useDate(date).startOf('month').format('YYYY-MM-DD 00:00:00'),
-        endFeedTime: useDate(date).endOf('month').format('YYYY-MM-DD 23:59:59')
+        endFeedTime: useDate(date).endOf('month').format('YYYY-MM-DD 23:59:59'),
+        babyId: appStore.babyInfo.id
       })
       state.clist = useCalendar(date, list || [])
     }
     initDate(state.currentDate)
     const handleDateChange = (date: Date) => {
       nextTick(() => {
-        initDate(date)
+        const selectedMonth = useDate(date).format('YYYY-MM')
+        const currentMonth = useDate(state.currentDate).format('YYYY-MM')
+        // 若月份不同，则调用 initDate
+        if (selectedMonth !== currentMonth) {
+          initDate(date)
+        }
         state.currentDate = date
       })
     }

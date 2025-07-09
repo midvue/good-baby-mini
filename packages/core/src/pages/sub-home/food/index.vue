@@ -12,6 +12,7 @@ import {
   Input,
   Navbar,
   Picker,
+  Tag,
   Textarea
 } from '@mid-vue/taro-h5-ui'
 import { useRoute, navigateBack, useDictList } from '@/use'
@@ -172,18 +173,25 @@ export default defineComponent({
               labelAlign: 'top',
               class: 'pb-[10px]'
             },
-            component: () => (
-              <div class='grid grid-cols-4 gap-10 size-full'>
-                {feedbackList.map((item) => (
-                  <div
-                    class={{ 'tag-item': true, active: state.form.content.feedback === item.code }}
-                    onClick={() => (state.form.content.feedback = item.code)}
-                  >
-                    {item.name}
-                  </div>
-                ))}
-              </div>
-            )
+            component: () => {
+              return (
+                <div>
+                  {feedbackList.map((item) => (
+                    <Tag
+                      class='w-[70px] mr-[8px]'
+                      v-model={state.form.content.feedback}
+                      type='primary'
+                      size='large'
+                      plain={state.form.content.feedback !== item.code}
+                      onClick={() => (state.form.content.feedback = item.code)}
+                      round
+                    >
+                      {item.name}
+                    </Tag>
+                  ))}
+                </div>
+              )
+            }
           }
         ]
       },
@@ -217,16 +225,12 @@ export default defineComponent({
               backgroundColor: 'transparent'
             }}
           ></Navbar>
-          <div class='food-header'>
-            <div class='food-record'>
-              <Form class='food-form' ref={formRef} cells={cells} v-model={state.form}></Form>
-              <FooterBar>
-                <Button type='primary' size='large' round onClick={onSubmit}>
-                  保存
-                </Button>
-              </FooterBar>
-            </div>
-          </div>
+          <Form class='food-form' ref={formRef} cells={cells} v-model={state.form}></Form>
+          <FooterBar>
+            <Button type='primary' size='large' round onClick={onSubmit}>
+              保存
+            </Button>
+          </FooterBar>
         </div>
       )
     }

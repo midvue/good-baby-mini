@@ -44,7 +44,7 @@
           @click="chooseDay(item)"
         >
           <span class="day">{{ item.day }}</span>
-          <span v-if="item.count" class="has"></span>
+          <span v-show="item.count" class="has"></span>
         </div>
       </div>
       <!-- 展开/收起按钮 -->

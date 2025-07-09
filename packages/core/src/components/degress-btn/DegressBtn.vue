@@ -8,11 +8,11 @@ export default defineComponent({
   props: {
     age: {
       type: Number,
-      default: ''
+      default: 0
     },
     temperature: {
       type: Number,
-      default: ''
+      default: 0
     }
   },
   setup(props) {

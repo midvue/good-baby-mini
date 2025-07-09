@@ -47,26 +47,27 @@ export default defineComponent({
               backgroundColor: 'transparent'
             }}
           ></Navbar>
-          <div class='feed-milk-header'>
-            {feedTypeList.map((item) => {
-              if (query.id && state.feedType !== item.value) return null
-              return (
-                <Tag
-                  type={state.feedType === item.value ? 'primary' : 'default'}
-                  plain={state.feedType !== item.value}
-                  round
-                  size='large'
-                  class={item.className}
-                  key={item.value}
-                  onClick={() => {
-                    state.feedType = item.value
-                  }}
-                >
-                  {item.label}
-                </Tag>
-              )
-            })}
-          </div>
+          {!query.id && (
+            <div class='feed-milk-header'>
+              {feedTypeList.map((item) => {
+                return (
+                  <Tag
+                    type={state.feedType === item.value ? 'primary' : 'default'}
+                    plain={state.feedType !== item.value}
+                    round
+                    size='large'
+                    class={item.className}
+                    key={item.value}
+                    onClick={() => {
+                      state.feedType = item.value
+                    }}
+                  >
+                    {item.label}
+                  </Tag>
+                )
+              })}
+            </div>
+          )}
           {state.feedType === EnumFeedType.MILK_BOTTLE ? (
             <MilkBottleFeed data={milkData.value as IFeedRecord<IMilkBottle>}></MilkBottleFeed>
           ) : (
