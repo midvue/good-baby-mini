@@ -5,14 +5,14 @@
       <div class="slider-year-month">
         <span class="month-change" @click="handleTriggleMonth('last')">上一月</span>
         <div class="current-month" @click="showPopup">
-          <VmPicker
+          <MvPicker
             v-model="state.currentStr"
             mode="date"
             :end="todayFormatted"
             @change="onDateChange"
           >
             {{ state.currentFormatted }}
-          </VmPicker>
+          </MvPicker>
           <MvIcon name="down" />
         </div>
         <span
@@ -50,6 +50,10 @@
       <!-- 展开/收起按钮 -->
       <div class="slider-shrink" @click="expandeDate">
         <span>{{ state.isExpand ? '收起' : '展开' }}</span>
+        <MvIcon
+          :name="state.isExpand ? 'mv-icon-collapse' : 'mv-icon-expand'"
+          class="ml-[4px]"
+        ></MvIcon>
       </div>
     </div>
     <!-- 返回今天按钮 -->
@@ -60,7 +64,7 @@
 <script lang="ts" setup>
 import { reactive, ref, watch, computed } from 'vue'
 import { useDate } from '@mid-vue/shared'
-import { Icon as MvIcon, Picker as VmPicker } from '@mid-vue/taro-h5-ui'
+import { Icon as MvIcon, Picker as MvPicker } from '@mid-vue/taro-h5-ui'
 import type { ICalendarItem, ICListState } from './type'
 
 // 定义 props

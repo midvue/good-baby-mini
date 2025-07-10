@@ -111,13 +111,13 @@ export default defineComponent({
           {
             label: '喂养类型',
             field: 'type',
-            attrs: { required: true },
+            attrs: { required: true, class: 'form-item-type' },
             component: () => (
               <div class='flex flex-wrap align-center'>
                 {milkList.map((item) => (
                   <Tag
                     class='mr-[8px] mt-[8px]'
-                    size='large'
+                    size='medium'
                     type='primary'
                     plain={state.form.content.type != item.code}
                     onClick={() => (state.form.content.type = item.code)}

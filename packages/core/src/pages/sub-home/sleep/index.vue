@@ -37,6 +37,7 @@ export default defineComponent({
         starRating: 3
       } as ISleep
     }
+    const sleepQualityList = ['很差', '较差', '一般', '较好', '很好']
     const state = reactive({
       isManual: !!query.id || getSleepStartTime()?.feedTime || false, //是否手动录入
       form: {
@@ -156,6 +157,7 @@ export default defineComponent({
           {
             label: '睡眠时长',
             field: 'duration',
+            attrs: { border: true },
             show: () => state.isManual,
             component: () => (
               <span>
@@ -182,18 +184,18 @@ export default defineComponent({
             label: '入睡方式',
             field: 'sleepType',
             attrs: {
-              labelAlign: 'top',
-              class: 'pb-[10px]'
+              class: 'form-item-type',
+              border: true
             },
             show: () => state.isManual,
             component: () => (
-              <div class='flex flex-wrap align-center'>
+              <div class='flex flex-wrap mt-[8px]'>
                 {sleepTypeList.map((item) => {
                   return (
                     <Tag
-                      class='w-[70px] h-[30px] mr-[8px] mt-[8px]'
+                      class=' mr-[8px] mb-[8px]'
                       key={item.code}
-                      round
+                      size='large'
                       type='primary'
                       onClick={() => (state.form.content.sleepType = item.code)}
                       plain={state.form.content.sleepType !== item.code}
@@ -213,7 +215,14 @@ export default defineComponent({
               class: 'pb-[10px]'
             },
             show: () => state.isManual,
-            component: () => <StarRating v-model={state.form.content.starRating} />
+            component: () => (
+              <div class='form-item-quality'>
+                <StarRating v-model={state.form.content.starRating} size='large' />
+                <span class='ml-[16px] text-[#675d78]'>
+                  {sleepQualityList[state.form.content.starRating - 1]}
+                </span>
+              </div>
+            )
           }
         ]
       },

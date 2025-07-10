@@ -9,5 +9,6 @@ export enum EnumDiaperType {
 }
 
 export interface IDiaperState {
+  isExpand: boolean
   form: IFeedRecord<IDiaper>
 }

@@ -30,7 +30,7 @@ export default defineComponent({
       babyId: babyInfo.id,
       content: {
         feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm'),
-        name: ''
+        name: 'AD'
       } as ISupplement
     }
 

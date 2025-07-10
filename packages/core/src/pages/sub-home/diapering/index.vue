@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref, watch } from 'vue'
 import { ScrollView } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { dateFormat } from '@mid-vue/shared'
@@ -38,8 +38,15 @@ export default defineComponent({
       } as IDiaper
     }
     const state = reactive<IDiaperState>({
+      isExpand: !!query.id && Number(query.content?.poopType) > 60,
       form: { ...defaultDiaper, ...query }
     })
+    const poopColorList = useDictList('POOP_COLOR')
+    const diaperTypeList = useDictList('DIAPER_TYPE')
+    let poopTypeList =
+      query.id && Number(query.content?.poopType) > 60
+        ? useDictList('POOP_TYPE')
+        : useDictList('POOP_TYPE').slice(0, 6)
 
     useDidShow(() => {
       if (query.id) return
@@ -52,14 +59,23 @@ export default defineComponent({
           ...list[0]?.content,
           feedTime: dateFormat(Date.now(), 'YYYY-MM-DD HH:mm')
         }
+        state.isExpand = Number(state.form.content.poopType) > 60
       })
     })
 
+    watch(
+      () => state.isExpand,
+      (newVal) => {
+        if (newVal) {
+          poopTypeList = useDictList('POOP_TYPE')
+        } else {
+          poopTypeList = useDictList('POOP_TYPE').slice(0, 6)
+        }
+      }
+    )
+
     const formRef = ref<FormInstance>()
 
-    const poopTypeList = useDictList('POOP_TYPE')
-    const poopColorList = useDictList('POOP_COLOR')
-    const diaperTypeList = useDictList('DIAPER_TYPE')
     const cells: IFormItem<IDiaper>[] = [
       {
         attrs: {
@@ -103,19 +119,32 @@ export default defineComponent({
             field: 'poopType',
             attrs: {
               labelAlign: 'top',
-              class: 'pb-[10px]'
+              class: 'pb-[10px]',
+              border: true
             },
-            show: () => state.form.type !== EnumDiaperType.PEE,
+            show: () => state.form.content.type !== EnumDiaperType.PEE,
             component: () => (
-              <div class='grid grid-cols-3 gap-10 size-full'>
-                {poopTypeList.map((item) => (
-                  <div
-                    class={{ 'tag-item': true, active: state.form.content.poopType === item.code }}
-                    onClick={() => (state.form.content.poopType = item.code)}
-                  >
-                    {item.name}
-                  </div>
-                ))}
+              <div class='diapering-more'>
+                <div class='grid grid-cols-3 gap-10 size-full'>
+                  {poopTypeList.map((item) => (
+                    <div
+                      class={{
+                        'tag-item': true,
+                        active: state.form.content.poopType === item.code
+                      }}
+                      onClick={() => (state.form.content.poopType = item.code)}
+                    >
+                      {item.name}
+                    </div>
+                  ))}
+                </div>
+                <div class='show-more' onClick={() => (state.isExpand = !state.isExpand)}>
+                  <span>{state.isExpand ? '收起' : '展开'}</span>
+                  <Icon
+                    name={state.isExpand ? 'mv-icon-collapse' : 'mv-icon-expand'}
+                    class='ml-[4px]'
+                  ></Icon>
+                </div>
               </div>
             )
           },
@@ -127,7 +156,7 @@ export default defineComponent({
               class: 'pb-[10px]',
               border: true
             },
-            show: () => state.form.type !== EnumDiaperType.PEE,
+            show: () => state.form.content.type !== EnumDiaperType.PEE,
             component: () => (
               <div class='form-item-color'>
                 <ScrollView scrollX class='color-list'>
@@ -152,7 +181,7 @@ export default defineComponent({
           {
             label: '更换时间',
             field: 'feedTime',
-            attrs: { required: true },
+            attrs: { required: true, border: true },
             component: () => <DateTimePicker v-model={state.form.content.feedTime}></DateTimePicker>
           }
         ]
@@ -179,7 +208,7 @@ export default defineComponent({
       const record = { ...state.form, feedTime: state.form.content.feedTime }
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
-      Taro.showToast({ title: '添加成功' })
+      Taro.showToast({ title: '保存成功!' })
       navigateBack()
     }
 

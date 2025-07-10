@@ -71,7 +71,7 @@ export default defineComponent({
           {
             label: '体重',
             field: 'weight',
-            attrs: { required: true },
+            attrs: { required: true, border: true },
             component: () => (
               <Input
                 type='digit'
@@ -117,7 +117,7 @@ export default defineComponent({
           {
             label: '脚长',
             field: 'footLength',
-            attrs: { required: false },
+            attrs: { required: false, border: true },
             component: () => (
               <Input
                 type='digit'

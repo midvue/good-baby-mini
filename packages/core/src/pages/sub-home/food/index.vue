@@ -101,7 +101,8 @@ export default defineComponent({
             field: 'type',
             attrs: {
               labelAlign: 'top',
-              class: 'pb-[10px]'
+              class: 'pb-[10px]',
+              border: true
             },
             component: () => (
               <div class='grid grid-cols-4 gap-10 size-full'>
@@ -121,7 +122,8 @@ export default defineComponent({
             field: 'shape',
             attrs: {
               labelAlign: 'top',
-              class: 'pb-[10px]'
+              class: 'pb-[10px]',
+              border: true
             },
             component: () => (
               <div class='grid grid-cols-3 gap-10 size-full'>

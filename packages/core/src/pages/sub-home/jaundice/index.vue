@@ -75,7 +75,7 @@ export default defineComponent({
           {
             label: '单位',
             field: 'unit',
-            attrs: { required: true },
+            attrs: { required: true, border: true },
             component: () => (
               <div class='unit-selector'>
                 {jaundiceUnits.map((unit) => {

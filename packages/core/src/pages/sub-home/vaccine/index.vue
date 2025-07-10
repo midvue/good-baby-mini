@@ -67,7 +67,7 @@ export default defineComponent({
           {
             label: '疫苗名称',
             field: 'name',
-            attrs: { required: true, border: true },
+            attrs: { required: true },
             component: () => (
               <Input
                 v-model={state.form.content.name}
