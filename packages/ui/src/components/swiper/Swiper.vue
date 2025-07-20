@@ -11,7 +11,12 @@
       <swiper-item v-for="(item, index) in items" :key="index">
         <view class="swiper-item" @click="handleSwiperClick(item, index)">
           <slot v-if="$slots.swiper" name="swiper" :url="item[swiperKey]"></slot>
-          <mv-image v-else :src="item[swiperKey]" class="mv-swiper-image"></mv-image>
+          <mv-image
+            v-else
+            :src="item[swiperKey]"
+            class="mv-swiper-image"
+            mode="scaleToFill"
+          ></mv-image>
         </view>
       </swiper-item>
     </swiper>
@@ -66,6 +71,7 @@ export default defineComponent({
     }
     .mv-swiper-image {
       width: 100%;
+      height: 100%;
     }
   }
 }

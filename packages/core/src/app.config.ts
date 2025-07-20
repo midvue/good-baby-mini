@@ -1,6 +1,7 @@
 export default {
   pages: [
     'pages/home/index',
+    'pages/centre/index',
     'pages/mine/index' // 我的
   ],
   subpackages: [
@@ -24,6 +25,11 @@ export default {
       ]
     },
     {
+      //sub 广场子包
+      root: 'pages/sub-centre',
+      pages: ['ai-name/index']
+    },
+    {
       //sub 用户中心子包
       root: 'pages/sub-summary',
       pages: ['chart/index']
@@ -43,6 +49,10 @@ export default {
   preloadRule: {
     'pages/home/index': {
       packages: ['pages/sub-home', 'pages/sub-summary'],
+      network: 'all'
+    },
+    'pages/centre/index': {
+      packages: ['pages/sub-centre'],
       network: 'all'
     },
     'pages/mine/index': {
@@ -70,6 +80,12 @@ export default {
         text: '喂养',
         selectedIconPath: 'assets/images/icon_home_active.png',
         iconPath: 'assets/images/icon_home.png'
+      },
+      {
+        pagePath: 'pages/centre/index',
+        text: '广场',
+        selectedIconPath: 'assets/images/icon_centre_active.png',
+        iconPath: 'assets/images/icon_centre_active.png'
       },
       {
         pagePath: 'pages/mine/index',

@@ -6,9 +6,6 @@ import { getConfigProvider } from '@mid-vue/taro-h5-ui'
 import appConfig from '@/app.config'
 import { useAppStore } from '@/stores'
 import { useRoute } from '@/use'
-defineOptions({
-  name: 'CustomTabBar'
-})
 
 const { model, screenHeight } = getConfigProvider()
 //判断是否是iphone x 以上手机
@@ -17,6 +14,14 @@ const isIphoneX = model.includes('iPhone') && screenHeight >= 750
 
 const appStore = useAppStore()
 
+const { path } = useRoute()
+
+const selected = computed(() => {
+  return appStore.tabBarPath || path
+})
+
+const color = appConfig.tabBar.color
+const selectedColor = appConfig.tabBar.selectedColor
 const list = appConfig.tabBar.list.map((item) => {
   return {
     ...item,
@@ -25,16 +30,7 @@ const list = appConfig.tabBar.list.map((item) => {
   }
 })
 
-/** 首页 */
-
-const color = appConfig.tabBar.color
-const selectedColor = appConfig.tabBar.selectedColor
-
-const selected = computed(() => {
-  return appStore.tabBarPath || useRoute().path
-})
-
-function onSwitchTab(url: string) {
+function switchTab(url: string) {
   appStore.tabBarPath = url
   Taro.switchTab({ url: '/' + url })
 }
@@ -46,7 +42,7 @@ function onSwitchTab(url: string) {
       v-for="item in list"
       :key="item.pagePath"
       class="tab-bar-item"
-      @tap="onSwitchTab(item.pagePath)"
+      @tap="switchTab(item.pagePath)"
     >
       <Image
         class="tab-bar-item-icon"
@@ -62,10 +58,6 @@ function onSwitchTab(url: string) {
 </template>
 
 <style lang="scss">
-:root,
-.mv-tab-bar {
-  --mv-tab-bar-item-height: 52px; /* 底部导航栏条目高度 */
-}
 .mv-tab-bar {
   width: 100%;
   position: fixed;
@@ -88,15 +80,10 @@ function onSwitchTab(url: string) {
     align-items: center;
     flex-direction: column;
     font-size: 12px;
-    height: var(--mv-tab-bar-item-height);
+    height: 52px;
   }
 
   .tab-bar-item-icon {
-    width: 22px;
-    height: 22px;
-    flex: none;
-  }
-  .tab-bar-item-tool-selected {
     width: 22px;
     height: 22px;
     flex: none;

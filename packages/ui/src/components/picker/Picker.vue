@@ -3,7 +3,7 @@
     class="mv-picker"
     :mode="mode"
     :range="range"
-    :rangeKey="rangeKey"
+    :range-key="rangeKey"
     :value="mode === 'selector' ? pickerIndex : modelValue"
     :disabled="disabled"
     :start="start"
@@ -19,12 +19,12 @@
   </picker>
 </template>
 <script lang="ts">
-import { CommonEvent, Picker } from '@tarojs/components'
-import { defineComponent, onMounted, PropType, ref, watch } from 'vue'
+import { defineComponent, onMounted, type PropType, ref, watch } from 'vue'
+import { type CommonEvent, Picker } from '@tarojs/components'
 export default defineComponent({
   name: 'MvPicker',
-  inheritAttrs: false,
   components: { Picker },
+  inheritAttrs: false,
   props: {
     mode: {
       type: String as PropType<'selector' | 'multiSelector' | 'time' | 'date' | 'region'>,

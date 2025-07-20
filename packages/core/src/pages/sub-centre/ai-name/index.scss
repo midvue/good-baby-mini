@@ -1,0 +1,45 @@
+.ai-name {
+  width: 100%;
+  min-height: 100%;
+  padding: 20px;
+
+  &__form {
+    width: 100%;
+
+    &__button-group {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+
+      button {
+        padding: 10px 20px;
+        background-color: #007aff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:disabled {
+          background-color: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  &__error-message {
+    color: red;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  &__name-list {
+    &__name-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      text-align: center;
+    }
+  }
+}
