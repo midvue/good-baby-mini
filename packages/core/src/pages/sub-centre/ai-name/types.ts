@@ -3,18 +3,19 @@
  */
 export interface IAiNameReq {
   isBorn: string
-  lastName: string
+  surname: string
   gender: string
-  birthDate: string
-  birthTime: string
+  birthDate?: string
+  birthTime?: string
+  remark?: string
 }
 
 /**
  * AI 取名响应结果
  */
 export interface IAiNameResponse {
-  names: string[]
-  reason?: string[]
+  name: string
+  desc: string
 }
 
 export interface AiNameState {

@@ -1,45 +1,21 @@
 .ai-name {
   width: 100%;
   min-height: 100%;
-  padding: 20px;
+  padding: 0 var(--mv-padding-w);
 
-  &__form {
+  .ai-name-form {
     width: 100%;
 
-    &__button-group {
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: center;
+    .form-item-card {
+      box-shadow: var(--mv-box-shadow);
+      border-radius: 8px;
+      margin: 12px var(--mv-padding-w 0);
+      padding: 15px;
 
-      button {
-        padding: 10px 20px;
-        background-color: #007aff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-
-        &:disabled {
-          background-color: #ccc;
-          cursor: not-allowed;
-        }
+      &:last-child {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
       }
-    }
-  }
-
-  &__error-message {
-    color: red;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  &__name-list {
-    &__name-item {
-      padding: 10px;
-      margin-bottom: 10px;
-      background-color: #f5f5f5;
-      border-radius: 4px;
-      text-align: center;
     }
   }
 }

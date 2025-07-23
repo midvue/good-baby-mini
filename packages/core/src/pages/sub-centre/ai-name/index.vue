@@ -1,17 +1,21 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
+import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
 import {
   Button,
+  FooterBar,
   Form,
+  hideLoading,
   type IFormItem,
+  Input,
   Navbar,
   Picker,
-  Input,
-  DateTimePicker,
-  Tag
+  showLoading,
+  showPopup,
+  Tag,
+  Textarea
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
-import { EnumYesNoPlus } from '@mid-vue/shared'
 import { useDictList } from '@/use'
 import { apiGetAINames } from './api'
 import type { AiNameState, IAiNameReq } from './types'
@@ -22,7 +26,7 @@ export default defineComponent({
     const [state] = defineCtxState<AiNameState>({
       form: {
         isBorn: '10',
-        lastName: '',
+        surname: '',
         gender: EnumYesNoPlus.YES,
         birthDate: '',
         birthTime: ''
@@ -39,13 +43,34 @@ export default defineComponent({
      * @param params 请求参数
      */
     const fetchNames = async () => {
-      try {
-        const response = await apiGetAINames(state.form)
-        // 可在此处添加处理返回结果的逻辑，如显示名字列表
-        console.log('获取 AI 名字成功:', response.names)
-      } catch (err) {
-        console.error('获取 AI 名字失败:', err)
-      }
+      showLoading({
+        title: 'AI 大模型处理中...'
+      })
+      const multiNames = await apiGetAINames(state.form).finally(() => hideLoading())
+      showPopup({
+        title: 'AI 生成的名字',
+        height: '85%',
+        render: () => {
+          return (
+            <div>
+              {multiNames.map((names) => {
+                return (
+                  <div class='flex flex-col items-center'>
+                    {names.map((aIName) => {
+                      return (
+                        <div key={aIName.name} class='flex w-[100%] items-center'>
+                          <div class='w-[100px] font-bold'>{aIName.name}</div>
+                          <div class='flex-1'>{aIName.desc}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })}
+            </div>
+          )
+        }
+      })
     }
 
     const handleSubmit = () => {
@@ -58,12 +83,10 @@ export default defineComponent({
         children: [
           {
             label: '姓氏',
-            field: 'lastName',
+            field: 'surname',
             attrs: { border: true },
             component: () => (
-              <div>
-                <Input v-model={state.form.lastName} placeholder='请输入姓氏' />
-              </div>
+              <Input maxlength={2} v-model={state.form.surname} placeholder='请输入姓氏' />
             )
           },
           {
@@ -119,36 +142,46 @@ export default defineComponent({
             label: '出生年月',
             field: 'birthDate',
             attrs: { border: true },
-            rules: [],
+            show: () => state.form.isBorn === EnumYesNoPlus.YES,
             component: () => (
-              <div>
-                <DateTimePicker v-model={state.form.birthDate} />
-              </div>
+              <Picker
+                v-model={state.form.birthDate}
+                mode='date'
+                end={useDate().format('YYYY-MM-DD')}
+              ></Picker>
             )
           },
           {
             label: '出生时间',
             field: 'birthTime',
-            attrs: { border: true },
-            rules: [],
-            component: () => (
-              <div>
-                <DateTimePicker v-model={state.form.birthTime} />
-              </div>
-            )
+            show: () => state.form.isBorn === EnumYesNoPlus.YES,
+            component: () => <Picker v-model={state.form.birthTime} mode='time'></Picker>
           }
         ]
+      },
+      {
+        label: '备注',
+        field: 'remark',
+        attrs: { class: 'form-item-card', labelAlign: 'top' },
+        component: () => (
+          <Textarea
+            v-model={state.form.remark}
+            placeholder='请输入备注(比如对宝宝期望,寓意)'
+            maxLength={25}
+          ></Textarea>
+        )
       }
     ]
 
     return () => (
       <div class='ai-name'>
         <Navbar title='AI取名' />
-        <Form cells={cells} v-model={state.form}>
-          <div class='ai-name__button-group'>
-            <Button onClick={handleSubmit}>生成名字</Button>
-          </div>
-        </Form>
+        <Form cells={cells} v-model={state.form} class='ai-name-form'></Form>
+        <FooterBar>
+          <Button type='primary' size='large' onClick={handleSubmit}>
+            一键取名
+          </Button>
+        </FooterBar>
       </div>
     )
   }
