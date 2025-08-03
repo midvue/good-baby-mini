@@ -1,0 +1,35 @@
+.uterine-contraction {
+  width: 100%;
+  min-height: 100%;
+  padding: 0 var(--mv-padding-w);
+
+  .uterine-contraction-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 0;
+    flex: none;
+
+    .header-time {
+      width: 148px;
+      height: 148px;
+      background: #f9b4f3;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #ffffff;
+      font-weight: bold;
+      border: 9px solid #f9b4f3;
+    }
+
+    .header-btn {
+      margin-top: 22px;
+    }
+  }
+  .uterine-contraction-list {
+    flex: 1;
+  }
+}

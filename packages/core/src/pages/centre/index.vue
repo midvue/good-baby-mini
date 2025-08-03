@@ -12,12 +12,7 @@ export default defineComponent({
     const [state] = defineCtxState<ICentreState>({
       banners: [
         {
-          img: 'mine/bg_mine_header.png',
-          alt: 'banner'
-        },
-        {
-          img: 'mine/bg_mine_header.png',
-          alt: 'banner'
+          img: 'centre/img_center_header.png'
         }
       ]
     })
@@ -50,7 +45,12 @@ export default defineComponent({
       },
       {
         icon: iconLogo,
-        title: '宫缩计时'
+        title: '宫缩计时',
+        click: () => {
+          navigateTo({
+            path: '/pages/sub-centre/uterine-contraction/index'
+          })
+        }
       },
       {
         icon: iconLogo,
@@ -61,7 +61,7 @@ export default defineComponent({
     return () => {
       return (
         <div class='centre'>
-          <Navbar title=' ' showHome={false} leftArrow={false}></Navbar>
+          <Navbar title=' ' showHome={false} leftArrow={false} clearfix={false}></Navbar>
           <Swiper items={state.banners} swiperKey='img' class='centre-swiper'></Swiper>
           <div class='center-menu-list '>
             {menuItems.map((item, index) => (

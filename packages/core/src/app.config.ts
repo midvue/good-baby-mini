@@ -27,7 +27,7 @@ export default {
     {
       //sub 广场子包
       root: 'pages/sub-centre',
-      pages: ['ai-name/index']
+      pages: ['ai-name/index', 'uterine-contraction/index']
     },
     {
       //sub 用户中心子包

@@ -15,7 +15,7 @@
             v-else
             :src="item[swiperKey]"
             class="mv-swiper-image"
-            mode="scaleToFill"
+            mode="aspectFill"
           ></mv-image>
         </view>
       </swiper-item>
