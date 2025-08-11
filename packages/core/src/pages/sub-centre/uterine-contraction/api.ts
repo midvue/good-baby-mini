@@ -1,13 +1,23 @@
 import Http from '@mid-vue/http-client'
-import { type IAiNameReq, type IAiNameResponse } from './types'
+import { type UterineContraction } from './types'
 
 /**
- * AI 取名接口
+ * 宫缩记录接口
  * @param params 请求参数
  */
-export const apiGetAINames = (data: IAiNameReq) => {
-  return Http.post<IAiNameResponse[][]>({
-    url: '/ai/names',
+export const apiGetUterineRecords = (data = {}) => {
+  return Http.post<UterineContraction[]>({
+    url: '/centre/uterineRecord/list',
+    data
+  })
+}
+/**
+ * 新增uterineRecord接口
+ * @param params 请求参数
+ */
+export const apiAddUterineRecord = (data: UterineContraction) => {
+  return Http.post({
+    url: '/centre/uterineRecord/add',
     data
   })
 }

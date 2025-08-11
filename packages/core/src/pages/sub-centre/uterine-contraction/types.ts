@@ -1,23 +1,14 @@
 /**
- * AI 取名请求参数
+ * 宫缩记录
  */
-export interface UterineContractionReq {
-  isBorn: string
-  surname: string
-  gender: string
-  birthDate?: string
-  birthTime?: string
-  remark?: string
-}
-
-/**
- * AI 取名响应结果
- */
-export interface UterineContractionResponse {
-  name: string
-  desc: string
+export interface UterineContraction {
+  startTime: string
+  endTime: string
+  duration: number
+  interval: number
 }
 
 export interface UterineContractionState {
-  form: UterineContractionReq
+  form: UterineContraction
+  list: UterineContraction[]
 }
