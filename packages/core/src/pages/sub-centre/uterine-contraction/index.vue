@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { computed, defineComponent } from 'vue'
 import { durationFormat, useDate } from '@mid-vue/shared'
-import { Button, hideLoading, Navbar, showLoading, showToast } from '@mid-vue/taro-h5-ui'
+import { Button, Navbar, showToast } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { apiAddUterineRecord, apiGetUterineRecords } from './api'
 import type { UterineContraction, UterineContractionState } from './types'
@@ -60,8 +60,7 @@ export default defineComponent({
             's'
           )
         }
-        showLoading()
-        await apiAddUterineRecord(state.form).finally(() => hideLoading())
+        await apiAddUterineRecord(state.form)
         showToast('添加成功')
         //提交成功,重置数据
         setState((state) => {
