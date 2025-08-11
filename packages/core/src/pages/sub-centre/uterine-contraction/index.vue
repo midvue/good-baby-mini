@@ -21,9 +21,25 @@ export default defineComponent({
       form: { ...defaultForm }
     })
 
+    const headers = [
+      {
+        title: '开始时间',
+        className: 'item-start-time'
+      },
+      {
+        title: '时长',
+        className: 'item-time'
+      },
+      {
+        title: '间隔',
+        className: 'item-time'
+      }
+    ]
+
     //获取记录
     const getList = async () => {
       const list = await apiGetUterineRecords()
+
       setState((state) => {
         state.list = list
       })
@@ -89,13 +105,20 @@ export default defineComponent({
           </Button>
         </div>
         <div class='uterine-contraction-list'>
+          <div class='uterine-contraction-item'>
+            {headers.map((item, index) => (
+              <div class={item.className} key={index}>
+                {item.title}
+              </div>
+            ))}
+          </div>
           {state.list.map((item) => (
             <div class='uterine-contraction-item' key={item.startTime}>
-              <div class='item-time'>{useDate(item.startTime).format('MM月DD日HH:mm:ss')}</div>
-              <div class='item-duration'>
+              <div class='item-start-time'>{useDate(item.startTime).format('DD日HH:mm:ss')}</div>
+              <div class='item-time'>
                 {durationFormat(item.duration, { format: 'mm分ss秒', unit: 's' })}
               </div>
-              <div class='item-interval'>
+              <div class='item-time'>
                 {durationFormat(item.interval, { format: 'mm分ss秒', unit: 's' }) || '---'}
               </div>
             </div>
