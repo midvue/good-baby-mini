@@ -1,6 +1,7 @@
 import http from '@mid-vue/http-client'
 import { type IBaby } from '@/components/baby-info'
 import { type FeedRecordResp } from './types'
+import { getToken } from '@/utils'
 
 /**
  * 获取喂养记录列表
@@ -30,6 +31,8 @@ export const apiGetFeedRecordList = (data = {}) => {
  * 获取宝宝列表
  */
 export const apiBabyList = (data = {}) => {
+  if (!getToken()) return Promise.resolve([])
+
   const option = {
     url: '/baby/list',
     data,

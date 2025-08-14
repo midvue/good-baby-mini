@@ -1,9 +1,10 @@
 <script lang="tsx">
 import { computed, defineComponent } from 'vue'
+import { ScrollView } from '@tarojs/components'
 import { durationFormat, useDate } from '@mid-vue/shared'
-import { Button, Navbar, showToast } from '@mid-vue/taro-h5-ui'
+import { Button, FooterBar, Navbar, showToast } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
-import { apiAddUterineRecord, apiGetUterineRecords } from './api'
+import { apiAddUterineRecord, apiDeleteUterineRecord, apiGetUterineRecords } from './api'
 import type { UterineContraction, UterineContractionState } from './types'
 
 const defaultForm: UterineContraction = {
@@ -85,6 +86,10 @@ export default defineComponent({
         getList()
       }
     }
+    const onReset = async () => {
+      await apiDeleteUterineRecord({ ids: state.list.map((item) => item.id!) })
+      getList()
+    }
     const durationRef = computed(() => {
       if (!state.form.duration) {
         return '00:00'
@@ -104,26 +109,37 @@ export default defineComponent({
             {state.form.duration ? '结束记录' : '开始记录'}
           </Button>
         </div>
-        <div class='uterine-contraction-list'>
-          <div class='uterine-contraction-item'>
+        <div class='uterine-contraction-records mv-hairline--top'>
+          <div class='uterine-contraction-item mv-hairline--bottom'>
             {headers.map((item, index) => (
               <div class={item.className} key={index}>
                 {item.title}
               </div>
             ))}
           </div>
-          {state.list.map((item) => (
-            <div class='uterine-contraction-item' key={item.startTime}>
-              <div class='item-start-time'>{useDate(item.startTime).format('DD日HH:mm:ss')}</div>
-              <div class='item-time'>
-                {durationFormat(item.duration, { format: 'mm分ss秒', unit: 's' })}
-              </div>
-              <div class='item-time'>
-                {durationFormat(item.interval, { format: 'mm分ss秒', unit: 's' }) || '---'}
-              </div>
+          <ScrollView class='contraction-records-scroll' scroll-y showScrollbar={false} enhanced>
+            <div class='contraction-records-content'>
+              {state.list.map((item) => (
+                <div class='uterine-contraction-item mv-hairline--top' key={item.startTime}>
+                  <div class='item-start-time'>
+                    {useDate(item.startTime).format('DD日HH:mm:ss')}
+                  </div>
+                  <div class='item-time'>
+                    {durationFormat(item.duration, { format: 'mm分ss秒', unit: 's' })}
+                  </div>
+                  <div class='item-time'>
+                    {durationFormat(item.interval, { format: 'mm分ss秒', unit: 's' }) || '---'}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </ScrollView>
         </div>
+        <FooterBar border>
+          <Button type='primary' round size='large' onClick={onReset}>
+            重置
+          </Button>
+        </FooterBar>
       </div>
     )
   }

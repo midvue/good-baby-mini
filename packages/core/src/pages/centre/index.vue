@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
-import { Image, Navbar, SafeBottom, Swiper } from '@mid-vue/taro-h5-ui'
+import { Image, Navbar, SafeBottom, showToast, Swiper } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { navigateTo } from '@/use'
 import { type ICentreState } from './types'
@@ -65,12 +65,24 @@ export default defineComponent({
           <Navbar title=' ' showHome={false} leftArrow={false} clearfix={false}></Navbar>
           <Swiper items={state.banners} swiperKey='img' class='centre-swiper'></Swiper>
           <div class='center-menu-list '>
-            {menuItems.map((item, index) => (
-              <div class='menu-item' key={index} onClick={() => item.click?.()}>
-                <Image src={item.icon} class='menu-item-icon'></Image>
-                <div class='menu-title'>{item.title}</div>
-              </div>
-            ))}
+            {menuItems.map((item, index) => {
+              const isClick = !!item.click
+              return (
+                <div
+                  class='menu-item'
+                  style={{
+                    filter: !isClick ? 'grayscale(100%)' : 'none'
+                  }}
+                  key={index}
+                  onClick={() => {
+                    isClick ? item.click() : showToast('暂未开放')
+                  }}
+                >
+                  <Image src={item.icon} class='menu-item-icon'></Image>
+                  <div class='menu-title'>{item.title}</div>
+                </div>
+              )
+            })}
           </div>
           <SafeBottom></SafeBottom>
         </div>
