@@ -42,7 +42,8 @@ export default {
         'family-manage/index',
         'about-me/index',
         'edit-me/index',
-        'credit/index'
+        'credit/index',
+        'invitation-letter/index'
       ]
     }
   ],

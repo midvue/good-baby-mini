@@ -56,6 +56,15 @@ export default defineComponent({
       {
         icon: 'centre/icon_family_tree.png',
         title: '家谱'
+      },
+      {
+        icon: 'centre/icon_family_tree.png',
+        title: '邀请函',
+        click: () => {
+          navigateTo({
+            path: '/pages/sub-mine/invitation-letter/index'
+          })
+        }
       }
     ]
 
@@ -71,7 +80,7 @@ export default defineComponent({
                 <div
                   class='menu-item'
                   style={{
-                    filter: !isClick ? 'grayscale(100%)' : 'none'
+                    filter: !isClick || item.title === '邀请函' ? 'grayscale(100%)' : 'none'
                   }}
                   key={index}
                   onClick={() => {
