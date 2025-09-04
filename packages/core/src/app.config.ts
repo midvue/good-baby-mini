@@ -18,7 +18,7 @@ export default {
         'sleep/index',
         'food/index',
         'degress/index',
-        'report/index',
+        'weekly/index',
         'supplement/index',
         'medicine/index',
         'vaccine/index'

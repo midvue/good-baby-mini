@@ -54,11 +54,11 @@ export const useProfile = () => {
     },
     {
       icon: iconAchieve,
-      title: '成就',
+      title: '周报',
       click: () => {
         if (!hasBaby()) return
         navigateTo({
-          path: '/pages/sub-home/report/index'
+          path: '/pages/sub-home/weekly/index'
         })
       }
     },

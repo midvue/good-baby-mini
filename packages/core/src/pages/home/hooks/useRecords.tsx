@@ -203,7 +203,19 @@ export const useRecords = () => {
       return (
         <div class='home-records'>
           <div class='home-records-header'>
-            <div class='header-title'>喂养记录</div>
+            <div class='header-title'>
+              喂养记录
+              <Tag
+                size='mini'
+                onClick={() => {
+                  navigateTo({
+                    path: '/pages/sub-home/weekly/index'
+                  })
+                }}
+              >
+                周报
+              </Tag>
+            </div>
             <div class='header-more' v-show={state.feedRecords.length} onClick={onClickMore}>
               更多<Icon name='arrow'></Icon>
             </div>
