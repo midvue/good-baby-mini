@@ -26,7 +26,9 @@ let codes = [
   'FOOD_UNIT',
   'FOOD_DURATION',
   'FOOD_FEEDBACK',
-  'FAMILY_RELATION'
+  'FAMILY_RELATION',
+  'PACKET_TYPE',
+  'FAMILY_CALL'
 ] as const
 
 let dictListMap = {} as DictMap

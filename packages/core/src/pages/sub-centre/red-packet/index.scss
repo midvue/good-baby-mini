@@ -1,0 +1,100 @@
+.red-packet {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #ffffff;
+  .red-packet-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f7f7f7;
+
+    .packet-filter {
+      height: 44px;
+      background-color: #ffffff;
+      margin-bottom: 16px;
+    }
+    .packet-count {
+      padding: 0;
+      width: 343px;
+      height: 84px;
+      background: linear-gradient(90deg, #fff4ed 0%, #ffffff 100%);
+      box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.04);
+      border-radius: 16px 16px 16px 16px;
+      padding: 16px;
+      margin: 0 var(--mv-padding-w) 12px;
+      .title {
+        font-size: 12px;
+        color: #675d78;
+      }
+      .count {
+        margin-top: 3px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #433a51;
+      }
+    }
+    .packet-scroll-container {
+      flex: 1;
+      overflow: hidden;
+      margin: 0 var(--mv-padding-w);
+      .packet-scroll {
+        height: calc(100% - 100px);
+        .packet-item {
+          height: 66px;
+          background: #ffffff;
+          border-radius: 16px 16px 16px 16px;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 12px;
+          margin-bottom: 10px;
+          .packet-item_left {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            .packet-item-icon {
+              width: 40px;
+              height: 40px;
+              margin-right: 8px;
+            }
+            .packet-item-content {
+              display: flex;
+              flex-direction: column;
+
+              .name {
+                font-size: 15px;
+                color: #433a51;
+                font-weight: bold;
+              }
+              .call-name {
+                font-size: 14px;
+                padding-left: 3px;
+              }
+              .type,
+              .time {
+                font-size: 12px;
+                color: #afa8bc;
+              }
+            }
+          }
+          .packet-item_right {
+            color: #fd5136;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+  .packet-drag-content {
+    width: 58px;
+    height: 58px;
+    line-height: 58px;
+    text-align: center;
+    font-size: 15px;
+    color: #ffffff;
+    background: linear-gradient(353deg, #ff5d9e 0%, #ff8bb9 100%);
+    border-radius: 100px 100px 100px 100px;
+  }
+}

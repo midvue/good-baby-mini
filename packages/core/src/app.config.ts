@@ -27,7 +27,7 @@ export default {
     {
       //sub 广场子包
       root: 'pages/sub-centre',
-      pages: ['ai-name/index', 'uterine-contraction/index']
+      pages: ['ai-name/index', 'uterine-contraction/index', 'red-packet/index']
     },
     {
       //sub 用户中心子包
@@ -86,7 +86,7 @@ export default {
         pagePath: 'pages/centre/index',
         text: '广场',
         selectedIconPath: 'assets/images/icon_centre_active.png',
-        iconPath: 'assets/images/icon_centre_active.png'
+        iconPath: 'assets/images/icon_centre.png'
       },
       {
         pagePath: 'pages/mine/index',
