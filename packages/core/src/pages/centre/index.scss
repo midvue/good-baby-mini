@@ -12,11 +12,14 @@
   }
 
   .center-menu-list {
-    width: 100%;
+    width: calc(100% - 32px);
+    background-color: #fff;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     padding: 16px;
+    margin: 16px;
+    border-radius: 16px;
 
     .menu-item {
       display: flex;

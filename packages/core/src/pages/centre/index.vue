@@ -38,7 +38,12 @@ export default defineComponent({
 
       {
         icon: 'centre/icon_red_packet.png',
-        title: '红包记账'
+        title: '红包记账',
+        click: () => {
+          navigateTo({
+            path: '/pages/sub-centre/red-packet/index'
+          })
+        }
       },
       {
         icon: 'centre/icon_fetal_movement.png',
@@ -58,7 +63,7 @@ export default defineComponent({
         title: '家谱'
       },
       {
-        icon: 'centre/icon_family_tree.png',
+        icon: 'centre/icon_family_invite.png',
         title: '邀请函',
         click: () => {
           navigateTo({

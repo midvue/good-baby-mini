@@ -1,8 +1,8 @@
 .uterine-contraction {
   width: 100%;
   height: 100%;
-  padding: 0 var(--mv-padding-w);
   display: flex;
+  background: linear-gradient(180deg, #fbeffd 0%, #fdf2f7 85%, rgba(253, 242, 246, 0) 97%);
   flex-direction: column;
 
   .uterine-contraction-header {
@@ -25,6 +25,14 @@
       color: #ffffff;
       font-weight: bold;
       border: 9px solid #f9b4f3;
+      .header-bg {
+        width: 166px;
+        height: 166px;
+        position: absolute;
+      }
+      .header-time-text {
+        z-index: 88;
+      }
     }
 
     .header-btn {
@@ -34,6 +42,7 @@
   .uterine-contraction-records {
     flex: 1;
     overflow: hidden;
+    background: #ffffff;
 
     .contraction-records-scroll {
       height: calc(100% - 42px);
@@ -51,10 +60,11 @@
     .uterine-contraction-item {
       width: 100%;
       height: 42px;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 32px;
       color: #433a51;
       font-size: 14px;
       flex: none;
@@ -71,6 +81,10 @@
         align-items: center;
         justify-content: center;
       }
+    }
+    .item-title {
+      background: #fafafa;
+      color: #675d78;
     }
   }
 }

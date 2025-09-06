@@ -2,7 +2,7 @@
 import { computed, defineComponent } from 'vue'
 import { ScrollView } from '@tarojs/components'
 import { durationFormat, useDate } from '@mid-vue/shared'
-import { Button, FooterBar, Navbar, showToast } from '@mid-vue/taro-h5-ui'
+import { Button, FooterBar, Navbar, showDialog, showToast, Image } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { apiAddUterineRecord, apiDeleteUterineRecord, apiGetUterineRecords } from './api'
 import type { UterineContraction, UterineContractionState } from './types'
@@ -87,8 +87,14 @@ export default defineComponent({
       }
     }
     const onReset = async () => {
-      await apiDeleteUterineRecord({ ids: state.list.map((item) => item.id!) })
-      getList()
+      showDialog({
+        title: '重置记录',
+        render: () => '确认重置所有记录吗？',
+        onConfirm: async () => {
+          await apiDeleteUterineRecord({ ids: state.list.map((item) => item.id!) })
+          getList()
+        }
+      })
     }
     const durationRef = computed(() => {
       if (!state.form.duration) {
@@ -104,13 +110,16 @@ export default defineComponent({
       <div class='uterine-contraction'>
         <Navbar title='宫缩计时' />
         <div class='uterine-contraction-header'>
-          <div class='header-time'> {durationRef.value}</div>
+          <div class='header-time'>
+            <Image src='centre/img_centre_urerine.png' class='header-bg' />
+            <div class='header-time-text'>{durationRef.value}</div>
+          </div>
           <Button type='primary' round class='header-btn' onClick={handleSubmit}>
             {state.form.duration ? '结束记录' : '开始记录'}
           </Button>
         </div>
         <div class='uterine-contraction-records mv-hairline--top'>
-          <div class='uterine-contraction-item mv-hairline--bottom'>
+          <div class='uterine-contraction-item item-title'>
             {headers.map((item, index) => (
               <div class={item.className} key={index}>
                 {item.title}
