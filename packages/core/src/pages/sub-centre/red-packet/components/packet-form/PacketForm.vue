@@ -34,10 +34,11 @@ export default defineComponent({
   setup(props, { emit }) {
     const typeList = useDictList('PACKET_TYPE')
     const callNameList = useDictList('FAMILY_CALL')
+    console.log('props.data', props.data.babyId)
     const currState = reactive({
       form: {
-        babyId: getBabyInfo().id || '',
         ...props.data,
+        babyId: props.data.babyId === null ? '999' : props.data.babyId || getBabyInfo().id || '',
         recordTime: props.data.recordTime
           ? useDate(props.data.recordTime).format('YYYY-MM-DD')
           : useDate().format('YYYY-MM-DD'),
@@ -45,7 +46,7 @@ export default defineComponent({
         callName: props.data.callName || callNameList[callNameList.length - 1].code
       } as IPacketForm
     })
-
+    console.log('currState.form', currState.form)
     const formRef = ref<FormInstance>()
 
     const cells: IFormItem<IPacketForm>[] = [
@@ -168,7 +169,8 @@ export default defineComponent({
       const apiFunc = currState.form.id ? apiPacketUpdate : apiPacketCreate
       const summitData = {
         ...currState.form,
-        familyId: currState.form.babyId ? getBabyInfo().familyId : ''
+        familyId: currState.form.babyId !== '999' ? getBabyInfo().familyId : '',
+        babyId: currState.form.babyId === '999' ? '' : currState.form.babyId
       }
       const res = await apiFunc(summitData).catch(() => false)
       if (!res) return

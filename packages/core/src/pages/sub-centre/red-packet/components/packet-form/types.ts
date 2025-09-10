@@ -1,6 +1,6 @@
 export interface IPacketForm {
   id: number
-  babyId?: number
+  babyId?: number | string
   name: string
   callName: string
   recordTime: string

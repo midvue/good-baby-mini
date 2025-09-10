@@ -52,7 +52,7 @@ export default defineComponent({
         name: item.nickname,
         code: item.id + ''
       }))
-      state.babyList.push({ name: '本人', code: '' })
+      state.babyList.push({ name: '本人', code: '999' })
     }
     getBabyList()
     //获取记录
@@ -66,16 +66,15 @@ export default defineComponent({
           filterParams[key as keyof FilterParams] = value
         }
       })
-      try {
-        const { list, count } = await apiGetRedPacketList({
-          ...filterParams,
-          ...(state.babyId ? { babyId: state.babyId + '' } : {})
-        })
-        state.packetList = list
-        state.total = count
-      } finally {
-        hideLoading()
-      }
+
+      const { list, count } = await apiGetRedPacketList({
+        ...filterParams,
+        ...(state.babyId !== '999' ? { babyId: state.babyId + '' } : {})
+      })
+      state.packetList = list
+      state.total = count
+
+      hideLoading()
     }
     getList()
 
