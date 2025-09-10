@@ -89,8 +89,9 @@ export default defineComponent({
           return (
             <FilterPopup
               filter={state.filter}
-              onConfirm={() => {
+              onConfirm={(filter) => {
                 scoped.close()
+                state.filter = filter
                 getList()
               }}
               onReset={() => {

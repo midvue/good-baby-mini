@@ -76,11 +76,7 @@ export default defineComponent({
 
         {/* 底部按钮 */}
         <div class='filter-buttons'>
-          <Button
-            size='large'
-            class='filter-btn filter-btn-reset'
-            onClick={() => emit('reset', state)}
-          >
+          <Button size='large' class='filter-btn filter-btn-reset' onClick={() => emit('reset')}>
             重置
           </Button>
           <Button
