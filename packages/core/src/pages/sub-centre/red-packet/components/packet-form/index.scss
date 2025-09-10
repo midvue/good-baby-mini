@@ -1,3 +1,9 @@
 .packet-form {
   width: 100%;
+  .tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 5px 0;
+  }
 }

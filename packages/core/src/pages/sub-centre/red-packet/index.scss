@@ -5,14 +5,24 @@
   background-color: #ffffff;
   .red-packet-content {
     height: 100%;
-    display: flex;
-    flex-direction: column;
     background-color: #f7f7f7;
 
     .packet-filter {
-      height: 44px;
+      position: relative;
       background-color: #ffffff;
       margin-bottom: 16px;
+      display: flex;
+      flex-direction: row;
+      padding: 6px var(--mv-padding-w);
+      overflow: auto;
+      .packet-filter-tag {
+        margin-right: 12px;
+      }
+      .filter-more {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+      }
     }
     .packet-count {
       padding: 0;
@@ -36,6 +46,7 @@
     }
     .packet-scroll-container {
       flex: 1;
+      height: calc(100% - 170px);
       overflow: hidden;
       margin: 0 var(--mv-padding-w);
       .packet-scroll {

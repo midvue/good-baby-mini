@@ -1,0 +1,50 @@
+/* 筛选浮层样式 */
+.filter-popup {
+  padding: 16px;
+  .filter-item {
+    margin-bottom: 20px;
+
+    .filter-label {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .amount-range {
+      display: flex;
+      align-items: center;
+      justify-content: center; /* 添加居中对齐 */
+      gap: 10px;
+      margin-top: 8px; /* 可选：增加与标签的间距 */
+
+      .range-separator {
+        color: #999;
+      }
+
+      input {
+        flex: 1;
+      }
+    }
+    .tag-item {
+      margin-right: 5px;
+      margin-bottom: 8px;
+    }
+  }
+  .filter-item_border {
+    border-bottom: 1px solid #eee; /* 添加底部边框 */
+  }
+  .filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+
+    .filter-btn {
+      flex: 1;
+    }
+    .filter-btn-reset {
+      border: 1px solid #e1e1e1;
+      color: #5c5959;
+    }
+  }
+}
