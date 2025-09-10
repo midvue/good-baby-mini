@@ -60,15 +60,23 @@ export default defineComponent({
             field: 'name',
             attrs: { required: true, border: true },
             rules: [{ required: true, message: '请输入称呼' }],
-            component: () => <Input v-model={currState.form.name} placeholder='请输入称呼'></Input>
+            component: () => (
+              <Input maxLength='10' v-model={currState.form.name} placeholder='请输入称呼'></Input>
+            )
           },
           {
             label: '金额',
             field: 'amount',
+
             attrs: { required: true, border: true },
             rules: [{ required: true, message: '请输入金额' }],
             component: () => (
-              <Input v-model={currState.form.amount} placeholder='请输入金额' type='number'></Input>
+              <Input
+                maxLength='12'
+                v-model={currState.form.amount}
+                placeholder='请输入金额'
+                type='number'
+              ></Input>
             )
           },
           // 关系选择器替换为Tag标签组
