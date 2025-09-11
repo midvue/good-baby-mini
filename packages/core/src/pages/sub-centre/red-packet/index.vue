@@ -13,7 +13,7 @@ import {
   hideLoading,
   Empty
 } from '@mid-vue/taro-h5-ui'
-import { dateFormat } from '@mid-vue/shared'
+import { dateFormat, formatNumber } from '@mid-vue/shared'
 import { useDictMap } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { type IPacketForm, PacketForm } from './components/packet-form'
@@ -170,7 +170,7 @@ export default defineComponent({
           </div>
           <div class='packet-count'>
             <div class='title'>总收入</div>
-            <div class='count'>{state.total.toLocaleString()}</div>
+            <div class='count'>{formatNumber(state.total)}</div>
           </div>
           <div class='packet-scroll-container'>
             <ScrollView class='packet-scroll' scroll-y showScrollbar={false} enhanced>
@@ -197,7 +197,7 @@ export default defineComponent({
                           <div class='time'>{dateFormat(item.recordTime, 'YYYY-MM-DD')}</div>
                         </div>
                       </div>
-                      <div class='packet-item_right'>{item.amount.toLocaleString()}</div>
+                      <div class='packet-item_right'>{formatNumber(item.amount)}</div>
                     </div>
                   ))
                 ) : (
