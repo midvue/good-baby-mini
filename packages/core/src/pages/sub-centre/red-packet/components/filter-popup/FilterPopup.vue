@@ -46,7 +46,7 @@ export default defineComponent({
                 key={item.code}
                 type={state.callName === item.code ? 'primary' : 'default'}
                 plain={state.callName !== item.code}
-                onClick={() => (state.callName = item.code)}
+                onClick={() => (state.callName = state.callName === item.code ? '' : item.code)}
                 class='tag-item'
               >
                 {item.name}
@@ -65,7 +65,7 @@ export default defineComponent({
                 key={item.code}
                 type={state.type === item.code ? 'primary' : 'default'}
                 plain={state.type !== item.code}
-                onClick={() => (state.type = item.code)}
+                onClick={() => (state.type = state.type === item.code ? '' : item.code)}
                 class='tag-item'
               >
                 {item.name}

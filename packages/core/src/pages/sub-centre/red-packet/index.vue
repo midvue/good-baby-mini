@@ -1,18 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
 import { ScrollView } from '@tarojs/components'
-import {
-  Navbar,
-  Image,
-  Drag,
-  showPopup,
-  showDialog,
-  Tag,
-  Icon,
-  showLoading,
-  hideLoading,
-  Empty
-} from '@mid-vue/taro-h5-ui'
+import { Navbar, Image, Drag, showPopup, showDialog, Tag, Icon, Empty } from '@mid-vue/taro-h5-ui'
 import { dateFormat, formatNumber } from '@mid-vue/shared'
 import { useDictMap } from '@/use'
 import { getBabyInfo } from '@/utils'
@@ -57,9 +46,6 @@ export default defineComponent({
     getBabyList()
     //获取记录
     const getList = async () => {
-      showLoading({
-        title: '加载中'
-      })
       const filterParams: FilterParams = {}
       Object.entries(state.filter).forEach(([key, value]) => {
         if (value !== '') {
@@ -73,8 +59,6 @@ export default defineComponent({
       })
       state.packetList = list
       state.total = count
-
-      hideLoading()
     }
     getList()
 
