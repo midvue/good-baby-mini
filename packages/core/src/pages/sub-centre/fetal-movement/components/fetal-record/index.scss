@@ -1,0 +1,62 @@
+.fetal-records-container {
+  display: flex;
+  height: calc(100% - 82px);
+  .fetal-records {
+    flex: 1;
+    overflow: hidden;
+    background: #ffffff;
+
+    .fetal-records-scroll {
+      height: calc(100% - 42px);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fetal-records-content {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      display: flex;
+    }
+
+    .fetal-item {
+      width: 100%;
+      height: 42px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      color: #433a51;
+      font-size: 14px;
+      flex: none;
+
+      .item-time {
+        flex: none;
+        width: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .item-expect-date {
+        flex: none;
+        width: 100px;
+        text-align: center;
+
+        &.normal {
+          color: #4caf50; // 绿色表示正常
+        }
+
+        &.less {
+          color: #f44336; // 红色表示较少
+        }
+      }
+    }
+    .item-title {
+      background: #fafafa;
+      color: #675d78;
+      height: 42px;
+    }
+  }
+}

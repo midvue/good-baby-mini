@@ -48,6 +48,11 @@ export default defineComponent({
       {
         icon: 'centre/icon_fetal_movement.png',
         title: '胎动记录'
+        // click: () => {
+        //   navigateTo({
+        //     path: '/pages/sub-centre/fetal-movement/index'
+        //   })
+        // }
       },
       {
         icon: 'centre/icon_five_elements.png',

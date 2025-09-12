@@ -27,7 +27,12 @@ export default {
     {
       //sub 广场子包
       root: 'pages/sub-centre',
-      pages: ['ai-name/index', 'uterine-contraction/index', 'red-packet/index']
+      pages: [
+        'ai-name/index',
+        'uterine-contraction/index',
+        'red-packet/index',
+        'fetal-movement/index'
+      ]
     },
     {
       //sub 用户中心子包
