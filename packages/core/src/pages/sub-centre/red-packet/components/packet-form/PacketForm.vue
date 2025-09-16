@@ -13,8 +13,9 @@ import {
   Tag
 } from '@mid-vue/taro-h5-ui'
 
-import { useDictList } from '@/use'
 import { getBabyInfo } from '@/utils'
+import { useDictList } from '@/use'
+import { type IDist } from '../../types'
 import { apiPacketCreate, apiPacketUpdate } from './api'
 import { type IPacketForm } from './types'
 
@@ -26,27 +27,28 @@ export default defineComponent({
       default: () => ({})
     },
     babyList: {
-      type: Array as PropType<{ name: string; code: string }[]>,
+      type: Array as PropType<IDist[]>,
       default: () => []
     }
   },
   emits: ['close'],
   setup(props, { emit }) {
-    const typeList = useDictList('PACKET_TYPE')
-    const callNameList = useDictList('FAMILY_CALL')
-    console.log('props.data', props.data.babyId)
+    const typeList = useDictList('PACKET_TYPE') || []
+    const callNameList = useDictList('FAMILY_CALL') || []
     const currState = reactive({
       form: {
         ...props.data,
-        babyId: props.data.babyId === null ? '999' : props.data.babyId || getBabyInfo().id || '',
+        babyId: props.data.babyId === null ? '999' : props.data.babyId || getBabyInfo().id || '999',
         recordTime: props.data.recordTime
           ? useDate(props.data.recordTime).format('YYYY-MM-DD')
           : useDate().format('YYYY-MM-DD'),
-        type: props.data.type || typeList[typeList.length - 1].code,
-        callName: props.data.callName || callNameList[callNameList.length - 1].code
+        type:
+          props.data.type || (typeList.length > 0 ? typeList[typeList.length - 1]?.code || '' : ''),
+        callName:
+          props.data.callName ||
+          (callNameList.length > 0 ? callNameList[callNameList.length - 1]?.code || '' : '')
       } as IPacketForm
     })
-    console.log('currState.form', currState.form)
     const formRef = ref<FormInstance>()
 
     const cells: IFormItem<IPacketForm>[] = [
@@ -62,7 +64,7 @@ export default defineComponent({
             attrs: { required: true, border: true },
             rules: [{ required: true, message: '请输入称呼' }],
             component: () => (
-              <Input maxLength='10' v-model={currState.form.name} placeholder='请输入称呼'></Input>
+              <Input max-length='10' v-model={currState.form.name} placeholder='请输入称呼'></Input>
             )
           },
           {
@@ -73,7 +75,7 @@ export default defineComponent({
             rules: [{ required: true, message: '请输入金额' }],
             component: () => (
               <Input
-                maxLength='12'
+                max-length='12'
                 v-model={currState.form.amount}
                 placeholder='请输入金额'
                 type='number'
@@ -88,18 +90,19 @@ export default defineComponent({
             rules: [{ required: true, message: '请选择关系' }],
             component: () => (
               <div class='tag-group'>
-                {callNameList.map((item) => (
-                  <Tag
-                    key={item.code}
-                    size='medium'
-                    type={currState.form.callName === item.code ? 'primary' : 'default'}
-                    plain={currState.form.callName !== item.code}
-                    onClick={() => (currState.form.callName = item.code)}
-                    class='packet-tag-item'
-                  >
-                    {item.name}
-                  </Tag>
-                ))}
+                {callNameList &&
+                  callNameList.map((item) => (
+                    <Tag
+                      key={item.code}
+                      size='medium'
+                      type={currState.form.callName === item.code ? 'primary' : 'default'}
+                      plain={currState.form.callName !== item.code}
+                      onClick={() => (currState.form.callName = item.code)}
+                      class='packet-tag-item'
+                    >
+                      {item.name}
+                    </Tag>
+                  ))}
               </div>
             )
           },
@@ -111,18 +114,19 @@ export default defineComponent({
             rules: [{ required: true, message: '请选择红包类型' }],
             component: () => (
               <div class='tag-group'>
-                {typeList.map((item) => (
-                  <Tag
-                    key={item.code}
-                    size='medium'
-                    type={currState.form.type === item.code ? 'primary' : 'default'}
-                    plain={currState.form.type !== item.code}
-                    onClick={() => (currState.form.type = item.code)}
-                    class='packet-tag-item'
-                  >
-                    {item.name}
-                  </Tag>
-                ))}
+                {typeList &&
+                  typeList.map((item) => (
+                    <Tag
+                      key={item.code}
+                      size='medium'
+                      type={currState.form.type === item.code ? 'primary' : 'default'}
+                      plain={currState.form.type !== item.code}
+                      onClick={() => (currState.form.type = item.code)}
+                      class='packet-tag-item'
+                    >
+                      {item.name}
+                    </Tag>
+                  ))}
               </div>
             )
           },

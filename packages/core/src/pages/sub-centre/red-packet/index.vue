@@ -1,7 +1,18 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
 import { ScrollView } from '@tarojs/components'
-import { Navbar, Image, Drag, showPopup, showDialog, Tag, Icon, Empty } from '@mid-vue/taro-h5-ui'
+import {
+  Navbar,
+  Image,
+  Drag,
+  showPopup,
+  showDialog,
+  Tag,
+  Icon,
+  Empty,
+  showLoading,
+  hideLoading
+} from '@mid-vue/taro-h5-ui'
 import { dateFormat, formatNumber } from '@mid-vue/shared'
 import { useDictMap } from '@/use'
 import { getBabyInfo } from '@/utils'
@@ -16,7 +27,7 @@ export default defineComponent({
     const state = reactive({
       packetList: [] as IPacketForm[],
       total: 0,
-      babyId: getBabyInfo().id || '',
+      babyId: getBabyInfo()?.id || '999',
       babyList: [] as { name: string; code: string }[],
       // 添加筛选条件状态
       filter: {
@@ -27,7 +38,8 @@ export default defineComponent({
         type: ''
       } as FilterParams
     })
-
+    const typeListMap = useDictMap('PACKET_TYPE')
+    const callNameListMap = useDictMap('FAMILY_CALL')
     // 提取筛选重置为独立方法
     const resetFilter = () => {
       Object.keys(state.filter).forEach((key) => {
@@ -42,25 +54,34 @@ export default defineComponent({
         code: item.id + ''
       }))
       state.babyList.push({ name: '本人', code: '999' })
+      if (state.babyList.length > 0) {
+        getList()
+      }
     }
     getBabyList()
     //获取记录
     const getList = async () => {
-      const filterParams: FilterParams = {}
-      Object.entries(state.filter).forEach(([key, value]) => {
-        if (value !== '') {
-          filterParams[key as keyof FilterParams] = value
-        }
+      showLoading({
+        title: '加载中'
       })
+      try {
+        const filterParams: FilterParams = {}
+        Object.entries(state.filter).forEach(([key, value]) => {
+          if (value !== '') {
+            filterParams[key as keyof FilterParams] = value
+          }
+        })
 
-      const { list, count } = await apiGetRedPacketList({
-        ...filterParams,
-        ...(state.babyId !== '999' ? { babyId: state.babyId + '' } : {})
-      })
-      state.packetList = list
-      state.total = count
+        const { list, count } = await apiGetRedPacketList({
+          ...filterParams,
+          ...(state.babyId !== '999' ? { babyId: state.babyId + '' } : {})
+        })
+        state.packetList = list
+        state.total = count
+      } finally {
+        hideLoading()
+      }
     }
-    getList()
 
     // 添加筛选浮层显示方法
     const showFilterPopup = () => {
@@ -173,11 +194,9 @@ export default defineComponent({
                         <div class='packet-item-content'>
                           <div class='name'>
                             {item.name}
-                            <span class='call-name'>
-                              ({useDictMap('FAMILY_CALL')[item.callName].name})
-                            </span>
+                            <span class='call-name'>({callNameListMap[item.callName]?.name})</span>
                           </div>
-                          <div class='type'>{useDictMap('PACKET_TYPE')[item.type].name}</div>
+                          <div class='type'>{typeListMap[item.type]?.name}</div>
                           <div class='time'>{dateFormat(item.recordTime, 'YYYY-MM-DD')}</div>
                         </div>
                       </div>

@@ -18,8 +18,8 @@ export default defineComponent({
 
     const menuItems = [
       {
-        icon: 'centre/icon_ai_name.png',
-        title: 'ai取名',
+        icon: 'centre/icon_name.png',
+        title: '一键取名',
         click: () => {
           navigateTo({
             path: '/pages/sub-centre/ai-name/index'
@@ -47,12 +47,12 @@ export default defineComponent({
       },
       {
         icon: 'centre/icon_fetal_movement.png',
-        title: '胎动记录'
-        // click: () => {
-        //   navigateTo({
-        //     path: '/pages/sub-centre/fetal-movement/index'
-        //   })
-        // }
+        title: '胎动记录',
+        click: () => {
+          navigateTo({
+            path: '/pages/sub-centre/fetal-movement/index'
+          })
+        }
       },
       {
         icon: 'centre/icon_five_elements.png',
