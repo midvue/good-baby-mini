@@ -1,5 +1,5 @@
 /**
- * AI 取名请求参数
+ * 智能 取名请求参数
  */
 export interface IAiNameReq {
   isBorn: string
@@ -11,13 +11,13 @@ export interface IAiNameReq {
 }
 
 /**
- * AI 取名响应结果
+ * 智能 取名响应结果
  */
-export interface IAiNameResponse {
+export interface INameResponse {
   name: string
   desc: string
 }
 
-export interface AiNameState {
+export interface NameState {
   form: IAiNameReq
 }

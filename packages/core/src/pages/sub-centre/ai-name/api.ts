@@ -1,12 +1,12 @@
 import Http from '@mid-vue/http-client'
-import { type IAiNameReq, type IAiNameResponse } from './types'
+import { IAiNameReq, INameResponse } from './types'
 
 /**
- * AI 取名接口
+ * 智能 取名接口
  * @param params 请求参数
  */
 export const apiGetAINames = (data: IAiNameReq) => {
-  return Http.post<IAiNameResponse[][]>({
+  return Http.post<INameResponse[][]>({
     url: '/ai/names',
     data
   })

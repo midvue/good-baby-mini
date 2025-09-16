@@ -18,12 +18,12 @@ import {
 import { defineCtxState } from '@mid-vue/use'
 import { useDictList } from '@/use'
 import { apiGetAINames } from './api'
-import type { AiNameState, IAiNameReq } from './types'
+import type { NameState, IAiNameReq } from './types'
 
 export default defineComponent({
-  name: 'AIName',
+  name: 'Name',
   setup() {
-    const [state] = defineCtxState<AiNameState>({
+    const [state] = defineCtxState<NameState>({
       form: {
         isBorn: '10',
         surname: '',
@@ -39,16 +39,16 @@ export default defineComponent({
     const genderList = useDictList('GENDER')
 
     /**
-     * 获取 AI 生成的名字
+     * 获取生成的名字
      * @param params 请求参数
      */
     const fetchNames = async () => {
       showLoading({
-        title: 'AI 大模型处理中...'
+        title: '处理中...'
       })
       const multiNames = await apiGetAINames(state.form).finally(() => hideLoading())
       showPopup({
-        title: 'AI 生成的名字',
+        title: '生成的名字',
         height: '85%',
         render: () => {
           return (
@@ -175,7 +175,7 @@ export default defineComponent({
 
     return () => (
       <div class='ai-name'>
-        <Navbar title='AI取名' />
+        <Navbar title='取名' />
         <Form cells={cells} v-model={state.form} class='ai-name-form'></Form>
         <FooterBar>
           <Button type='primary' size='large' onClick={handleSubmit}>
