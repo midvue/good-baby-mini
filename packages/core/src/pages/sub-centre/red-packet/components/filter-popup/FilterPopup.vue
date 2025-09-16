@@ -40,19 +40,18 @@ export default defineComponent({
         <div class='filter-item'>
           <div class='filter-label'>关系</div>
           <div class='tag-group'>
-            {callNameList &&
-              callNameList.map((item) => (
-                <Tag
-                  size='large'
-                  key={item.code}
-                  type={state.callName === item.code ? 'primary' : 'default'}
-                  plain={state.callName !== item.code}
-                  onClick={() => (state.callName = state.callName === item.code ? '' : item.code)}
-                  class='tag-item'
-                >
-                  {item.name}
-                </Tag>
-              ))}
+            {callNameList.map((item) => (
+              <Tag
+                size='large'
+                key={item.code}
+                type={state.callName === item.code ? 'primary' : 'default'}
+                plain={state.callName !== item.code}
+                onClick={() => (state.callName = state.callName === item.code ? '' : item.code)}
+                class='tag-item'
+              >
+                {item.name}
+              </Tag>
+            ))}
           </div>
         </div>
 
@@ -60,19 +59,18 @@ export default defineComponent({
         <div class='filter-item'>
           <div class='filter-label'>红包类型</div>
           <div class='tag-group'>
-            {typeList &&
-              typeList.map((item) => (
-                <Tag
-                  size='large'
-                  key={item.code}
-                  type={state.type === item.code ? 'primary' : 'default'}
-                  plain={state.type !== item.code}
-                  onClick={() => (state.type = state.type === item.code ? '' : item.code)}
-                  class='tag-item'
-                >
-                  {item.name}
-                </Tag>
-              ))}
+            {typeList.map((item) => (
+              <Tag
+                size='large'
+                key={item.code}
+                type={state.type === item.code ? 'primary' : 'default'}
+                plain={state.type !== item.code}
+                onClick={() => (state.type = state.type === item.code ? '' : item.code)}
+                class='tag-item'
+              >
+                {item.name}
+              </Tag>
+            ))}
           </div>
         </div>
 

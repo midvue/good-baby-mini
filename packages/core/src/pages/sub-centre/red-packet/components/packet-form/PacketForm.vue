@@ -42,11 +42,8 @@ export default defineComponent({
         recordTime: props.data.recordTime
           ? useDate(props.data.recordTime).format('YYYY-MM-DD')
           : useDate().format('YYYY-MM-DD'),
-        type:
-          props.data.type || (typeList.length > 0 ? typeList[typeList.length - 1]?.code || '' : ''),
-        callName:
-          props.data.callName ||
-          (callNameList.length > 0 ? callNameList[callNameList.length - 1]?.code || '' : '')
+        type: props.data.type || typeList[typeList.length - 1]?.code || '',
+        callName: props.data.callName || callNameList[callNameList.length - 1]?.code || ''
       } as IPacketForm
     })
     const formRef = ref<FormInstance>()
@@ -90,19 +87,18 @@ export default defineComponent({
             rules: [{ required: true, message: '请选择关系' }],
             component: () => (
               <div class='tag-group'>
-                {callNameList &&
-                  callNameList.map((item) => (
-                    <Tag
-                      key={item.code}
-                      size='medium'
-                      type={currState.form.callName === item.code ? 'primary' : 'default'}
-                      plain={currState.form.callName !== item.code}
-                      onClick={() => (currState.form.callName = item.code)}
-                      class='packet-tag-item'
-                    >
-                      {item.name}
-                    </Tag>
-                  ))}
+                {callNameList.map((item) => (
+                  <Tag
+                    key={item.code}
+                    size='medium'
+                    type={currState.form.callName === item.code ? 'primary' : 'default'}
+                    plain={currState.form.callName !== item.code}
+                    onClick={() => (currState.form.callName = item.code)}
+                    class='packet-tag-item'
+                  >
+                    {item.name}
+                  </Tag>
+                ))}
               </div>
             )
           },
@@ -114,19 +110,18 @@ export default defineComponent({
             rules: [{ required: true, message: '请选择红包类型' }],
             component: () => (
               <div class='tag-group'>
-                {typeList &&
-                  typeList.map((item) => (
-                    <Tag
-                      key={item.code}
-                      size='medium'
-                      type={currState.form.type === item.code ? 'primary' : 'default'}
-                      plain={currState.form.type !== item.code}
-                      onClick={() => (currState.form.type = item.code)}
-                      class='packet-tag-item'
-                    >
-                      {item.name}
-                    </Tag>
-                  ))}
+                {typeList.map((item) => (
+                  <Tag
+                    key={item.code}
+                    size='medium'
+                    type={currState.form.type === item.code ? 'primary' : 'default'}
+                    plain={currState.form.type !== item.code}
+                    onClick={() => (currState.form.type = item.code)}
+                    class='packet-tag-item'
+                  >
+                    {item.name}
+                  </Tag>
+                ))}
               </div>
             )
           },
