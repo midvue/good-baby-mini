@@ -220,9 +220,9 @@ export default defineComponent({
       return (
         <li>
           <span class='summary-item'>
-            <span class='text-num-active'>{name}</span> 在
+            <span class='text-[#433a51] font-bold'>{name}</span> 在凌晨:
             <span class='text-num-active'>
-              {dateFormat(state.weekly.lastFeedTime, '凌晨:MM-DD HH:mm:ss')}
+              {dateFormat(state.weekly.lastFeedTime, 'MM-DD HH:mm:ss')}
             </span>
             起来喂养, 带娃不易!
           </span>
@@ -278,7 +278,7 @@ export default defineComponent({
             <ul class='summary-list'>
               <li>
                 <span class='summary-item'>
-                  总次数: <span class='text-num-active'>{state.weekly.count} 次</span>
+                  总次数: <span class='text-num-active'>{state.weekly.count} </span>次
                 </span>
                 {Object.entries(state.weekly.userStat).map(([key, stat]) => {
                   const relation = state.userMap[key]?.relation
