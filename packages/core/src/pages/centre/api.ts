@@ -1,7 +1,7 @@
 import http from '@mid-vue/http-client'
 
 /**
- * 获取喂养记录列表
+ * 获取家庭关系
  */
 export const apiPostRelation = (data = {}) => {
   const option = {

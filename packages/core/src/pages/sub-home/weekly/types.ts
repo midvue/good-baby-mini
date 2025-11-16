@@ -29,9 +29,17 @@ export interface IWeeklyDetail {
 export interface IWeekly {
   babyId: number
   count: number
+  /** 最后一次喂养记录id */
+  lastFeedUid: string
+  /** 最后一次喂养类型 */
+  lastFeedType: EnumFeedType
+  /** 最后一次喂养时间 */
+  lastFeedTime: string
   detailMap: Record<EnumFeedType, IWeeklyDetail>
+  userStat: Record<string, { count: number; total: number }>
 }
 
 export interface IWeeklyState {
   weekly: IWeekly
+  userMap: Record<string, { relation: string }>
 }

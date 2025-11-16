@@ -6,22 +6,23 @@ import itemIcon from '@/assets/images/img_baby_avatar.png'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { useDictList, useDictMap } from '@/use'
-import { apiGetReportWeek } from './api'
+import { apiGetReportWeek, apiPostRelation } from './api'
 import { type IWeekly, type IWeeklyDetail, type IWeeklyState } from './types'
 
 export default defineComponent({
   name: 'Report',
   setup() {
     const appStore = useAppStore()
-    const date = useDate('2025-07-12').subtract(1, 'week')
+    const date = useDate().subtract(1, 'week')
     // 获取当前周的周一,周日
-    const startFeedTime = useDate(date).day(1).format('YYYY-MM-DD')
-    const endFeedTime = useDate(date).day(7).format('YYYY-MM-DD')
+    const startFeedTime = useDate(date).day(1).format('YYYY/MM/DD')
+    const endFeedTime = useDate(date).day(7).format('YYYY/MM/DD')
     const state = reactive<IWeeklyState>({
-      weekly: { detailMap: {} } as IWeekly
+      weekly: { detailMap: {}, userStat: {} } as IWeekly,
+      userMap: {}
     })
 
-    const feedTypeMap = useDictMap('FEED_TYPE')
+    const relationMap = useDictMap('FAMILY_RELATION')
     const feedTypeList = useDictList('FEED_TYPE')
 
     //获取周报列表
@@ -33,7 +34,29 @@ export default defineComponent({
         endFeedTime
       })
     }
-    getReportList()
+
+    const getFamilyList = () => {
+      apiPostRelation({
+        id: appStore.babyInfo?.familyId
+      }).then((list) => {
+        state.userMap = list.reduce(
+          (prev, cur) => {
+            prev[cur.userId] = {
+              relation: cur.relation
+            }
+            return prev
+          },
+          {} as IWeeklyState['userMap']
+        )
+        console.log(state.userMap)
+      })
+    }
+
+    function init() {
+      Promise.all([getFamilyList(), getReportList()])
+    }
+
+    init()
 
     const weeklyStrategy = {
       [EnumFeedType.MILK_BOTTLE]: {
@@ -72,7 +95,8 @@ export default defineComponent({
           if (dailyMaxCount > 0) {
             tips.push(
               <div class='tips-item'>
-                <span class='text-[#433a51]'>{dateFormat(maxCountDate, 'MM月DD日')}</span>喂最多次(
+                <span class='text-[#433a51]'>{dateFormat(maxCountDate, 'MM月DD日')}</span>
+                最多喂了(
                 <span class='text-num-active'>{dailyMaxCount}</span>次)
               </div>
             )
@@ -80,7 +104,8 @@ export default defineComponent({
           if (dailyMaxTotal > 0) {
             tips.push(
               <div class='tips-item'>
-                <span class='text-[#433a51]'>{dateFormat(maxTotalDate, 'MM月DD日')}</span>喂最多量(
+                <span class='text-[#433a51]'>{dateFormat(maxTotalDate, 'MM月DD日')}</span>
+                最多喂了(
                 <span class='text-num-active'>{dailyMaxTotal}</span>毫升)
               </div>
             )
@@ -120,7 +145,7 @@ export default defineComponent({
           if (dailyMaxCount > 0) {
             tips.push(
               <div class='tips-item'>
-                <span class='text-[#433a51]'>{dateFormat(maxCountDate, 'MM月DD日')}</span>喂最多次(
+                <span class='text-[#433a51]'>{dateFormat(maxCountDate, 'MM月DD日')}</span>最多喂了(
                 <span class='text-num-active'>{dailyMaxCount}</span>次)
               </div>
             )
@@ -129,7 +154,7 @@ export default defineComponent({
             tips.push(
               <div class='tips-item'>
                 <span class='text-[#433a51]'>{dateFormat(maxDurationDate, 'MM月DD日')}</span>
-                喂最多时长(
+                最多喂了(
                 <span class='text-num-active'>{dailyMaxDuration}</span>毫秒)
               </div>
             )
@@ -160,7 +185,7 @@ export default defineComponent({
           if (dailyMaxCount > 0) {
             tips.push(
               <div class='tips-item'>
-                <span class='text-[#433a51]'>{dateFormat(maxCountDate, 'MM月DD日')}</span>换最多次(
+                <span class='text-[#433a51]'>{dateFormat(maxCountDate, 'MM月DD日')}</span>最多换了(
                 <span class='text-num-active'>{dailyMaxCount}</span>次)
               </div>
             )
@@ -186,6 +211,25 @@ export default defineComponent({
 
     const otherFeedTypeList = feedTypeList.filter((dict) => !weeklyKeyList.includes(dict.code))
 
+    /** 渲染最晚喂信息 */
+    const renderLastFeedInfo = () => {
+      const relation = state.userMap[state.weekly.lastFeedUid]?.relation || ''
+      if (!relation) return null
+      const name = relationMap[relation].name || ''
+      if (!name) return null
+      return (
+        <li>
+          <span class='summary-item'>
+            <span class='text-num-active'>{name}</span> 在
+            <span class='text-num-active'>
+              {dateFormat(state.weekly.lastFeedTime, '凌晨:MM-DD HH:mm:ss')}
+            </span>
+            起来喂养, 带娃不易!
+          </span>
+        </li>
+      )
+    }
+
     return () => {
       return (
         <div class='report'>
@@ -193,7 +237,7 @@ export default defineComponent({
           <div class='baby-report'>
             <Image src='mine/img_report_bg.png' class='baby-report-bg'></Image>
             <div class='baby-report-title'>宝宝周报 </div>
-            <div class='baby-report-date'>{`${dateFormat(startFeedTime, 'YY-MM-DD')} - ${dateFormat(endFeedTime, 'MM-DD')}`}</div>
+            <div class='baby-report-date'>{`${startFeedTime} - ${dateFormat(endFeedTime, 'MM/DD')}`}</div>
           </div>
           {Object.entries(state.weekly.detailMap).map(([feedType, detail], index) => {
             const strategy = weeklyStrategy[feedType]
@@ -232,15 +276,34 @@ export default defineComponent({
           <div class='summary'>
             <div class='summary-title'>总结</div>
             <ul class='summary-list'>
-              {otherFeedTypeList.map((dict) => {
-                const detail = state.weekly.detailMap[dict.code as unknown as EnumFeedType]
-                if (!detail || !detail.count) return null
-                return (
-                  <span class='summary-item' key={dict.code}>
-                    {dict.name}:<span class='text-num-active'>{detail.count} 次</span>
-                  </span>
-                )
-              })}
+              <li>
+                <span class='summary-item'>
+                  总次数: <span class='text-num-active'>{state.weekly.count} 次</span>
+                </span>
+                {Object.entries(state.weekly.userStat).map(([key, stat]) => {
+                  const relation = state.userMap[key]?.relation
+                  if (!relation) return null
+                  return (
+                    <span class='summary-item' key={key}>
+                      {relationMap[relation].name}喂:
+                      <span class='text-num-active'>{stat.count} </span>次
+                    </span>
+                  )
+                })}
+              </li>
+              {renderLastFeedInfo()}
+              <li>
+                {otherFeedTypeList.map((dict) => {
+                  const detail = state.weekly.detailMap[dict.code as unknown as EnumFeedType]
+                  if (!detail || !detail.count) return null
+                  return (
+                    <span class='summary-item' key={dict.code}>
+                      {dict.name}:<span class='text-num-active'>{detail.count} </span>次
+                    </span>
+                  )
+                })}
+              </li>
+
               {/* {summaryList.map((item, index) => (
                 <li class='summary-item' key={index}>
                   {item}

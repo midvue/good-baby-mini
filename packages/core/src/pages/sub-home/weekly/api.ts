@@ -22,3 +22,14 @@ export const apiGetReportDetail = (data: Partial<IFeedRecord>) => {
   }
   return http.post(option)
 }
+
+/**
+ * 获取家庭关系
+ */
+export const apiPostRelation = (data = {}) => {
+  const option = {
+    url: '/babyFamily/relation',
+    data
+  }
+  return http.post<{ userId: string; relation: string }[]>(option)
+}
