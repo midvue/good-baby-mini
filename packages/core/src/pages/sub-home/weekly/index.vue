@@ -1,10 +1,11 @@
 <script lang="tsx">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, type VNode } from 'vue'
 import { dateFormat, useDate } from '@mid-vue/shared'
 import { Image, Navbar } from '@mid-vue/taro-h5-ui'
 import itemIcon from '@/assets/images/img_baby_avatar.png'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
+import { useDictList, useDictMap } from '@/use'
 import { apiGetReportWeek } from './api'
 import { type IWeekly, type IWeeklyDetail, type IWeeklyState } from './types'
 
@@ -12,13 +13,16 @@ export default defineComponent({
   name: 'Report',
   setup() {
     const appStore = useAppStore()
-    const date = useDate('2025-07-10').subtract(1, 'week')
+    const date = useDate('2025-07-12').subtract(1, 'week')
     // 获取当前周的周一,周日
     const startFeedTime = useDate(date).day(1).format('YYYY-MM-DD')
     const endFeedTime = useDate(date).day(7).format('YYYY-MM-DD')
     const state = reactive<IWeeklyState>({
       weekly: { detailMap: {} } as IWeekly
     })
+
+    const feedTypeMap = useDictMap('FEED_TYPE')
+    const feedTypeList = useDictList('FEED_TYPE')
 
     //获取周报列表
     const getReportList = async () => {
@@ -28,7 +32,6 @@ export default defineComponent({
         startFeedTime,
         endFeedTime
       })
-      console.log(state.weekly, 22)
     }
     getReportList()
 
@@ -40,22 +43,26 @@ export default defineComponent({
         items: [
           {
             title: '总次数',
-            valueKey: 'count',
+            value: (detail: IWeeklyDetail) => detail.count,
             unit: '次'
           },
           {
             title: '总量',
-            valueKey: 'total',
+            value: (detail: IWeeklyDetail) => detail.total,
             unit: '毫升'
           },
           {
-            title: '最多次数(日)',
-            valueKey: 'dailyMaxCount',
+            title: '平均次数(日)',
+            value: (detail: IWeeklyDetail) => {
+              return (detail.count / detail.days).toFixed(1)
+            },
             unit: '次'
           },
           {
-            title: '最大喂养(日)',
-            valueKey: 'dailyMaxTotal',
+            title: '平均量(日)',
+            value: (detail: IWeeklyDetail) => {
+              return (detail.total / detail.days).toFixed(1)
+            },
             unit: '毫升'
           }
         ],
@@ -88,22 +95,22 @@ export default defineComponent({
         items: [
           {
             title: '总次数',
-            valueKey: 'count',
+            value: (detail: IWeeklyDetail) => detail.count,
             unit: '次'
           },
           {
             title: '总时长',
-            valueKey: 'duration',
+            value: (detail: IWeeklyDetail) => detail.duration,
             unit: '毫秒'
           },
           {
             title: '最多次数(日)',
-            valueKey: 'dailyMaxCount',
+            value: (detail: IWeeklyDetail) => detail.dailyMaxCount,
             unit: '次'
           },
           {
             title: '最大时长(日)',
-            valueKey: 'dailyMaxDuration',
+            value: (detail: IWeeklyDetail) => detail.dailyMaxDuration,
             unit: '毫秒'
           }
         ],
@@ -131,19 +138,19 @@ export default defineComponent({
         }
       },
       [EnumFeedType.DIAPER]: {
-        title: '尿布',
+        title: '换尿布',
         bgColor: '#FFF3F3',
         icon: itemIcon,
         items: [
           {
             title: '总次数',
-            valueKey: 'count',
+            value: (detail: IWeeklyDetail) => detail.count,
             unit: '次'
           },
 
           {
             title: '最多次数(日)',
-            valueKey: 'dailyMaxCount',
+            value: (detail: IWeeklyDetail) => detail.dailyMaxCount,
             unit: '次'
           }
         ],
@@ -160,23 +167,6 @@ export default defineComponent({
           }
           return <div class='report-tips mv-hairline--top'>{tips.map((item) => item)}</div>
         }
-      },
-      [EnumFeedType.HEIGHT_WEIGHT]: {
-        title: '身高体重',
-        bgColor: '#FFF3F3',
-        icon: itemIcon,
-        items: [
-          // {
-          //   title: '身高',
-          //   valueKey: 'height',
-          //   unit: '厘米'
-          // },
-          // {
-          //   title: '体重',
-          //   valueKey: 'weight',
-          //   unit: '千克'
-          // }
-        ]
       }
     } as Record<
       string,
@@ -186,13 +176,16 @@ export default defineComponent({
         icon: string
         items?: {
           title: string
-          valueKey: keyof IWeeklyDetail
+          value: (detail: IWeeklyDetail) => string | VNode | number
           unit: string
         }[]
+        renderTips?: (detail: IWeeklyDetail) => VNode
       }
     >
+    const weeklyKeyList = Object.keys(weeklyStrategy)
 
-    const summaryList = ['本周宝宝的喂养情况良好', '一个月没有测量体重', '宝宝臭臭有点频繁']
+    const otherFeedTypeList = feedTypeList.filter((dict) => !weeklyKeyList.includes(dict.code))
+
     return () => {
       return (
         <div class='report'>
@@ -204,7 +197,7 @@ export default defineComponent({
           </div>
           {Object.entries(state.weekly.detailMap).map(([feedType, detail], index) => {
             const strategy = weeklyStrategy[feedType]
-            if (!strategy) return null
+            if (!strategy || !detail.count) return null
 
             return (
               <div class='report-feed-type' key={feedType + index}>
@@ -225,7 +218,7 @@ export default defineComponent({
                       <div class='content-item' key={index}>
                         <div class='item-title'>{item.title}</div>
                         <div class='item-value'>
-                          {detail[item.valueKey]}
+                          {item.value(detail)}
                           <span class='unit'>{item.unit}</span>
                         </div>
                       </div>
@@ -239,11 +232,20 @@ export default defineComponent({
           <div class='summary'>
             <div class='summary-title'>总结</div>
             <ul class='summary-list'>
-              {summaryList.map((item, index) => (
+              {otherFeedTypeList.map((dict) => {
+                const detail = state.weekly.detailMap[dict.code as unknown as EnumFeedType]
+                if (!detail || !detail.count) return null
+                return (
+                  <span class='summary-item' key={dict.code}>
+                    {dict.name}:<span class='text-num-active'>{detail.count} 次</span>
+                  </span>
+                )
+              })}
+              {/* {summaryList.map((item, index) => (
                 <li class='summary-item' key={index}>
                   {item}
                 </li>
-              ))}
+              ))} */}
             </ul>
           </div>
         </div>

@@ -7,7 +7,7 @@ export interface IWeeklyDetail {
   /** 总喂养量 */
   total: number
   /** 日均喂养量 */
-  avg?: number
+
   /** 日最大次数 */
   dailyMaxCount?: number
   /** 每日最大总喂养量 */
@@ -17,7 +17,7 @@ export interface IWeeklyDetail {
   /** 每日最大母乳喂养时间 */
   dailyMaxDuration?: number
   /** 记录的天数 */
-  days?: number
+  days: number
   /** 最大次数日期 */
   maxCountDate?: string
   /** 最大喂养量日期 */
