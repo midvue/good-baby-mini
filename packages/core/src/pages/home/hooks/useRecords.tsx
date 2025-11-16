@@ -205,7 +205,7 @@ export const useRecords = () => {
           <div class='home-records-header'>
             <div class='header-title'>
               喂养记录
-              {/* <Tag
+              <Tag
                 size='mini'
                 onClick={() => {
                   navigateTo({
@@ -214,7 +214,7 @@ export const useRecords = () => {
                 }}
               >
                 周报
-              </Tag> */}
+              </Tag>
             </div>
             <div class='header-more' v-show={state.feedRecords.length} onClick={onClickMore}>
               更多<Icon name='arrow'></Icon>
