@@ -81,7 +81,7 @@ export default defineComponent({
     return () => {
       return (
         <div class='centre'>
-          <Navbar title=' ' showHome={false} leftArrow={false} clearfix={false}></Navbar>
+          <Navbar showHome={false} leftArrow={false} clearfix={false}></Navbar>
           <Swiper items={state.banners} swiperKey='img' class='centre-swiper'></Swiper>
           <div class='center-menu-list '>
             {menuItems.map((item, index) => {
@@ -90,7 +90,7 @@ export default defineComponent({
                 <div
                   class='menu-item'
                   style={{
-                    filter: !isClick || item.title === '邀请函' ? 'grayscale(100%)' : 'none'
+                    filter: !isClick ? 'grayscale(100%)' : 'none'
                   }}
                   key={index}
                   onClick={() => {

@@ -137,7 +137,7 @@ export const useHeader = () => {
   return {
     render: () => (
       <div class='home-header'>
-        <Navbar leftArrow={false} showHome={false}></Navbar>
+        <Navbar leftArrow={false} showHome={false} title='奶娃星球'></Navbar>
         <div class='home-baby-info'>
           <Image
             class='baby-info-avatar'

@@ -233,7 +233,7 @@ export default defineComponent({
     return () => {
       return (
         <div class='report'>
-          <Navbar position='fixed' clearfix={false}></Navbar>
+          <Navbar position='fixed' clearfix={false} title='奶娃星球'></Navbar>
           <div class='baby-report'>
             <Image src='mine/img_report_bg.png' class='baby-report-bg'></Image>
             <div class='baby-report-title'>宝宝周报 </div>

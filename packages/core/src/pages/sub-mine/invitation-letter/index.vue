@@ -2,30 +2,54 @@
 import { defineComponent, reactive } from 'vue'
 import { WebView } from '@tarojs/components'
 import { useShareAppMessage } from '@tarojs/taro'
+import { useRoute } from '@/use'
+
+interface ShareInfo {
+  title: string
+  fullPath: string
+  coverUrl: string
+  type: string
+}
 
 export default defineComponent({
   name: 'WebPage',
   components: { 'web-view': WebView },
   setup() {
-    const state = reactive({
-      src: 'https://activity.xfy-66.com/home'
+    const route = useRoute()
+    const baseUrl = 'https://activity.xfy-66.com'
+    const state = reactive<{
+      shareInfo: ShareInfo
+    }>({
+      shareInfo: {
+        fullPath: route.query.fullPath || '/home',
+        title: '奶娃星球-邀请函'
+      } as ShareInfo
     })
 
     useShareAppMessage(() => {
       return {
-        title: '厉氏宗祠竣工庆典邀请函',
-        path: '/pages/sub-mine/invitation-letter/index'
+        title: state.shareInfo.title,
+        path: `/pages/sub-mine/invitation-letter/index?fullPath=${state.shareInfo.fullPath}`,
+        imageUrl: state.shareInfo.coverUrl || undefined
       }
     })
 
-    const handlerMessage = (event: any) => {
-      console.log('web-page handlerMessage', event)
+    const handlerMessage = (event: { detail: { data: ShareInfo[] } }) => {
+      const shareArr = event.detail.data.filter((item) => item.type === 'shareApp')
+      const lastIndex = shareArr.length - 1
+      state.shareInfo = shareArr[lastIndex]
     }
 
     return () => {
       return (
         <div class='invitation-letter'>
-          {<web-view src={state.src} onMessage={handlerMessage} class='webview' />}
+          {
+            <web-view
+              src={`${baseUrl}${state.shareInfo.fullPath}`}
+              onMessage={handlerMessage}
+              class='webview'
+            />
+          }
         </div>
       )
     }
