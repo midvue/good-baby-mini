@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
-import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
+import { debounce, EnumYesNoPlus } from '@mid-vue/shared'
 import {
   Button,
   FooterBar,
@@ -9,73 +9,58 @@ import {
   type IFormItem,
   Input,
   Navbar,
-  Picker,
   showLoading,
   showPopup,
-  Tag,
-  Textarea
+  showToast,
+  Tag
 } from '@mid-vue/taro-h5-ui'
 import { defineCtxState } from '@mid-vue/use'
 import { useDictList } from '@/use'
-import { apiGetAINames } from './api'
-import type { NameState, IAiNameReq } from './types'
+import { apiGetAINames, apiInterpretNamesNames } from './api'
+import type { IAiNameReq, NameState } from './types'
 
 export default defineComponent({
   name: 'Name',
   setup() {
-    const [state] = defineCtxState<NameState>({
+    const [state, setState] = defineCtxState<NameState>({
       form: {
-        isBorn: '10',
         surname: '',
-        gender: EnumYesNoPlus.YES,
-        birthDate: '',
-        birthTime: ''
-      }
+        gender: EnumYesNoPlus.YES
+      },
+      names: [],
+      selectedNames: []
     })
-    const yesNoList = [
-      { label: '是', value: '10' },
-      { label: '否', value: '20' }
-    ]
+
     const genderList = useDictList('GENDER')
+
+    const clear = () => {
+      setState((state) => {
+        state.form.lastFindName = undefined
+        state.selectedNames = []
+        state.names = []
+      })
+    }
 
     /**
      * 获取生成的名字
      * @param params 请求参数
      */
     const fetchNames = async () => {
+      if (!state.form.surname || !state.form.gender) {
+        showToast('请输入姓氏')
+        return
+      }
       showLoading({
         title: '处理中...'
       })
+      setState((state) => (state.form.lastFindName = state.names?.[state.names.length - 1]?.name))
       const multiNames = await apiGetAINames(state.form).finally(() => hideLoading())
-      showPopup({
-        title: '生成的名字',
-        height: '85%',
-        render: () => {
-          return (
-            <div>
-              {multiNames.map((names) => {
-                return (
-                  <div class='flex flex-col items-center'>
-                    {names.map((aIName) => {
-                      return (
-                        <div key={aIName.name} class='flex w-[100%] items-center'>
-                          <div class='w-[100px] font-bold'>{aIName.name}</div>
-                          <div class='flex-1'>{aIName.desc}</div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                )
-              })}
-            </div>
-          )
-        }
-      })
+      setState((state) => (state.names = multiNames))
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = debounce(() => {
       fetchNames()
-    }
+    }, 300)
 
     const cells: IFormItem<IAiNameReq>[] = [
       {
@@ -86,7 +71,15 @@ export default defineComponent({
             field: 'surname',
             attrs: { border: true },
             component: () => (
-              <Input maxlength={2} v-model={state.form.surname} placeholder='请输入姓氏' />
+              <Input
+                maxlength={2}
+                v-model={state.form.surname}
+                placeholder='请输入姓氏'
+                onInput={() => {
+                  clear()
+                  handleSubmit()
+                }}
+              />
             )
           },
           {
@@ -105,6 +98,8 @@ export default defineComponent({
                       plain={state.form.gender !== gender.code}
                       onClick={() => {
                         state.form.gender = gender.code
+                        clear()
+                        handleSubmit()
                       }}
                     >
                       {gender.name}宝宝
@@ -113,73 +108,101 @@ export default defineComponent({
                 })}
               </>
             )
-          },
-          {
-            label: '是否出生',
-            field: 'isBorn',
-            attrs: { border: true },
-            component: () => (
-              <>
-                {yesNoList.map((item) => {
-                  return (
-                    <Tag
-                      class='w-[60px] mr-[8px]'
-                      round
-                      type='primary'
-                      plain={state.form.isBorn !== item.value}
-                      onClick={() => {
-                        state.form.isBorn = item.value
-                      }}
-                    >
-                      {item.label}
-                    </Tag>
-                  )
-                })}
-              </>
-            )
-          },
-          {
-            label: '出生年月',
-            field: 'birthDate',
-            attrs: { border: true },
-            show: () => state.form.isBorn === EnumYesNoPlus.YES,
-            component: () => (
-              <Picker
-                v-model={state.form.birthDate}
-                mode='date'
-                end={useDate().format('YYYY-MM-DD')}
-              ></Picker>
-            )
-          },
-          {
-            label: '出生时间',
-            field: 'birthTime',
-            show: () => state.form.isBorn === EnumYesNoPlus.YES,
-            component: () => <Picker v-model={state.form.birthTime} mode='time'></Picker>
           }
         ]
-      },
-      {
-        label: '备注',
-        field: 'remark',
-        attrs: { class: 'form-item-card', labelAlign: 'top' },
-        component: () => (
-          <Textarea
-            v-model={state.form.remark}
-            placeholder='请输入备注(比如对宝宝期望,寓意)'
-            maxLength={25}
-          ></Textarea>
-        )
       }
     ]
+
+    /**
+     * 选择或取消选择一个名字
+     * @param index 名字在列表中的索引
+     */
+    const onSelectName = (index: number) => {
+      const item = state.names[index]
+      if (state.selectedNames.includes(item.name)) {
+        state.selectedNames.splice(state.selectedNames.indexOf(item.name), 1)
+      } else {
+        state.selectedNames.push(item.name)
+      }
+      item.isSelected = !item.isSelected
+    }
+
+    /**
+     * 解读选中的名字
+     */
+    const onInterpretNames = () => {
+      if (state.selectedNames.length === 0) {
+        showToast('请选择要解读的名字')
+        return
+      }
+      showLoading({
+        title: '解读中...'
+      })
+      apiInterpretNamesNames({ names: state.selectedNames, gender: state.form.gender })
+        .then((names) => {
+          showPopup({
+            title: '名字解读',
+            height: '90%',
+            render: () => {
+              return (
+                <div class='flex flex-col items-center px-[12px] '>
+                  {names.map((aIName) => {
+                    return (
+                      <div
+                        key={aIName.name}
+                        class='flex w-[100%] items-center mv-hairline--bottom py-[10px] '
+                      >
+                        <div class='w-[80px] font-bold self-start text-[16px]'>{aIName.name}</div>
+                        <div class='flex-1 flex flex-col text-[14px]  text-[#333333] leading-[24px]'>
+                          <div>
+                            <span class='font-bold'>读音</span>:{' '}
+                            <span class='text-[#ff4a4a]'>{aIName.spell}</span>
+                          </div>
+                          <div>
+                            <span class='font-bold'>出自</span>: {aIName.origin}
+                          </div>
+                          <div>
+                            <span class='font-bold'>释义</span>:{' '}
+                            <span class='text-[#675d78]'>{aIName.desc}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            }
+          })
+        })
+        .finally(() => hideLoading())
+    }
 
     return () => (
       <div class='ai-name'>
         <Navbar title='取名' />
         <Form cells={cells} v-model={state.form} class='ai-name-form'></Form>
-        <FooterBar>
-          <Button type='primary' size='large' onClick={handleSubmit}>
-            一键取名
+        <div class='ai-name-list' v-show={state.names.length > 0}>
+          {state.names.map((item, index) => {
+            return (
+              <Tag
+                class='name-tag'
+                key={index}
+                round
+                type='primary'
+                plain={!item.isSelected}
+                onClick={() => onSelectName(index)}
+              >
+                {item.name}
+              </Tag>
+            )
+          })}
+        </div>
+        <FooterBar class='justify-around'>
+          <Button type='success' size='medium' onClick={onInterpretNames}>
+            解读
+          </Button>
+          <Button type='primary' size='medium' onClick={handleSubmit}>
+            换一批
           </Button>
         </FooterBar>
       </div>

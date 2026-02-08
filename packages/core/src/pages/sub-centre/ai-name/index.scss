@@ -18,4 +18,22 @@
       }
     }
   }
+
+  .ai-name-list {
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: var(--mv-box-shadow);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+
+    .name-tag {
+      width: 50px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
 }
