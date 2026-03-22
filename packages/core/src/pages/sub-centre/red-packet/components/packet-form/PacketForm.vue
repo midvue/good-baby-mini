@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, type PropType, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
-import { useDate } from '@mid-vue/shared'
+import { useDate } from '@allkit/shared'
 import {
   Button,
   FooterBar,
@@ -11,7 +11,7 @@ import {
   Input,
   Picker,
   Tag
-} from '@mid-vue/taro-h5-ui'
+} from '@allkit/taro-h5-ui'
 
 import { getBabyInfo } from '@/utils'
 import { useDictList } from '@/use'

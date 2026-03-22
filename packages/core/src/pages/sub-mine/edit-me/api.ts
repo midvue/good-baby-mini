@@ -1,4 +1,4 @@
-import http from '@mid-vue/http-client'
+import http from '@allkit/http-client'
 
 /**
  * 更新个人信息

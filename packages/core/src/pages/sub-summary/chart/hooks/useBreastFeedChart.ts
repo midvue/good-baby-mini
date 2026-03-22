@@ -1,9 +1,9 @@
 import { useAppStore } from '@/stores'
 import { apiFeedRecordList } from '../api'
-import { useDate } from '@mid-vue/shared'
+import { useDate } from '@allkit/shared'
 import { EnumFeedType } from '@/dict'
 import { Chart } from '../../utils/chart'
-import { useCtxState } from '@mid-vue/use'
+import { useCtxState } from '@allkit/use'
 import { IChartState } from '../types'
 
 export function useBreastFeedChart() {

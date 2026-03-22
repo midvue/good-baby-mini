@@ -54,7 +54,7 @@
 import { defineComponent, reactive, toRefs } from 'vue'
 import Taro, { usePageScroll } from '@tarojs/taro'
 
-import { throttle } from '@mid-vue/shared'
+import { throttle } from '@allkit/shared'
 import { getConfigProvider } from '../../use/useConfigProvider'
 import { Icon } from '../icon'
 import { props } from './props'

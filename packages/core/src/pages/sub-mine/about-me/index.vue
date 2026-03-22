@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
-import { Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { Image, Navbar } from '@allkit/taro-h5-ui'
 import iconLogo from '@/assets/images/icon_logo.png'
 
 export default defineComponent({

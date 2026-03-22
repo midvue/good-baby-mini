@@ -35,7 +35,7 @@ import { computed, defineComponent, type PropType, reactive, type SlotsType } fr
 import { inject } from 'vue'
 import Taro, { useReady } from '@tarojs/taro'
 import { type CommonEvent } from '@tarojs/components'
-import { debounce, uniqueId } from '@mid-vue/shared'
+import { debounce, uniqueId } from '@allkit/shared'
 import { CONFIG_PROVIDER } from '../../constants'
 import Search from '../search'
 import Popover from './Popover.vue'

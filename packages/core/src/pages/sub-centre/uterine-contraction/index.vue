@@ -1,9 +1,9 @@
 <script lang="tsx">
 import { computed, defineComponent } from 'vue'
 import { ScrollView } from '@tarojs/components'
-import { durationFormat, useDate } from '@mid-vue/shared'
-import { Button, FooterBar, Navbar, showDialog, showToast, Image } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
+import { durationFormat, useDate } from '@allkit/shared'
+import { Button, FooterBar, Navbar, showDialog, showToast, Image } from '@allkit/taro-h5-ui'
+import { defineCtxState } from '@allkit/use'
 import { apiAddUterineRecord, apiDeleteUterineRecord, apiGetUterineRecords } from './api'
 import type { UterineContraction, UterineContractionState } from './types'
 

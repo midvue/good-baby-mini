@@ -1,6 +1,6 @@
 <script lang="tsx">
-import { useNumber } from '@mid-vue/shared'
-import { Input } from '@mid-vue/taro-h5-ui'
+import { useNumber } from '@allkit/shared'
+import { Input } from '@allkit/taro-h5-ui'
 import { defineComponent, reactive, watch } from 'vue'
 
 export default defineComponent({

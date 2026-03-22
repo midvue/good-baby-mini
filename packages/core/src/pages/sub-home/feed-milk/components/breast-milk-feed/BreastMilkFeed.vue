@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, onUnmounted, type PropType, reactive, ref, watch } from 'vue'
 import Taro from '@tarojs/taro'
-import { dateFormat, durationFormat, durationFormatNoZero } from '@mid-vue/shared'
+import { dateFormat, durationFormat, durationFormatNoZero } from '@allkit/shared'
 import {
   Button,
   DateTimePicker,
@@ -12,7 +12,7 @@ import {
   type IFormItem,
   Image,
   Textarea
-} from '@mid-vue/taro-h5-ui'
+} from '@allkit/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateBack } from '@/use'
 import { getBabyInfo } from '@/utils'

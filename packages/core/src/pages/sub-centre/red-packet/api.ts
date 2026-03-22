@@ -1,4 +1,4 @@
-import Http from '@mid-vue/http-client'
+import Http from '@allkit/http-client'
 import { type IPacketForm } from './components/packet-form/types'
 
 /**

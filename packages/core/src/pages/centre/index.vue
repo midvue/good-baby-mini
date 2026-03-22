@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
-import { Image, Navbar, SafeBottom, showToast, Swiper } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
+import { Image, Navbar, SafeBottom, showToast, Swiper } from '@allkit/taro-h5-ui'
+import { defineCtxState } from '@allkit/use'
 import { navigateTo } from '@/use'
 import { type ICentreState } from './types'
 

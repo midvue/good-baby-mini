@@ -1,4 +1,4 @@
-import http from '@mid-vue/http-client'
+import http from '@allkit/http-client'
 import { type FeedRecordResp } from './types'
 import { type ICalendarItem } from './components/calendar/type'
 

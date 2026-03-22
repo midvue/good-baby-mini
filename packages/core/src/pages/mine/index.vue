@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
 
-import { SafeBottom } from '@mid-vue/taro-h5-ui'
+import { SafeBottom } from '@allkit/taro-h5-ui'
 import { useList, useProfile } from './hooks'
 
 export default defineComponent({

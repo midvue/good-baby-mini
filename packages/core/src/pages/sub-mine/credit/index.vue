@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
-import { Button, Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { Button, Image, Navbar } from '@allkit/taro-h5-ui'
 import { apiPointList, apiPointSummary, apiUpdatePoint } from './api'
 import { type Point } from './types'
 import { EnumPointStatus, pointStatusStrategy } from './dict'

@@ -1,4 +1,4 @@
-import { useHttp } from '@mid-vue/http-client'
+import { useHttp } from '@allkit/http-client'
 import { type IUploadQuery } from './types'
 
 /**

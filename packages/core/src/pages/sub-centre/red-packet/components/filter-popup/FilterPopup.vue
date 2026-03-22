@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, reactive, type PropType } from 'vue'
-import { Input, Button, Tag } from '@mid-vue/taro-h5-ui'
+import { Input, Button, Tag } from '@allkit/taro-h5-ui'
 import { useDictList } from '@/use'
 import { type FilterParams } from './type'
 

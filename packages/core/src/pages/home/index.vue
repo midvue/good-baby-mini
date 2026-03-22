@@ -2,8 +2,8 @@
 import { defineComponent, watch } from 'vue'
 
 import { useShareAppMessage } from '@tarojs/taro'
-import { hideLoading, SafeBottom, showLoading } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
+import { hideLoading, SafeBottom, showLoading } from '@allkit/taro-h5-ui'
+import { defineCtxState } from '@allkit/use'
 import { useHeader, useRecords, useTools } from './hooks'
 import { type IHomeState } from './types'
 

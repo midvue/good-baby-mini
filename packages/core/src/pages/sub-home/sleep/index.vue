@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref, watch } from 'vue'
 import Taro, { useDidShow } from '@tarojs/taro'
-import { dateDiff, dateFormat, durationFormatNoZero, EnumYesNoPlus } from '@mid-vue/shared'
+import { dateDiff, dateFormat, durationFormatNoZero, EnumYesNoPlus } from '@allkit/shared'
 import {
   Button,
   DateTimePicker,
@@ -13,7 +13,7 @@ import {
   Navbar,
   Tag,
   Textarea
-} from '@mid-vue/taro-h5-ui'
+} from '@allkit/taro-h5-ui'
 import { useRoute, navigateBack, useDictList } from '@/use'
 import { EnumFeedType } from '@/dict'
 import { clearSleepStartTime, getBabyInfo, getSleepStartTime, setSleepStartTime } from '@/utils'

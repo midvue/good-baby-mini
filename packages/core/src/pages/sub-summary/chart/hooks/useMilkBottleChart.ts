@@ -1,7 +1,7 @@
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
-import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
-import { useCtxState } from '@mid-vue/use'
+import { EnumYesNoPlus, useDate } from '@allkit/shared'
+import { useCtxState } from '@allkit/use'
 import { Chart, EnumLineType } from '../../utils/chart'
 import { apiFeedRecordList } from '../api' // 假设存在该 API
 import { IChartState } from '../types'

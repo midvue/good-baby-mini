@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive, type VNode } from 'vue'
-import { dateFormat, useDate } from '@mid-vue/shared'
-import { Image, Navbar } from '@mid-vue/taro-h5-ui'
+import { dateFormat, useDate } from '@allkit/shared'
+import { Image, Navbar } from '@allkit/taro-h5-ui'
 import itemIcon from '@/assets/images/img_baby_avatar.png'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'

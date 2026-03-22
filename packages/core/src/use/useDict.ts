@@ -1,4 +1,4 @@
-import Http from '@mid-vue/http-client'
+import Http from '@allkit/http-client'
 import { getStorage, setStorage } from '@/utils'
 
 export interface DictItem {

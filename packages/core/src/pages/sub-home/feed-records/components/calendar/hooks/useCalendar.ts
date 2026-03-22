@@ -1,4 +1,4 @@
-import { useDate } from '@mid-vue/shared'
+import { useDate } from '@allkit/shared'
 
 import type { ICalendarItem } from '../type'
 

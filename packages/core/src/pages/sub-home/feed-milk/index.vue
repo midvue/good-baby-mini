@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { computed, defineComponent, reactive } from 'vue'
-import { Navbar, Tag } from '@mid-vue/taro-h5-ui'
+import { Navbar, Tag } from '@allkit/taro-h5-ui'
 import { useRoute } from '@/use'
 
 import { EnumFeedType } from '@/dict'

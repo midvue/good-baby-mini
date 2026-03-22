@@ -1,9 +1,9 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
-import { EnumYesNoPlus, sleep, useDate } from '@mid-vue/shared'
-import { Canvas, Navbar, Picker, TabPane, Tabs, Tag, Icon } from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
+import { EnumYesNoPlus, sleep, useDate } from '@allkit/shared'
+import { Canvas, Navbar, Picker, TabPane, Tabs, Tag, Icon } from '@allkit/taro-h5-ui'
+import { defineCtxState } from '@allkit/use'
 import { EnumFeedType } from '@/dict'
 import { type DictItem, useDictList, useRoute } from '@/use'
 import { useBreastFeedChart } from './hooks/useBreastFeedChart'

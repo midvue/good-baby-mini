@@ -63,8 +63,8 @@
 
 <script lang="ts" setup>
 import { reactive, ref, watch, computed } from 'vue'
-import { useDate } from '@mid-vue/shared'
-import { Icon as MvIcon, Picker as MvPicker } from '@mid-vue/taro-h5-ui'
+import { useDate } from '@allkit/shared'
+import { Icon as MvIcon, Picker as MvPicker } from '@allkit/taro-h5-ui'
 import type { ICalendarItem, ICListState } from './type'
 
 // 定义 props

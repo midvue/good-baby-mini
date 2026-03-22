@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
 import Taro from '@tarojs/taro'
-import { Image } from '@mid-vue/taro-h5-ui'
+import { Image } from '@allkit/taro-h5-ui'
 import { type EnumFeedType } from '@/dict'
 import { navigateTo, useDictList, useDictMap } from '@/use'
 

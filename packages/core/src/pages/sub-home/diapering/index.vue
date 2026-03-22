@@ -2,7 +2,7 @@
 import { defineComponent, reactive, ref, watch } from 'vue'
 import { ScrollView } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
-import { dateFormat } from '@mid-vue/shared'
+import { dateFormat } from '@allkit/shared'
 import {
   Button,
   DateTimePicker,
@@ -13,7 +13,7 @@ import {
   Navbar,
   Textarea,
   type FormInstance
-} from '@mid-vue/taro-h5-ui'
+} from '@allkit/taro-h5-ui'
 import { EnumFeedType } from '@/dict'
 import { navigateBack, useDictList, useRoute } from '@/use'
 import { getBabyInfo } from '@/utils'

@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
 import { ScrollView } from '@tarojs/components'
-import { useDate } from '@mid-vue/shared'
+import { useDate } from '@allkit/shared'
 import { type FetalMovement } from '../../types'
 import { apiGetFetalRecords } from './api'
 

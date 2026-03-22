@@ -1,4 +1,5 @@
 {
+  "root": true,
   "extends": ["@mid-vue"],
   "globals": {
     "wx": "readonly"

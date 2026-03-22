@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
-import { Navbar, Tag } from '@mid-vue/taro-h5-ui'
+import { Navbar, Tag } from '@allkit/taro-h5-ui'
 import { useAppStore } from '@/stores'
 import { useDictMap } from '@/use'
 import { apiFamilyList } from './api'

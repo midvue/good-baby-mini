@@ -1,4 +1,4 @@
-import http from '@mid-vue/http-client'
+import http from '@allkit/http-client'
 import { type IBaby } from '@/components/baby-info'
 import { type FeedRecordResp } from './types'
 import { getToken } from '@/utils'

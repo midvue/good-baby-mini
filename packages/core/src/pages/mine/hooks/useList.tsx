@@ -10,7 +10,7 @@ import {
   showDialog,
   showPopup,
   Tag
-} from '@mid-vue/taro-h5-ui'
+} from '@allkit/taro-h5-ui'
 
 import { navigateTo, reLaunch, useDictList } from '@/use'
 import { getBabyInfo, getUserInfo } from '@/utils'

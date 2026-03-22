@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive, ref } from 'vue'
 import Taro, { useDidShow } from '@tarojs/taro'
-import { dateFormat } from '@mid-vue/shared'
+import { dateFormat } from '@allkit/shared'
 import {
   Button,
   DateTimePicker,
@@ -14,7 +14,7 @@ import {
   Picker,
   Tag,
   Textarea
-} from '@mid-vue/taro-h5-ui'
+} from '@allkit/taro-h5-ui'
 import { useRoute, navigateBack, useDictList } from '@/use'
 import { EnumFeedType } from '@/dict'
 import { getBabyInfo } from '@/utils'

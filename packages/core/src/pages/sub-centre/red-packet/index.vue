@@ -12,8 +12,8 @@ import {
   Empty,
   showLoading,
   hideLoading
-} from '@mid-vue/taro-h5-ui'
-import { dateFormat, formatNumber } from '@mid-vue/shared'
+} from '@allkit/taro-h5-ui'
+import { dateFormat, formatNumber } from '@allkit/shared'
 import { useDictMap } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { type IPacketForm, PacketForm } from './components/packet-form'

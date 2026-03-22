@@ -21,7 +21,7 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, watch } from 'vue'
 import { type IPickerState, props } from './props'
-import { deepClone, useDate } from '@mid-vue/shared'
+import { deepClone, useDate } from '@allkit/shared'
 import { BaseEventOrig, Picker, PickerMultiSelectorProps } from '@tarojs/components'
 
 export default defineComponent({

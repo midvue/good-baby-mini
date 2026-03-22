@@ -12,8 +12,8 @@ import {
   PickerView,
   Tag,
   Textarea
-} from '@mid-vue/taro-h5-ui'
-import { dateFormat } from '@mid-vue/shared'
+} from '@allkit/taro-h5-ui'
+import { dateFormat } from '@allkit/shared'
 import { navigateBack, useDictList } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { EnumFeedType } from '@/dict'

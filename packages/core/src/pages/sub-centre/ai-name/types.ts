@@ -1,4 +1,4 @@
-import { EnumYesNoPlus } from '@mid-vue/shared'
+import { EnumYesNoPlus } from '@allkit/shared'
 
 /**
  * 智能 取名请求参数

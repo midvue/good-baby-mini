@@ -1,8 +1,8 @@
 <script lang="tsx">
 import { defineComponent, onUnmounted, reactive, watch } from 'vue'
 import { Picker } from '@tarojs/components'
-import { Navbar, Image, showPopup } from '@mid-vue/taro-h5-ui'
-import { dateFormat, useDate } from '@mid-vue/shared'
+import { Navbar, Image, showPopup } from '@allkit/taro-h5-ui'
+import { dateFormat, useDate } from '@allkit/shared'
 import { FetalRecord } from './components/fetal-record'
 import { apiAddFetalMovement } from './api'
 

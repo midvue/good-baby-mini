@@ -1,5 +1,5 @@
 import Taro from '@tarojs/taro'
-import { isFunction, isNullOrUnDef } from '@mid-vue/shared'
+import { isFunction, isNullOrUnDef } from '@allkit/shared'
 import { type ISerie, type DataSet, type ChartOpt } from './types'
 
 // 定义线条类型枚举

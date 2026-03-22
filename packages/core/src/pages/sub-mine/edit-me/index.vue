@@ -11,7 +11,7 @@ import {
   type IFormItem,
   Input,
   Tag
-} from '@mid-vue/taro-h5-ui'
+} from '@allkit/taro-h5-ui'
 import { useDictList } from '@/use'
 import imgBabyAvatar from '@/assets/images/img_baby_avatar.png'
 import { getUserInfo } from '@/utils'

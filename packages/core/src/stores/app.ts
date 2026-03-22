@@ -10,7 +10,7 @@ import {
   setToken,
   setUserInfo
 } from '@/utils'
-import Http from '@mid-vue/http-client'
+import Http from '@allkit/http-client'
 import Taro from '@tarojs/taro'
 import { defineStore } from 'pinia'
 

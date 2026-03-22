@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { Image, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { getConfigProvider } from '@mid-vue/taro-h5-ui'
+import { getConfigProvider } from '@allkit/taro-h5-ui'
 import appConfig from '@/app.config'
 import { useAppStore } from '@/stores'
 import { useRoute } from '@/use'

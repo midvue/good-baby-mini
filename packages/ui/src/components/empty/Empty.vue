@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, type PropType, type VNode } from 'vue'
-import { isFunction } from '@mid-vue/shared'
-import { Image } from '@mid-vue/taro-h5-ui'
+import { isFunction } from '@allkit/shared'
+import { Image } from '@allkit/taro-h5-ui'
 
 export default defineComponent({
   props: {

@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
-import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@mid-vue/shared'
-import { Button, FooterBar, Image, Navbar, showDialog, showPopup, Tag } from '@mid-vue/taro-h5-ui'
+import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@allkit/shared'
+import { Button, FooterBar, Image, Navbar, showDialog, showPopup, Tag } from '@allkit/taro-h5-ui'
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
 import { BabyInfo, type IBaby } from '@/components/baby-info'

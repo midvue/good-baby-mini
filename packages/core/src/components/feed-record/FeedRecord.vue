@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { defineComponent, type PropType } from 'vue'
-import { Image, showDialog, Tag } from '@mid-vue/taro-h5-ui'
-import { durationFormatNoZero } from '@mid-vue/shared'
+import { Image, showDialog, Tag } from '@allkit/taro-h5-ui'
+import { durationFormatNoZero } from '@allkit/shared'
 import { EnumFeedType } from '@/dict'
 import { navigateTo, useDictList, useDictMap } from '@/use'
 import IconFeedDiaper from '@/assets/images/icon_feed_diaper.png'

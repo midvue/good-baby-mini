@@ -1,7 +1,7 @@
 <script lang="tsx">
 import { computed, defineComponent, h, type HtmlHTMLAttributes } from 'vue'
 import Taro from '@tarojs/taro'
-import { isFunction, isString, get } from '@mid-vue/shared'
+import { isFunction, isString, get } from '@allkit/shared'
 import { FORM_KEY } from '../../constants'
 import * as UI from '../../index'
 import { useChildren } from '../../use/useRelation'

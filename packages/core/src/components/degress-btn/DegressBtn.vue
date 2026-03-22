@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { computed, defineComponent } from 'vue'
-import { Tag } from '@mid-vue/taro-h5-ui'
+import { Tag } from '@allkit/taro-h5-ui'
 import { checkBabyTemperature, HEALTH_STATUS } from './useDegress'
 
 export default defineComponent({

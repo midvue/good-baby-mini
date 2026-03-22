@@ -4,7 +4,7 @@ import Taro, { useReady } from '@tarojs/taro'
 import { useRect } from '../../use/useRect'
 import SafeBottom from '../safe-bottom'
 import { type PositionProperty } from './types'
-import { uniqueId } from '@mid-vue/shared'
+import { uniqueId } from '@allkit/shared'
 
 export default defineComponent({
   name: 'MvFooterBar',

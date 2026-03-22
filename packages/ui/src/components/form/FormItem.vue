@@ -39,7 +39,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref, computed } from 'vue'
 import { type CommonEvent } from '@tarojs/components'
-import { isFunction, isPromise } from '@mid-vue/shared'
+import { isFunction, isPromise } from '@allkit/shared'
 import { FORM_KEY } from '../../constants'
 import { useParent } from '../../use/useRelation'
 import Icon from '../icon'

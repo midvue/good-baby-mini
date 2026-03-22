@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent } from 'vue'
-import { debounce, EnumYesNoPlus } from '@mid-vue/shared'
+import { debounce, EnumYesNoPlus } from '@allkit/shared'
 import {
   Button,
   FooterBar,
@@ -13,8 +13,8 @@ import {
   showPopup,
   showToast,
   Tag
-} from '@mid-vue/taro-h5-ui'
-import { defineCtxState } from '@mid-vue/use'
+} from '@allkit/taro-h5-ui'
+import { defineCtxState } from '@allkit/use'
 import { useDictList } from '@/use'
 import { apiGetAINames, apiInterpretNamesNames } from './api'
 import type { IAiNameReq, NameState } from './types'

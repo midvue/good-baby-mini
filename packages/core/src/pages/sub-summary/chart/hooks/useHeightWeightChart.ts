@@ -1,6 +1,6 @@
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
-import { EnumYesNoPlus, useDate } from '@mid-vue/shared'
+import { EnumYesNoPlus, useDate } from '@allkit/shared'
 import { Chart, EnumLineType, init } from '../../utils/chart'
 import { apiFeedRecordList } from '../api'
 import {
