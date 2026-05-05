@@ -13,18 +13,11 @@ import { getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
 
 if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
   const { miniProgram } = Taro.getAccountInfoSync()
-  if (miniProgram.envVersion === EnumEnvVersion.RELEASE) {
-    setEnvVersion(EnumEnvVersion.RELEASE)
-  } else {
-    let env = getEnvVersion()
-    if (!env || env === EnumEnvVersion.RELEASE) {
-      env = EnumEnvVersion.UAT
-    }
-    //开发版,体验版默认是uat环境
-    setEnvVersion(env)
-  }
+  setEnvVersion(
+    miniProgram.envVersion === EnumEnvVersion.RELEASE ? EnumEnvVersion.RELEASE : EnumEnvVersion.DEV
+  )
 } else {
-  setEnvVersion(getEnvVersion() || EnumEnvVersion.UAT)
+  setEnvVersion(getEnvVersion() || EnumEnvVersion.DEV)
 }
 
 const App = createApp({

@@ -1,10 +1,8 @@
-/** 页面类型 */
+/** 环境版本 */
 export enum EnumEnvVersion {
-  /** stg环境 */
-  STG = 'stg',
-  /** uat 环境 (开发版,体验版默认uat) */
-  UAT = 'uat',
-  /** 生产环境 */
+  /** 开发/测试环境 (小程序开发版/体验版默认) */
+  DEV = 'dev',
+  /** 生产环境 (小程序正式版) */
   RELEASE = 'release'
 }
 
@@ -38,12 +36,12 @@ export enum EnumFeedType {
   SLEEP = 60,
   /** 辅食 */
   FOOD = 70,
-  // /** 体温 */
+  /** 体温 */
   DEGRESS = 80,
   /** 补剂 */
   SUPPLEMENT = 90,
-  // /** 疫苗 */
+  /** 疫苗 */
   VACCINE = 100,
-  // /** 用药 */
+  /** 用药 */
   MEDICINE = 110
 }

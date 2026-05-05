@@ -1,0 +1,81 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+context: |
+  ## 项目信息
+  - 项目名称: 奶娃星球 (good-baby-mini)
+  - 项目类型: 微信小程序 + H5 双端应用
+  - 项目描述: 婴幼儿喂养记录管理小程序
+
+  ## 技术栈
+  - 框架: Taro 4.0.9
+  - UI 框架: Vue 3.4.38 (Composition API + TSX)
+  - 状态管理: Pinia 3.0.1
+  - 样式: Tailwind CSS 3.4.13 + SCSS + weapp-tailwindcss
+  - HTTP 客户端: @allkit/http-client
+  - 工具库: @allkit/shared, @allkit/use
+  - 包管理: pnpm workspace (Monorepo)
+  - 代码规范: ESLint + Prettier + TypeScript
+  - 构建工具: Webpack 5
+
+  ## 架构模式
+  - Monorepo 结构: packages/core (业务代码) + packages/ui (UI组件库)
+  - 小程序分包架构: sub-home, sub-centre, sub-mine, sub-summary
+  - 状态管理: Pinia store (app-store)
+  - 组件化: 通用组件(@allkit/taro-h5-ui) + 业务组件
+
+  ## 代码规范
+  - Vue 组件使用 TSX 写法: defineComponent + setup() 返回 render 函数
+  - 页面逻辑拆分为自定义 Hooks (useXxx)
+  - 每个页面独立: api.ts, types.ts, hooks/
+  - 命名规范: PascalCase (组件), camelCase (变量/函数), kebab-case (文件)
+  - 类型定义使用 TypeScript 接口
+
+  ## 目录结构规范
+  ```
+  pages/
+    ├── [page-name]/
+    │   ├── hooks/          # 自定义 hooks
+    │   ├── components/     # 页面专用组件
+    │   ├── api.ts          # API 接口
+    │   ├── types.ts        # 类型定义
+    │   ├── index.vue       # 页面组件
+    │   ├── index.config.ts # 页面配置
+    │   └── index.scss      # 页面样式
+  ```
+
+  ## 环境配置
+  - dev: 开发/测试环境
+  - release: 生产环境
+  - 小程序自动识别: 正式版→RELEASE, 开发/体验版→DEV (默认)
+  - H5 端默认使用 DEV 环境
+
+  ## 开发命令
+  - pnpm dev:weapp    # 微信小程序开发
+  - pnpm dev:h5       # H5 开发
+  - pnpm build:weapp  # 微信小程序构建
+  - pnpm upload:weapp # 上传小程序
+
+  ## 核心功能模块
+  - 喂养记录: 喂奶(母乳/奶瓶)、换尿布、睡眠、辅食
+  - 健康管理: 黄疸、体温、生长发育、疫苗、用药、补剂
+  - 用户中心: 个人信息、宝宝管理、家庭管理、积分
+  - 广场功能: AI取名、胎动记录、宫缩记录、红包记录
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+rules:
+  proposal:
+    - 明确功能目标和非目标
+    - 包含技术方案概述
+    - 评估影响范围和风险
+  tasks:
+    - 任务拆分不超过2小时
+    - 每个任务有明确的验收标准
+    - 关联相关的 API 文档和设计稿
+  design:
+    - 包含页面流程图
+    - 定义数据结构
+    - 说明与现有模块的交互
