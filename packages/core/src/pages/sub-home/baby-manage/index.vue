@@ -1,6 +1,6 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
-import { durationFormatNoZero, EnumYesNoPlus, useDate } from '@allkit/shared'
+import { EnumYesNoPlus, useDate } from '@allkit/shared'
 import { Button, FooterBar, Image, Navbar, showDialog, showPopup, Tag } from '@allkit/taro-h5-ui'
 import imgAvatarFemale from '@/assets/images/img_avatar_female.png'
 import imgAvatarMale from '@/assets/images/img_avatar_male.png'
@@ -43,8 +43,15 @@ export default defineComponent({
     const formatBirthTime = (baby: BabyInfo) => {
       const now = useDate()
       const targetDate = useDate(baby.birthDate)
-      const diff = now.diff(targetDate.format('YYYY-MM-DD ' + baby.birthTime), 'millisecond')
-      return `${durationFormatNoZero(diff, { format: baby.birthTime ? 'D天H小时' : '第D天' })}`
+      const totalMonths = now.diff(targetDate, 'month')
+      const years = Math.floor(totalMonths / 12)
+      const months = totalMonths % 12
+      const days = now.diff(useDate(targetDate, 'YYYY-MM-DD').add(totalMonths, 'month'), 'day')
+      const baseDate = useDate(targetDate, 'YYYY-MM-DD').add(totalMonths, 'month').add(days, 'day')
+      const hours = now.diff(baseDate, 'hour')
+      const ageStr = `${years ? years + '岁' : ''}${months}个月${days}天`
+      const hourStr = baby.birthTime ? `${hours}小时` : ''
+      return `${ageStr}${hourStr}`.trim()
     }
 
     /**

@@ -1,5 +1,7 @@
 export default {
   navigationStyle: 'custom',
   navigationBarTextStyle: 'black',
-  enableShareAppMessage: true
+  enableShareAppMessage: true,
+  enablePageMeta: true,
+  pageOrientation: 'auto'
 }

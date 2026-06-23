@@ -28,6 +28,20 @@ export const apiGetFeedRecordList = (data = {}) => {
 }
 
 /**
+ * 按天分页获取喂养记录列表
+ * - 分页单位为"天",某一天的全部记录必定在同一页返回
+ * - 返回结构与 apiGetFeedRecordList 一致 `{ list, count }`,count 为总有记录的天数
+ */
+export const apiGetFeedRecordListByDay = (data = {}) => {
+  const option = {
+    url: '/baby/feedRecord/pageByDay',
+    data: data,
+    ignoreToast: [401]
+  }
+  return http.post<FeedRecordResp>(option)
+}
+
+/**
  * 获取宝宝列表
  */
 export const apiBabyList = (data = {}) => {

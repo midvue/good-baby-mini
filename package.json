@@ -48,8 +48,9 @@
     "vue": "^3.4.38"
   },
   "devDependencies": {
-    "@allkit/best-practice": "^0.0.2",
+    "@allkit/best-practice": "^0.0.3",
     "@allkit/eslint-config": "^0.0.1",
+    "eslint": "^9.5.0",
     "@allkit/tsconfig": "^0.0.1",
     "@babel/core": "^7.8.0",
     "@babel/plugin-transform-class-properties": "^7.25.4",

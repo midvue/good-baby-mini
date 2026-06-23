@@ -1,9 +1,10 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
 import { Button, Image, Navbar } from '@allkit/taro-h5-ui'
-import { apiPointList, apiPointSummary, apiUpdatePoint } from './api'
+import { apiPointList, apiPointSummary, apiPointToday, apiUpdatePoint } from './api'
 import { type Point } from './types'
-import { EnumPointStatus, pointStatusStrategy } from './dict'
+import { EnumPointStatus, EnumTriggerType, pointStatusStrategy, ruleRouteStrategy } from './dict'
+import { switchTab, navigateTo } from '@/use'
 
 export default defineComponent({
   name: 'Credit',
@@ -11,8 +12,10 @@ export default defineComponent({
     const state = reactive({
       summary: {
         totalPoints: 0,
-        todayPoints: 0
+        earnedPoints: 0,
+        consumedPoints: 0
       },
+      todayPoints: 0,
       pointList: [] as Point[]
     })
 
@@ -20,17 +23,32 @@ export default defineComponent({
       apiPointList().then((list) => {
         state.pointList = list || []
       })
-      // apiPointSummary().then((summary) => {
-      //   state.summary = summary
-      // })
+      apiPointSummary().then((summary) => {
+        state.summary = summary
+      })
+      apiPointToday().then((res) => {
+        state.todayPoints = res?.todayPoints || 0
+      })
     }
     init()
 
     function onPointClick(point: Point) {
-      if (point.status === EnumPointStatus.COMPLETED) {
+      // MANUAL类型且待领取：领取积分
+      if (
+        point.triggerType === EnumTriggerType.MANUAL &&
+        point.status === EnumPointStatus.COMPLETED
+      ) {
         apiUpdatePoint(point.code).then(() => {
           init()
         })
+        return
+      }
+      // 未完成状态：跳转到对应页面去完成
+      if (point.status === EnumPointStatus.UNCOMPLETED) {
+        const route = ruleRouteStrategy[point.code]
+        if (route) {
+          route.isTab ? switchTab({ path: route.path }) : navigateTo({ path: route.path })
+        }
       }
     }
 
@@ -48,21 +66,22 @@ export default defineComponent({
               <div class='credit-line'></div>
               <div class='credit-content-right'>
                 <span class='credit-title'>今日积分</span>
-                <span>{state.summary.todayPoints || 0}</span>
+                <span>{state.todayPoints || 0}</span>
               </div>
             </div>
           </div>
           <div class='credit-list'>
             {state.pointList.map((item, index) => {
-              const strategy = pointStatusStrategy[item.status]
+              const strategy =
+                pointStatusStrategy[item.status] || pointStatusStrategy[EnumPointStatus.UNCOMPLETED]
 
               return (
                 <div class='credit-item' key={index}>
                   <div class='item-left'>
                     <div class='item-icon-wrap'>+{item.points}</div>
                     <div class='item-content'>
-                      <div class='item-title'>{item.description}</div>
-                      <div class='item-text'>奖励{item.points}积分</div>
+                      <div class='item-title'>{item.title}</div>
+                      <div class='item-text'>{item.description}</div>
                     </div>
                   </div>
                   <Button

@@ -2,15 +2,31 @@ import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { useDate } from '@allkit/shared'
 import { useCtxState } from '@allkit/use'
+import Taro from '@tarojs/taro'
 import { Chart, EnumLineType } from '../../utils/chart'
 import { apiFeedRecordList } from '../api' // 假设存在该 API
 import { IChartState } from '../types'
+
+type ScrollableChartStrategy = {
+  data: { value: unknown }
+  chartYAxisWidth?: { value: number }
+  chartContentWidth?: { value: number }
+}
+
+const POINT_WIDTH = 34
+const Y_AXIS_WIDTH = 44
+const getChartContentWidth = (length: number) => {
+  const { windowWidth } = Taro.getSystemInfoSync()
+  const visibleContentWidth = Math.max(0, windowWidth - Y_AXIS_WIDTH - 8)
+  const pointContentWidth = Math.max(length - 1, 1) * POINT_WIDTH + 80
+  return Math.max(visibleContentWidth, pointContentWidth)
+}
 
 export function useDiaperChart() {
   let [state] = useCtxState<IChartState>()
   const appStore = useAppStore()
 
-  async function initDiaper() {
+  async function initDiaper(this: ScrollableChartStrategy) {
     let list = await apiFeedRecordList<IMilkBottle>({
       babyId: appStore.babyInfo.id,
       feedType: EnumFeedType.DIAPER,
@@ -40,13 +56,16 @@ export function useDiaperChart() {
       yAxisData: Object.values(axis)
     }
 
-    initCHart(this.data.value)
+    initCHart.call(this, this.data.value)
   }
 
   /**
    * 初始化尿布图表
    */
-  function initCHart(axis: { xAxisData: any[]; yAxisData: any[] }) {
+  function initCHart(
+    this: ScrollableChartStrategy,
+    axis: { xAxisData: any[]; yAxisData: any[] }
+  ) {
     // 求平均值
     let average = (
       axis.yAxisData.reduce((sum, num) => sum + num, 0) / axis.yAxisData.length
@@ -54,8 +73,14 @@ export function useDiaperChart() {
     // 提前计算x轴间隔
     let xDataLength = axis.xAxisData.length
     let xInterval = Math.floor(xDataLength / 7)
-    new Chart().init(`${EnumFeedType.DIAPER}Canvas`, {
+    const chartContentWidth = getChartContentWidth(xDataLength)
+    if (this.chartYAxisWidth) this.chartYAxisWidth.value = Y_AXIS_WIDTH
+    if (this.chartContentWidth) this.chartContentWidth.value = chartContentWidth
+    const chartConfig = {
       hideYAxis: false,
+      chart: {
+        yAxisMinValue: 0
+      },
       colors: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {
         text: '',
@@ -105,6 +130,30 @@ export function useDiaperChart() {
           data: axis.yAxisData.map(() => +0)
         }
       ]
+    }
+
+    new Chart().init(`${EnumFeedType.DIAPER}YAxisCanvas`, {
+      ...chartConfig,
+      chart: {
+        ...chartConfig.chart,
+        width: Y_AXIS_WIDTH,
+        respectWidth: true,
+        renderOnlyYAxis: true,
+        showYAxisGridLines: false,
+        yAxisAxisLeft: Y_AXIS_WIDTH
+      }
+    })
+    new Chart().init(`${EnumFeedType.DIAPER}ContentCanvas`, {
+      ...chartConfig,
+      chart: {
+        ...chartConfig.chart,
+        width: chartContentWidth,
+        respectWidth: true,
+        renderOnlyContent: true,
+        showYAxisLabels: false,
+        showYAxisLine: false,
+        axisLeft: 0
+      }
     })
   }
 

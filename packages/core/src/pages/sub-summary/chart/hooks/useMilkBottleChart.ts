@@ -2,9 +2,26 @@ import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { EnumYesNoPlus, useDate } from '@allkit/shared'
 import { useCtxState } from '@allkit/use'
+import Taro from '@tarojs/taro'
 import { Chart, EnumLineType } from '../../utils/chart'
 import { apiFeedRecordList } from '../api' // 假设存在该 API
 import { IChartState } from '../types'
+
+type ScrollableChartStrategy = {
+  childCode: { value: string }
+  data: { value: unknown }
+  chartYAxisWidth?: { value: number }
+  chartContentWidth?: { value: number }
+}
+
+const POINT_WIDTH = 34
+const Y_AXIS_WIDTH = 44
+const getChartContentWidth = (length: number) => {
+  const { windowWidth } = Taro.getSystemInfoSync()
+  const visibleContentWidth = Math.max(0, windowWidth - Y_AXIS_WIDTH - 8)
+  const pointContentWidth = Math.max(length - 1, 1) * POINT_WIDTH + 80
+  return Math.max(visibleContentWidth, pointContentWidth)
+}
 
 export function useMilkBottleChart() {
   let [state] = useCtxState<IChartState>()
@@ -14,7 +31,7 @@ export function useMilkBottleChart() {
    * 初始化奶瓶喂养图表数据
    * @param code - 图表类型代码
    */
-  async function initMilkBottle() {
+  async function initMilkBottle(this: ScrollableChartStrategy) {
     let code = this.childCode.value
     let list = await apiFeedRecordList<IMilkBottle>({
       babyId: appStore.babyInfo.id,
@@ -51,10 +68,11 @@ export function useMilkBottleChart() {
       yAxisVolume: Object.values(axis).map((item) => item.volume)
     }
 
-    initChart(code, this.data.value)
+    initChart.call(this, code, this.data.value)
   }
 
   function initChart(
+    this: ScrollableChartStrategy,
     code: string | undefined,
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
   ) {
@@ -65,9 +83,16 @@ export function useMilkBottleChart() {
     // 提前计算x轴间隔
     let xDataLength = axis.xAxisData.length
     let xInterval = Math.floor(xDataLength / 7)
+    const chartContentWidth = getChartContentWidth(xDataLength)
+    if (this.chartYAxisWidth) this.chartYAxisWidth.value = Y_AXIS_WIDTH
+    if (this.chartContentWidth) this.chartContentWidth.value = chartContentWidth
 
-    new Chart().init(`${EnumFeedType.MILK_BOTTLE}Canvas`, {
+    const chartConfig = {
       hideYAxis: false,
+      chart: {
+        yAxisMinValue: 0,
+        yAxisInteger: true
+      },
       colors: ['#1aad19', '#74DAE5', '#F3AA59', '#ED7672', '#180d41'],
       title: {
         text: '',
@@ -118,6 +143,30 @@ export function useMilkBottleChart() {
           data: yDatas.map(() => 0)
         }
       ]
+    }
+
+    new Chart().init(`${EnumFeedType.MILK_BOTTLE}YAxisCanvas`, {
+      ...chartConfig,
+      chart: {
+        ...chartConfig.chart,
+        width: Y_AXIS_WIDTH,
+        respectWidth: true,
+        renderOnlyYAxis: true,
+        showYAxisGridLines: false,
+        yAxisAxisLeft: Y_AXIS_WIDTH
+      }
+    })
+    new Chart().init(`${EnumFeedType.MILK_BOTTLE}ContentCanvas`, {
+      ...chartConfig,
+      chart: {
+        ...chartConfig.chart,
+        width: chartContentWidth,
+        respectWidth: true,
+        renderOnlyContent: true,
+        showYAxisLabels: false,
+        showYAxisLine: false,
+        axisLeft: 0
+      }
     })
   }
 

@@ -2,6 +2,7 @@
  * 路由统一处理
  */
 import Taro, { useRouter, useUnload } from '@tarojs/taro'
+import { useAppStore } from '@/stores'
 
 /**
  * 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
@@ -9,6 +10,9 @@ import Taro, { useRouter, useUnload } from '@tarojs/taro'
  */
 export const switchTab = (option: INavOption) => {
   const { path: url, complete, fail, success, event } = option
+  // 同步更新 appStore.tabBarPath,让 custom-tab-bar 高亮跟随切换
+  const appStore = useAppStore()
+  appStore.tabBarPath = url.startsWith('/') ? url.substring(1) : url
   if (event) {
     const path = url.startsWith('/') ? url.substring(1) : url
     Taro.eventCenter.trigger(path.split('?')[0], event)

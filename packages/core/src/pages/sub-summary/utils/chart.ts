@@ -46,6 +46,7 @@ export class Chart {
       color: '',
       size: 12
     },
+    chart: {},
     colors: ['#74DAE5', '#394655', '#FEE746'],
     xAxis: {
       color: '#666A73',
@@ -102,6 +103,7 @@ export class Chart {
     }
     // 更新全局数据集的 X 轴数据
     this.dataSet.xAxis = Object.assign(this.dataSet.xAxis, data.xAxis)
+    this.dataSet.chart = Object.assign(this.dataSet.chart || {}, data.chart)
 
     // 更新全局数据集的系列数据
     this.dataSet.series = data.series
@@ -143,7 +145,14 @@ export class Chart {
     // 计算所有数值中的最大值
     const maxNum: number = Math.max(...yValues)
     // 调用工具函数计算 Y 轴刻度尺数据，将结果存储到全局图表配置中
-    this.chartOpt.axisYMarks = this.calculateY(minNum, maxNum, 5)
+    this.chartOpt.axisYMarks = this.calculateY(
+      minNum,
+      maxNum,
+      this.dataSet.chart?.yAxisMarkCount || 6,
+      this.dataSet.chart?.yAxisPaddingRatio ?? 0.08,
+      this.dataSet.chart?.yAxisMinValue,
+      this.dataSet.chart?.yAxisInteger
+    )
   }
 
   /**
@@ -157,23 +166,30 @@ export class Chart {
       sysInfo = Taro.getSystemInfoSync()
     }
 
-    this.chartOpt.chartWidth = sysInfo.windowWidth
-    this.chartOpt.chartHeight = sysInfo.windowWidth * 1.3 // Canvas 组件的宽高比
+    this.chartOpt.chartWidth = this.dataSet.chart?.renderOnlyYAxis || this.dataSet.chart?.respectWidth
+      ? this.dataSet.chart?.width || 0
+      : Math.max(this.dataSet.chart?.width || 0, sysInfo.windowWidth)
+    this.chartOpt.scrollContentWidth = this.dataSet.chart?.scrollContentWidth
+    this.chartOpt.scrollLeft = this.getScrollLeft()
+    this.chartOpt.chartHeight = this.dataSet.chart?.height || sysInfo.windowWidth * 1.3 // Canvas 组件的宽高比
 
     this.chartOpt.legendWidth = this.dataSet.legend.size * 1.3
     this.chartOpt.legendHeight = this.dataSet.legend.size * 0.8
 
     this.chartOpt.top = this.chartOpt.left = this.chartOpt.chartSpace
-    this.chartOpt.right = this.chartOpt.chartWidth - this.chartOpt.chartSpace
+    this.chartOpt.right = this.getLayoutWidth() - this.chartOpt.chartSpace
     this.chartOpt.bottom = this.chartOpt.chartHeight - this.chartOpt.chartSpace
 
     // 3 个数字的文字长度
-    const textWidth: number = this.measureText('100', this.dataSet.xAxis.size)
+    const textWidth: number =
+      this.dataSet.chart?.yAxisLabelWidth || this.measureText('100', this.dataSet.xAxis.size)
     const legendHeight: number =
       this.dataSet.series.length > 1 ? this.chartOpt.legendHeight + this.chartOpt.chartSpace * 2 : 0
 
-    this.chartOpt.axisLeft =
-      this.chartOpt.left + (this.dataSet.hideYAxis ? 0 : textWidth + this.chartOpt.textSpace)
+    this.chartOpt.axisLeft = this.dataSet.chart?.renderOnlyYAxis
+      ? this.dataSet.chart?.yAxisAxisLeft || this.chartOpt.right - this.chartOpt.chartSpace
+      : this.dataSet.chart?.axisLeft ??
+        this.chartOpt.left + (this.dataSet.hideYAxis ? 0 : textWidth + this.chartOpt.textSpace)
     this.chartOpt.axisBottom =
       this.chartOpt.bottom - this.dataSet.xAxis.size - this.chartOpt.textSpace - legendHeight
     this.chartOpt.axisTop =
@@ -192,6 +208,18 @@ export class Chart {
     this.drawBackground(ctx)
     this.drawTitle(ctx)
     // this.drawLegend(ctx)
+    if (this.dataSet.chart?.renderOnlyYAxis) {
+      this.drawYAxis(ctx)
+      ctx.draw()
+      return
+    }
+    if (this.dataSet.chart?.renderOnlyContent) {
+      this.drawXAxis(ctx)
+      this.drawYAxis(ctx)
+      this.drawCharts(ctx)
+      ctx.draw()
+      return
+    }
     if (!this.chartOpt.hideXYAxis) {
       this.drawXAxis(ctx)
       this.drawYAxis(ctx)
@@ -199,6 +227,9 @@ export class Chart {
 
     // this.drawBarChart(ctx);
     this.drawCharts(ctx)
+    if (this.dataSet.chart?.scrollContentWidth && this.dataSet.chart?.showYAxisLabels !== false) {
+      this.drawFixedYAxisOverlay(ctx)
+    }
     ctx.draw()
   }
 
@@ -240,21 +271,35 @@ export class Chart {
     // 绘制 X 轴横线
     ctx.setLineWidth(0.5)
     ctx.setLineCap('round')
+    ctx.beginPath()
     ctx.moveTo(this.chartOpt.axisLeft, this.chartOpt.axisBottom)
-    ctx.lineTo(this.chartOpt.right, this.chartOpt.axisBottom)
+    ctx.lineTo(this.getViewportRight(), this.chartOpt.axisBottom)
     ctx.stroke()
+    ctx.closePath()
 
-    const width = (this.chartOpt.right - this.chartOpt.axisLeft) / this.chartOpt.barLength
+    const width = this.getPointWidth()
     const data = this.dataSet.xAxis.data
     // 绘制 X 轴显示文字
     for (let i = 0; i < data.length; i++) {
       const show = this.dataSet.xAxis.show
       const isShow = isFunction(show) ? show(i) : show
       if (isShow) {
-        const textX = width * (i + 1) - width / 2 + this.chartOpt.axisLeft
+        const isFirstTick = this.dataSet.chart?.pointOnTick && i === 0
+        const pointX = this.toViewportX(this.getPointX(i, width))
+        if (!this.isXVisible(pointX, 24)) continue
+        const textX = pointX + (isFirstTick ? this.dataSet.chart?.firstXAxisLabelOffset || 0 : 0)
+        if (this.dataSet.chart?.showXAxisTickPoints) {
+          this.drawPoint(
+            ctx,
+            pointX,
+            this.chartOpt.axisBottom,
+            this.dataSet.chart?.xAxisTickPointRadius || 2,
+            this.dataSet.xAxis.color
+          )
+        }
         ctx.setFillStyle(this.dataSet.xAxis.color)
         ctx.setFontSize(this.dataSet.xAxis.size)
-        ctx.setTextAlign('center')
+        ctx.setTextAlign(isFirstTick ? 'left' : 'center')
         ctx.fillText(
           data[i],
           textX,
@@ -270,8 +315,16 @@ export class Chart {
    */
   private drawYAxis(ctx: Taro.CanvasContext): void {
     // 绘制 Y 轴横线
-    ctx.setLineWidth(0.5)
-    ctx.setLineCap('round')
+    if (this.dataSet.chart?.showYAxisLine !== false) {
+      ctx.setLineWidth(0.5)
+      ctx.setLineCap('round')
+      ctx.setStrokeStyle(this.chartOpt.lineColor)
+      ctx.beginPath()
+      ctx.moveTo(this.chartOpt.axisLeft, this.chartOpt.axisTop)
+      ctx.lineTo(this.chartOpt.axisLeft, this.chartOpt.axisBottom)
+      ctx.stroke()
+      ctx.closePath()
+    }
 
     const height =
       (this.chartOpt.axisBottom - this.chartOpt.axisTop) / (this.chartOpt.axisYMarks.length - 1)
@@ -279,18 +332,19 @@ export class Chart {
     // 绘制 Y 轴显示数字
     for (let i = 0; i < this.chartOpt.axisYMarks.length; i++) {
       const y = this.chartOpt.axisBottom - height * i
-      if (i > 0) {
+      if (i > 0 && this.dataSet.chart?.showYAxisGridLines !== false) {
         ctx.setStrokeStyle(this.chartOpt.lineColor)
-        this.drawDashLine(ctx, this.chartOpt.axisLeft, y, this.chartOpt.right, y)
+        this.drawDashLine(ctx, this.chartOpt.axisLeft, y, this.getViewportRight(), y)
       }
 
-      if (!this.dataSet.hideYAxis) {
+      if (!this.dataSet.hideYAxis && this.dataSet.chart?.showYAxisLabels !== false) {
         ctx.setFillStyle(this.dataSet.xAxis.color)
         ctx.setFontSize(this.dataSet.xAxis.size)
         ctx.setTextAlign('right')
         ctx.fillText(
           this.chartOpt.axisYMarks[i].toString(),
-          this.chartOpt.axisLeft - this.chartOpt.textSpace,
+          this.chartOpt.axisLeft -
+            (this.dataSet.chart?.yAxisTextSpace ?? this.chartOpt.textSpace),
           y + this.chartOpt.textSpace
         )
       }
@@ -393,7 +447,7 @@ export class Chart {
     const series = this.dataSet.series
     for (let i = 0; i < series.length; i++) {
       const category = series[i].category
-      let barWidth = (this.chartOpt.right - this.chartOpt.axisLeft) / this.chartOpt.barLength
+      let barWidth = this.getPointWidth()
       const barHeight = this.chartOpt.axisBottom - this.chartOpt.axisTop
       const maxMark = this.chartOpt.axisYMarks[this.chartOpt.axisYMarks.length - 1]
 
@@ -430,13 +484,15 @@ export class Chart {
 
     for (let k = 0; k < item.data.length; k++) {
       const itemHeight = barHeight * ((item.data[k] as number) / maxMark)
-      const x =
+      const x = this.toViewportX(
         barWidth * k +
-        this.chartOpt.axisLeft +
-        k * this.chartOpt.chartSpace +
-        this.chartOpt.chartSpace / 2 +
-        i * itemWidth
+          this.chartOpt.axisLeft +
+          k * this.chartOpt.chartSpace +
+          this.chartOpt.chartSpace / 2 +
+          i * itemWidth
+      )
       const y = this.chartOpt.axisBottom - itemHeight
+      if (!this.isXVisible(x, itemWidth)) continue
       const color = this.getColor(series.length <= 1 ? k : i)
       ctx.setFillStyle(color)
       ctx.fillRect(x, y, itemWidth, itemHeight)
@@ -470,7 +526,7 @@ export class Chart {
     // 更新枚举引用
     const lineType = item.type || EnumLineType.SOLID
     const color = this.getColor(i)
-    ctx.setLineWidth(2)
+    ctx.setLineWidth(item.type === EnumLineType.DASHED ? 1.5 : this.dataSet.chart?.lineWidth || 2)
     ctx.setStrokeStyle(color)
     ctx.beginPath()
 
@@ -478,7 +534,13 @@ export class Chart {
     for (let k = 0; k < item.data.length; k++) {
       if (isNullOrUnDef(item.data[k])) continue
       const point = this.getLinePoint(k, item, barWidth, barHeight)
-      if (k === 0) {
+      const segmentVisible =
+        this.isXVisible(point.x, barWidth * 1.5) || (prevPoint && this.isXVisible(prevPoint.x, barWidth * 1.5))
+      if (!segmentVisible) {
+        prevPoint = point
+        continue
+      }
+      if (k === 0 || !prevPoint) {
         ctx.moveTo(point.x, point.y)
       } else {
         // 更新枚举引用
@@ -500,6 +562,7 @@ export class Chart {
       const isShow = isFunction(item.toolTips.show) ? item.toolTips.show(k) : item.toolTips.show
       if (isShow) {
         const point = this.getLinePoint(k, item, barWidth, barHeight)
+        if (!this.isXVisible(point.x, 24)) continue
         this.drawPoint(ctx, point.x, point.y, 3, color)
         this.drawPoint(ctx, point.x, point.y, 1, this.chartOpt.bgColor)
         const label = item.toolTips.formatter?.(item.data) || (item.data[k] as number).toString()
@@ -526,11 +589,64 @@ export class Chart {
   ): { x: number; y: number } {
     const maxY = this.chartOpt.axisYMarks[this.chartOpt.axisYMarks.length - 1]
     const minY = this.chartOpt.axisYMarks[0]
-    const x = barWidth * k + this.chartOpt.axisLeft + barWidth / 2
+    const x = this.toViewportX(this.getPointX(k, barWidth))
     const y =
       this.chartOpt.axisBottom - barHeight * (((item.data[k] as number) - minY) / (maxY - minY))
 
     return { x, y }
+  }
+
+  private getPointWidth(): number {
+    const divisor = this.dataSet.chart?.pointOnTick
+      ? Math.max(this.chartOpt.barLength - 1, 1)
+      : this.chartOpt.barLength
+    const pointLeft = this.getPointLeft()
+    const pointRight = this.getPointRight()
+    return (pointRight - pointLeft) / divisor
+  }
+
+  private getPointX(index: number, pointWidth: number): number {
+    const pointLeft = this.getPointLeft()
+    if (this.dataSet.chart?.pointOnTick) {
+      return pointWidth * index + pointLeft
+    }
+    return pointWidth * index + pointLeft + pointWidth / 2
+  }
+
+  private getPointLeft(): number {
+    return this.chartOpt.axisLeft + (this.dataSet.chart?.pointStartPadding || 0)
+  }
+
+  private getPointRight(): number {
+    return this.chartOpt.right - (this.dataSet.chart?.pointEndPadding || 0)
+  }
+
+  private getLayoutWidth(): number {
+    return Math.max(this.dataSet.chart?.scrollContentWidth || 0, this.chartOpt.chartWidth)
+  }
+
+  private getScrollLeft(): number {
+    const viewportWidth = this.dataSet.chart?.width || 0
+    const contentWidth = this.dataSet.chart?.scrollContentWidth || 0
+    const maxScrollLeft = Math.max(0, contentWidth - viewportWidth)
+    const scrollLeft = this.dataSet.chart?.scrollLeft || 0
+    return Math.min(Math.max(scrollLeft, 0), maxScrollLeft)
+  }
+
+  private toViewportX(x: number): number {
+    if (!this.dataSet.chart?.scrollContentWidth) return x
+    if (x <= this.chartOpt.axisLeft) return x
+    return x - (this.chartOpt.scrollLeft || 0)
+  }
+
+  private getViewportRight(): number {
+    return this.chartOpt.chartWidth - this.chartOpt.chartSpace
+  }
+
+  private isXVisible(x: number, buffer = 0): boolean {
+    if (this.dataSet.chart?.renderOnlyContent) return true
+    if (!this.dataSet.chart?.scrollContentWidth) return true
+    return x >= this.chartOpt.axisLeft - buffer && x <= this.chartOpt.chartWidth + buffer
   }
 
   /**
@@ -713,37 +829,84 @@ export class Chart {
   /**
    * 计算Y轴显示刻度
    */
-  private calculateY(dMin: number, dMax: number, iMaxAxisNum: number) {
+  private calculateY(
+    dMin: number,
+    dMax: number,
+    iMaxAxisNum: number,
+    paddingRatio = 0.08,
+    minValue?: number,
+    integerOnly = false
+  ) {
+    if (!Number.isFinite(dMin) || !Number.isFinite(dMax)) {
+      const min = minValue ?? 0
+      return [min, min + 1]
+    }
     if (iMaxAxisNum < 1 || dMax < dMin) return [] as number[]
+
+    if (integerOnly) {
+      const min = minValue ?? Math.floor(dMin)
+      const padding = Math.max(1, dMax - min) * paddingRatio
+      const max = Math.max(Math.ceil(dMax + padding), min + 1)
+      const interval = Math.max(1, Math.ceil((max - min) / Math.max(iMaxAxisNum - 1, 1)))
+      const yIndex = [] as number[]
+
+      for (let value = min; value <= max; value += interval) {
+        yIndex.push(value)
+      }
+      if (yIndex[yIndex.length - 1] < max) {
+        yIndex.push(max)
+      }
+
+      return yIndex.length < 2 ? [min, min + 1] : yIndex
+    }
 
     let dDelta = dMax - dMin
     if (dDelta < 1.0) {
       dMax += (1.0 - dDelta) / 2.0
       dMin -= (1.0 - dDelta) / 2.0
     }
+    const padding = (dMax - dMin) * paddingRatio
+    dMax += padding
+    dMin -= padding
     dDelta = dMax - dMin
 
-    const iExp = parseInt((Math.log(dDelta) / Math.log(10.0)).toString()) - 2
+    const iExp = Math.floor(Math.log(dDelta) / Math.log(10.0)) - 1
     const dMultiplier = Math.pow(10, iExp)
     const dSolutions = [1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 250, 500]
     let i
     for (i = 0; i < dSolutions.length; i++) {
       const dMultiCal = dMultiplier * dSolutions[i]
-      if (parseInt((dDelta / dMultiCal).toString()) + 1 <= iMaxAxisNum) {
+      if (Math.floor(dDelta / dMultiCal) + 1 <= iMaxAxisNum) {
         break
       }
     }
 
-    const dInterval = dMultiplier * dSolutions[i]
+    const dInterval = dMultiplier * (dSolutions[i] || dSolutions[dSolutions.length - 1])
+    if (!Number.isFinite(dInterval) || dInterval <= 0) {
+      const min = minValue ?? 0
+      return [min, Math.max(min + 1, dMax)]
+    }
 
-    const dStartPoint = (parseInt((dMin / dInterval).toString()) - 1) * dInterval
+    const dStartPoint =
+      minValue === undefined
+        ? Math.floor(dMin / dInterval) * dInterval
+        : Math.max(minValue, Math.floor(dMin / dInterval) * dInterval)
     const yIndex = [] as number[]
-    let iAxisIndex
-    for (iAxisIndex = 1; true; iAxisIndex++) {
+    for (let iAxisIndex = 0; iAxisIndex < 100; iAxisIndex++) {
       const y = dStartPoint + dInterval * iAxisIndex
-      yIndex.push(y)
+      yIndex.push(Number(y.toFixed(2)))
       if (y > dMax) break
     }
+
+    if (minValue !== undefined && yIndex[0] !== minValue) {
+      yIndex.unshift(minValue)
+    }
+
+    if (yIndex.length < 2) {
+      const min = minValue ?? yIndex[0] ?? 0
+      return [min, min + 1]
+    }
+
     return yIndex
   }
 
@@ -762,18 +925,49 @@ export class Chart {
     const beveling = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
     const num = Math.floor(beveling / dashLen)
 
-    ctx.beginPath()
     for (let i = 0; i < num; i++) {
       const x = x1 + ((x2 - x1) / num) * i
       const y = y1 + ((y2 - y1) / num) * i
       if (i % 2 == 0) {
+        ctx.beginPath()
         ctx.moveTo(x, y)
       } else {
         ctx.lineTo(x, y)
+        ctx.stroke()
+        ctx.closePath()
       }
     }
-    ctx.stroke()
-    ctx.closePath()
+  }
+
+  private drawFixedYAxisOverlay(ctx: Taro.CanvasContext): void {
+    ctx.setFillStyle(this.chartOpt.bgColor)
+    ctx.fillRect(0, 0, this.chartOpt.axisLeft + 1, this.chartOpt.chartHeight)
+
+    if (this.dataSet.chart?.showYAxisLine !== false) {
+      ctx.setLineWidth(0.5)
+      ctx.setLineCap('round')
+      ctx.setStrokeStyle(this.chartOpt.lineColor)
+      ctx.beginPath()
+      ctx.moveTo(this.chartOpt.axisLeft, this.chartOpt.axisTop)
+      ctx.lineTo(this.chartOpt.axisLeft, this.chartOpt.axisBottom)
+      ctx.stroke()
+      ctx.closePath()
+    }
+
+    const height =
+      (this.chartOpt.axisBottom - this.chartOpt.axisTop) / (this.chartOpt.axisYMarks.length - 1)
+
+    for (let i = 0; i < this.chartOpt.axisYMarks.length; i++) {
+      const y = this.chartOpt.axisBottom - height * i
+      ctx.setFillStyle(this.dataSet.xAxis.color)
+      ctx.setFontSize(this.dataSet.xAxis.size)
+      ctx.setTextAlign('right')
+      ctx.fillText(
+        this.chartOpt.axisYMarks[i].toString(),
+        this.chartOpt.axisLeft - (this.dataSet.chart?.yAxisTextSpace ?? this.chartOpt.textSpace),
+        y + this.chartOpt.textSpace
+      )
+    }
   }
 
   /**

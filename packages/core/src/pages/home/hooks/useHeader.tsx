@@ -127,11 +127,16 @@ export const useHeader = () => {
     if (!birthDate) return ''
     const now = useDate()
     const targetDate = useDate(birthDate)
-    const months = now.diff(targetDate, 'month')
-    const days = now.diff(useDate(targetDate, 'YYYY-MM-DD').add(months, 'month'), 'day').toString()
+    const totalMonths = now.diff(targetDate, 'month')
+    const years = Math.floor(totalMonths / 12)
+    const months = totalMonths % 12
+    const days = now
+      .diff(useDate(targetDate, 'YYYY-MM-DD').add(totalMonths, 'month'), 'day')
+      .toString()
     const diff = now.diff(targetDate.format('YYYY-MM-DD ' + birthTime), 'millisecond')
 
-    return `${months}个月${days.padStart(2, '0')}天 (${durationFormatNoZero(diff, { format: birthTime ? 'D天H小时' : '第D天' })})`
+    const ageStr = `${years ? years + '岁' : ''}${months}个月${days.padStart(2, '0')}天`
+    return `${ageStr} (${durationFormatNoZero(diff, { format: birthTime ? 'D天H小时' : '第D天' })})`
   })
 
   return {

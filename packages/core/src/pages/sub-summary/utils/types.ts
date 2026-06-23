@@ -32,10 +32,39 @@ interface XAxis {
   show?: boolean | ((index: number) => boolean)
 }
 
+interface ChartLayout {
+  width?: number
+  scrollContentWidth?: number
+  scrollLeft?: number
+  height?: number
+  respectWidth?: boolean
+  yAxisMarkCount?: number
+  yAxisPaddingRatio?: number
+  yAxisMinValue?: number
+  yAxisInteger?: boolean
+  lineWidth?: number
+  renderOnlyYAxis?: boolean
+  renderOnlyContent?: boolean
+  showYAxisLabels?: boolean
+  showYAxisLine?: boolean
+  showYAxisGridLines?: boolean
+  yAxisLabelWidth?: number
+  axisLeft?: number
+  yAxisAxisLeft?: number
+  yAxisTextSpace?: number
+  pointOnTick?: boolean
+  firstXAxisLabelOffset?: number
+  pointStartPadding?: number
+  pointEndPadding?: number
+  showXAxisTickPoints?: boolean
+  xAxisTickPointRadius?: number
+}
+
 export interface DataSet {
   hideYAxis: boolean
   title: Title
   legend?: Legend
+  chart?: ChartLayout
   colors: string[]
   xAxis: XAxis
   series: ISerie[]
@@ -62,6 +91,8 @@ export interface ChartOpt {
   bottom: number
   axisLeft: number
   axisBottom: number
+  scrollContentWidth?: number
+  scrollLeft?: number
   // 修正拼写错误
   axisTop: number
 }

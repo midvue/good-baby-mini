@@ -14,7 +14,7 @@ export default defineComponent({
       loading: false,
       pagination: {
         current: 1,
-        size: 16,
+        size: 2,
         total: 0
       },
       feedRecords: []

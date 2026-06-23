@@ -9,7 +9,7 @@ import { FeedRecord, type SummaryFeedRecord } from '@/components/feed-record'
 import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictList, useDictMap } from '@/use'
-import { apiBabyList, apiGetFeedRecordList } from '../api'
+import { apiBabyList, apiGetFeedRecordListByDay } from '../api'
 import { type IHomeState } from '../types'
 
 /**  喂养记录 */
@@ -38,8 +38,6 @@ export const useRecords = () => {
     }
   )
 
-  const startFeedTime = useDate().subtract(3, 'day').format('YYYY-MM-DD 00:00:00')
-  const endFeedTime = useDate().format('YYYY-MM-DD 23:59:59')
   let dayMap = {} as Record<string, SummaryFeedRecord>
   /** 获取喂养记录 */
   async function getRecordList(isRefresh = true) {
@@ -56,13 +54,15 @@ export const useRecords = () => {
         state.pagination.current += 1
       })
     }
-    const res = await apiGetFeedRecordList({
-      startFeedTime,
-      endFeedTime,
+    // 按天分页:size 为"几天一页",不传 startFeedTime/endFeedTime,接口自动按有记录的天分页
+    const { current, size } = state.pagination
+    const res = await apiGetFeedRecordListByDay({
       babyId: appStore.babyInfo.id,
-      ...state.pagination
+      current,
+      size
     })
     const list = res.list || []
+    const totalDays = res.count || 0
     const now = Date.now()
 
     //格式化时间
@@ -99,6 +99,8 @@ export const useRecords = () => {
     )
 
     setState((state) => {
+      // 更新总天数,用于前端判断是否还有更多页
+      state.pagination.total = totalDays
       if (isRefresh) {
         //保存最后一次记录
         state.feedRecords = feedRecords
@@ -160,6 +162,10 @@ export const useRecords = () => {
     currState.isRefresher = false
   }
   const onLoadMore = () => {
+    // 按天分页:已加载天数已达总数,不再加载
+    if (state.pagination.current * state.pagination.size >= state.pagination.total) {
+      return
+    }
     getRecordList(false).finally(() => setState((state) => (state.loading = false)))
   }
 
