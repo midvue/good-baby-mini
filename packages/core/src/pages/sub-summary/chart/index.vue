@@ -1,5 +1,5 @@
 ﻿<script lang="tsx">
-import { defineComponent, onUnmounted, reactive, ref } from 'vue'
+import { defineComponent, nextTick, onUnmounted, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
 import { ScrollView } from '@tarojs/components'
 import { EnumYesNoPlus, useDate } from '@allkit/shared'
@@ -12,6 +12,7 @@ import { useDiaperChart } from './hooks/useDiaperChart'
 import { useHeightWeightChart } from './hooks/useHeightWeightChart'
 import { useMilkBottleChart } from './hooks/useMilkBottleChart'
 import { type IChartState } from './types'
+import { getCanvasLayoutSync } from './helpers/chartLayout'
 
 export default defineComponent({
   name: 'Chart',
@@ -29,7 +30,7 @@ export default defineComponent({
     })
 
     const initTabList = () => {
-      const feedTypeList = useDictList('FEED_TYPE')
+      const feedTypeList = useDictList('FEED_TYPE') || []
       const slicedFeedTypeList = feedTypeList.slice(0, 4)
       return slicedFeedTypeList
         .filter((feedType) => !!feedType.ext)
@@ -56,17 +57,17 @@ export default defineComponent({
     const { initMilkBottle } = useMilkBottleChart()
     const { initBreastFeed } = useBreastFeedChart()
     const { initDiaper } = useDiaperChart()
-    const systemInfo = Taro.getSystemInfoSync()
+    const { windowWidth } = getCanvasLayoutSync()
     const heightWeightYAxisWidth = ref(34)
-    const heightWeightChartContentWidth = ref(systemInfo.windowWidth)
-    const heightWeightChartHeight = ref(systemInfo.windowWidth * 1.3)
+    const heightWeightChartContentWidth = ref(windowWidth)
+    const heightWeightChartHeight = ref(windowWidth * 1.3)
     const heightWeightCurrMonth = ref(0)
     const milkBottleYAxisWidth = ref(44)
-    const milkBottleChartContentWidth = ref(systemInfo.windowWidth)
+    const milkBottleChartContentWidth = ref(windowWidth)
     const breastFeedYAxisWidth = ref(44)
-    const breastFeedChartContentWidth = ref(systemInfo.windowWidth)
+    const breastFeedChartContentWidth = ref(windowWidth)
     const diaperYAxisWidth = ref(44)
-    const diaperChartContentWidth = ref(systemInfo.windowWidth)
+    const diaperChartContentWidth = ref(windowWidth)
     let chartInitTimer: ReturnType<typeof setTimeout> | undefined
 
     const feedTypeStrategy = {
@@ -106,8 +107,23 @@ export default defineComponent({
         render: () => renderChartCanvas(EnumFeedType.DIAPER)
       }
     } as const
-
     function initChart() {
+      if (chartInitTimer) {
+        clearTimeout(chartInitTimer)
+      }
+      nextTick(() => {
+        if (chartInitTimer) {
+          clearTimeout(chartInitTimer)
+        }
+        chartInitTimer = setTimeout(() => {
+          const strategy = feedTypeStrategy[state.tabActive] || {}
+          strategy.init?.()
+          chartInitTimer = undefined
+        }, 32)
+      })
+    }
+
+    function redrawCurrentChart() {
       if (chartInitTimer) {
         clearTimeout(chartInitTimer)
       }
@@ -262,7 +278,8 @@ export default defineComponent({
 
       const strategy = feedTypeStrategy[feedType]
       const yAxisWidth = strategy.chartYAxisWidth?.value || 44
-      const chartContentWidth = strategy.chartContentWidth?.value || systemInfo.windowWidth
+      const chartContentWidth = strategy.chartContentWidth?.value || windowWidth
+      const normalChartHeight = windowWidth * 1.3
       return (
         <div class='chart-normal-canvas-shell'>
           <div
@@ -276,7 +293,9 @@ export default defineComponent({
             <Canvas
               key={feedType + 'YAxisCanvas'}
               canvas-id={feedType + 'YAxisCanvas'}
-              style={{ width: '100%', height: '100%' }}
+              width={yAxisWidth}
+              height={normalChartHeight}
+              style={{ width: `${yAxisWidth}px`, height: `${normalChartHeight}px` }}
             ></Canvas>
           </div>
           <ScrollView
@@ -295,7 +314,9 @@ export default defineComponent({
               <Canvas
                 key={feedType + 'ContentCanvas'}
                 canvas-id={feedType + 'ContentCanvas'}
-                style={{ width: '100%', height: '100%' }}
+                width={chartContentWidth}
+                height={normalChartHeight}
+                style={{ width: `${chartContentWidth}px`, height: `${normalChartHeight}px` }}
               ></Canvas>
             </div>
           </ScrollView>
@@ -333,7 +354,7 @@ export default defineComponent({
                             onClick={() => {
                               feedType.childIndex = index
                               strategy.childCode.value = tag.code
-                              strategy.init?.()
+                              redrawCurrentChart()
                             }}
                           >
                             {tag.label}

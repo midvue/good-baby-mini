@@ -1,7 +1,6 @@
 ﻿import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { EnumYesNoPlus, useDate } from '@allkit/shared'
-import Taro from '@tarojs/taro'
 import { nextTick } from 'vue'
 import { Chart, EnumLineType } from '../../utils/chart'
 import { apiFeedRecordList } from '../api'
@@ -21,15 +20,15 @@ import {
 import { EnumHeightWeightIndex } from '../dict'
 import { type GrowthAxisData, type HeightWeightStrategy } from '../types'
 import { createGrowthAxisData, getDisplayEndIndex } from '../helpers/heightWeightAxis'
+import { getCanvasLayoutSync } from '../helpers/chartLayout'
 
 const POINT_WIDTH = 40
 const Y_AXIS_WIDTH = 34
 const POINT_START_PADDING = 8
 const POINT_END_PADDING = 24
-const PORTRAIT_HEIGHT_RATIO = 1.3
 
 const getChartLayout = (labelCount: number) => {
-  const { windowWidth } = Taro.getSystemInfoSync()
+  const { windowWidth } = getCanvasLayoutSync()
   const yAxisWidth = Y_AXIS_WIDTH
   const visibleWidth = Math.max(280, windowWidth - 8)
   const contentAreaWidth = Math.max(0, visibleWidth - yAxisWidth)
@@ -37,13 +36,12 @@ const getChartLayout = (labelCount: number) => {
     contentAreaWidth,
     Math.max(labelCount - 1, 1) * POINT_WIDTH + POINT_START_PADDING + POINT_END_PADDING
   )
-  const chartHeight = windowWidth * PORTRAIT_HEIGHT_RATIO
 
   return {
     width: visibleWidth,
     yAxisWidth,
     contentWidth,
-    height: chartHeight
+    height: windowWidth * 1.3
   }
 }
 
@@ -157,7 +155,6 @@ export function useHeightWeightChart() {
     }
 
     const chartConfig = {
-      hideYAxis: false,
       chart: {
         ...layout,
         yAxisMarkCount: 7,
@@ -184,15 +181,10 @@ export function useHeightWeightChart() {
         '#ED7672',
         '#180d41'
       ],
-      title: {
-        text: '',
-        color: '#333333',
-        size: 15
-      },
       xAxis: {
-        color: '#666A73',
-        size: 10,
         data: visibleXAxisLabels,
+        color: '#333',
+        size: 12,
         show: (index: number) => shouldShowAgeLabel(index, visibleXAxisLabels.length)
       },
       series: [
@@ -222,6 +214,8 @@ export function useHeightWeightChart() {
     }
 
     new Chart().init(`${EnumFeedType.HEIGHT_WEIGHT}YAxisCanvas`, {
+      hideYAxis: false,
+      title: { text: '', color: '#333', size: 14 },
       ...chartConfig,
       chart: {
         ...chartConfig.chart,
@@ -233,6 +227,8 @@ export function useHeightWeightChart() {
       }
     })
     new Chart().init(`${EnumFeedType.HEIGHT_WEIGHT}ContentCanvas`, {
+      hideYAxis: false,
+      title: { text: '', color: '#333', size: 14 },
       ...chartConfig,
       chart: {
         ...chartConfig.chart,
