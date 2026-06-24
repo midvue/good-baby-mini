@@ -1,7 +1,7 @@
 ﻿<script lang="tsx">
-import { defineComponent, nextTick, onUnmounted, reactive, ref } from 'vue'
+import { defineComponent, onUnmounted, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
-import { CoverView, PageMeta, ScrollView } from '@tarojs/components'
+import { ScrollView } from '@tarojs/components'
 import { EnumYesNoPlus, useDate } from '@allkit/shared'
 import { Canvas, Navbar, Picker, TabPane, Tabs, Tag, Icon } from '@allkit/taro-h5-ui'
 import { defineCtxState } from '@allkit/use'
@@ -12,15 +12,6 @@ import { useDiaperChart } from './hooks/useDiaperChart'
 import { useHeightWeightChart } from './hooks/useHeightWeightChart'
 import { useMilkBottleChart } from './hooks/useMilkBottleChart'
 import { type IChartState } from './types'
-
-type MenuButtonRect = {
-  top: number
-  right: number
-  bottom: number
-  left: number
-  width: number
-  height: number
-}
 
 export default defineComponent({
   name: 'Chart',
@@ -61,40 +52,11 @@ export default defineComponent({
     }
     const tabList = initTabList()
 
-    const { initHeightWeight, renderHeightWeight } = useHeightWeightChart()
+    const { initHeightWeight } = useHeightWeightChart()
     const { initMilkBottle } = useMilkBottleChart()
     const { initBreastFeed } = useBreastFeedChart()
     const { initDiaper } = useDiaperChart()
-    const chartOrientation = ref<'portrait' | 'landscape'>('portrait')
     const systemInfo = Taro.getSystemInfoSync()
-    const chartWindowSize = ref({
-      windowWidth: systemInfo.windowWidth,
-      windowHeight: systemInfo.windowHeight
-    })
-    const getSafeAreaInsets = () => {
-      const info = Taro.getSystemInfoSync()
-      const safeArea = info.safeArea
-      return {
-        top: safeArea?.top || 0,
-        right: safeArea ? Math.max(info.windowWidth - safeArea.right, 0) : 0,
-        bottom: safeArea ? Math.max(info.windowHeight - safeArea.bottom, 0) : 0,
-        left: safeArea?.left || 0
-      }
-    }
-    const chartSafeAreaInsets = ref(getSafeAreaInsets())
-    const getMenuButtonRect = () => {
-      const taroWithMenuButton = Taro as typeof Taro & {
-        getMenuButtonBoundingClientRect?: () => MenuButtonRect
-      }
-      try {
-        return taroWithMenuButton.getMenuButtonBoundingClientRect?.()
-      } catch {
-        return undefined
-      }
-    }
-    const chartMenuButtonRect = ref<MenuButtonRect | undefined>(getMenuButtonRect())
-    const chartRenderReady = ref(true)
-    const heightWeightChartWidth = ref(systemInfo.windowWidth)
     const heightWeightYAxisWidth = ref(34)
     const heightWeightChartContentWidth = ref(systemInfo.windowWidth)
     const heightWeightChartHeight = ref(systemInfo.windowWidth * 1.3)
@@ -106,23 +68,16 @@ export default defineComponent({
     const diaperYAxisWidth = ref(44)
     const diaperChartContentWidth = ref(systemInfo.windowWidth)
     let chartInitTimer: ReturnType<typeof setTimeout> | undefined
-    let chartRenderTimer: ReturnType<typeof setTimeout> | undefined
-    let lastOrientationTapTime = 0
 
     const feedTypeStrategy = {
       [EnumFeedType.HEIGHT_WEIGHT]: {
         data: ref(),
         childCode: ref<string>(EnumYesNoPlus.YES),
-        chartWidth: heightWeightChartWidth,
         chartYAxisWidth: heightWeightYAxisWidth,
         chartContentWidth: heightWeightChartContentWidth,
         chartHeight: heightWeightChartHeight,
-        orientation: chartOrientation,
-        windowSize: chartWindowSize,
-        safeAreaInsets: chartSafeAreaInsets,
         currMonth: heightWeightCurrMonth,
         init: initHeightWeight,
-        redraw: renderHeightWeight,
         render: () => renderChartCanvas(EnumFeedType.HEIGHT_WEIGHT)
       },
       [EnumFeedType.MILK_BOTTLE]: {
@@ -164,91 +119,13 @@ export default defineComponent({
     }
     initChart()
 
-    const refreshSafeAreaInsets = () => {
-      chartSafeAreaInsets.value = getSafeAreaInsets()
-      chartMenuButtonRect.value = getMenuButtonRect()
-    }
-
-    const getLandscapeButtonStyle = () => {
-      const buttonSize = 20
-      const gap = 20
-      const menuButtonRect = chartMenuButtonRect.value
-      if (!menuButtonRect) {
-        return {
-          width: `${buttonSize}px`,
-          height: `${buttonSize}px`,
-          lineHeight: `${buttonSize}px`,
-          top: `${chartSafeAreaInsets.value.top + 8}px`,
-          right: `${chartSafeAreaInsets.value.right + 64}px`
-        }
-      }
-
-      return {
-        width: `${buttonSize}px`,
-        height: `${buttonSize}px`,
-        lineHeight: `${buttonSize}px`,
-        top: `${menuButtonRect.top + Math.max((menuButtonRect.height - buttonSize) / 2, 0)}px`,
-        left: `${Math.max(menuButtonRect.left - buttonSize - gap, chartSafeAreaInsets.value.left + 8)}px`
-      }
-    }
-
-    const redrawHeightWeightAfterLayout = (delay = 120) => {
-      if (chartRenderTimer) {
-        clearTimeout(chartRenderTimer)
-      }
-      chartRenderReady.value = false
-      chartRenderTimer = setTimeout(() => {
-        refreshSafeAreaInsets()
-        chartRenderReady.value = true
-        nextTick(() => {
-          feedTypeStrategy[EnumFeedType.HEIGHT_WEIGHT].init?.()
-          chartRenderTimer = undefined
-        })
-      }, delay)
-    }
-
-    const resetHeightWeightScroll = () => {
-      redrawHeightWeightAfterLayout(32)
-    }
-
     const handleTopTabChange = () => {
       initChart()
-      resetHeightWeightScroll()
-    }
-
-    const toggleChartOrientation = () => {
-      chartOrientation.value = chartOrientation.value === 'portrait' ? 'landscape' : 'portrait'
-      redrawHeightWeightAfterLayout(180)
-    }
-
-    const handleChartOrientationTap = (event?: Event) => {
-      event?.stopPropagation?.()
-      const now = Date.now()
-      if (now - lastOrientationTapTime < 350) return
-      lastOrientationTapTime = now
-      toggleChartOrientation()
-    }
-
-    const handlePageResize = (event: {
-      detail?: { size?: { windowWidth: number; windowHeight: number } }
-    }) => {
-      const size = event.detail?.size
-      if (!size) return
-      chartWindowSize.value = {
-        windowWidth: size.windowWidth,
-        windowHeight: size.windowHeight
-      }
-      if (state.tabActive === EnumFeedType.HEIGHT_WEIGHT) {
-        redrawHeightWeightAfterLayout(120)
-      }
     }
 
     onUnmounted(() => {
       if (chartInitTimer) {
         clearTimeout(chartInitTimer)
-      }
-      if (chartRenderTimer) {
-        clearTimeout(chartRenderTimer)
       }
     })
 
@@ -339,76 +216,45 @@ export default defineComponent({
     function renderChartCanvas(feedType: EnumFeedType) {
       if (feedType === EnumFeedType.HEIGHT_WEIGHT) {
         return (
-          <div
-            class={[
-              'chart-canvas-area',
-              chartOrientation.value === 'landscape' ? 'chart-canvas-area-landscape' : ''
-            ]}
-          >
-            {chartOrientation.value === 'portrait' ? (
-              <CoverView
-                class='chart-orientation-btn chart-orientation-btn-expand'
-                onClick={handleChartOrientationTap}
-                onTap={handleChartOrientationTap}
-                onTouchend={handleChartOrientationTap}
+          <div class='chart-canvas-area'>
+            <div class='chart-canvas-shell'>
+              <div
+                class='chart-y-axis-canvas'
+                style={{
+                  width: `${heightWeightYAxisWidth.value}px`,
+                  minWidth: `${heightWeightYAxisWidth.value}px`,
+                  flexBasis: `${heightWeightYAxisWidth.value}px`
+                }}
               >
-                <CoverView
-                  class='chart-orientation-icon'
-                  onTap={handleChartOrientationTap}
-                  onTouchend={handleChartOrientationTap}
+                <Canvas
+                  key={feedType + 'YAxisCanvas'}
+                  canvas-id={feedType + 'YAxisCanvas'}
+                  catchMove={false}
+                  style={{ width: '100%', height: '100%' }}
+                ></Canvas>
+              </div>
+              <ScrollView
+                class='chart-canvas-viewport'
+                scrollX
+                scrollY={false}
+                enhanced
+                showScrollbar={false}
+              >
+                <div
+                  class='chart-canvas-content'
+                  style={{
+                    width: `${heightWeightChartContentWidth.value}px`,
+                    height: `${heightWeightChartHeight.value}px`
+                  }}
                 >
-                  <CoverView class='chart-orientation-expand-corner chart-orientation-expand-corner-tl' />
-                  <CoverView class='chart-orientation-expand-corner chart-orientation-expand-corner-br' />
-                </CoverView>
-              </CoverView>
-            ) : null}
-            <div
-              class={[
-                'chart-canvas-shell',
-                chartRenderReady.value ? '' : 'chart-canvas-shell-hidden'
-              ]}
-            >
-              {chartRenderReady.value ? (
-                <>
-                  <div
-                    class='chart-y-axis-canvas'
-                    style={{
-                      width: `${heightWeightYAxisWidth.value}px`,
-                      minWidth: `${heightWeightYAxisWidth.value}px`,
-                      flexBasis: `${heightWeightYAxisWidth.value}px`
-                    }}
-                  >
-                    <Canvas
-                      key={feedType + 'YAxisCanvas'}
-                      canvas-id={feedType + 'YAxisCanvas'}
-                      catchMove={false}
-                      style={{ width: '100%', height: '100%' }}
-                    ></Canvas>
-                  </div>
-                  <ScrollView
-                    class='chart-canvas-viewport'
-                    scrollX
-                    scrollY={false}
-                    enhanced
-                    showScrollbar={false}
-                  >
-                    <div
-                      class='chart-canvas-content'
-                      style={{
-                        width: `${heightWeightChartContentWidth.value}px`,
-                        height: `${heightWeightChartHeight.value}px`
-                      }}
-                    >
-                      <Canvas
-                        key={feedType + 'ContentCanvas'}
-                        canvas-id={feedType + 'ContentCanvas'}
-                        catchMove={false}
-                        style={{ width: '100%', height: '100%' }}
-                      ></Canvas>
-                    </div>
-                  </ScrollView>
-                </>
-              ) : null}
+                  <Canvas
+                    key={feedType + 'ContentCanvas'}
+                    canvas-id={feedType + 'ContentCanvas'}
+                    catchMove={false}
+                    style={{ width: '100%', height: '100%' }}
+                  ></Canvas>
+                </div>
+              </ScrollView>
             </div>
           </div>
         )
@@ -457,98 +303,52 @@ export default defineComponent({
       )
     }
 
-    const renderOrientationButton = () => {
-      if (state.tabActive !== EnumFeedType.HEIGHT_WEIGHT || chartOrientation.value !== 'landscape') {
-        return null
-      }
-
-      return (
-        <CoverView
-          class='chart-orientation-btn chart-orientation-btn-collapse'
-          style={getLandscapeButtonStyle()}
-          onClick={handleChartOrientationTap}
-          onTap={handleChartOrientationTap}
-        >
-          <CoverView
-            class='chart-orientation-icon chart-orientation-close-icon'
-            onTap={handleChartOrientationTap}
-            onTouchend={handleChartOrientationTap}
-          >
-            <CoverView class='chart-orientation-close-line chart-orientation-close-line-left' />
-            <CoverView class='chart-orientation-close-line chart-orientation-close-line-right' />
-          </CoverView>
-        </CoverView>
-      )
-    }
-
     return () => {
       const strategy = feedTypeStrategy[state.tabActive] || {}
-      const pageOrientation =
-        state.tabActive === EnumFeedType.HEIGHT_WEIGHT ? chartOrientation.value : 'portrait'
 
       return (
-        <>
-          <PageMeta pageOrientation={pageOrientation} onResize={handlePageResize}></PageMeta>
-          <div
-            class={[
-              'chart',
-              state.tabActive === EnumFeedType.HEIGHT_WEIGHT &&
-              chartOrientation.value === 'landscape'
-                ? 'chart-landscape'
-                : ''
-            ]}
-          >
-            {chartOrientation.value === 'landscape' &&
-            state.tabActive === EnumFeedType.HEIGHT_WEIGHT ? null : (
-              <>
-                <Navbar
-                  title='图表'
-                  defaultConfig={{
-                    frontColor: '#000000',
-                    backgroundColor: 'fff8e5'
-                  }}
-                ></Navbar>
-                <div class='chart-tabs'>
-                  <Tabs v-model={state.tabActive} onChange={handleTopTabChange} border={false}>
-                    {tabList.map((feedType) => {
-                      return (
-                        <TabPane label={feedType.name} key={feedType.code} name={+feedType.code}>
-                          <div class='tabs-pane-switch'>
-                            {feedType.children.map((tag, index) => {
-                              return (
-                                <Tag
-                                  size='large'
-                                  class='switch-tag'
-                                  round
-                                  type={feedType.childIndex === index ? 'primary' : 'default'}
-                                  plain={feedType.childIndex !== index}
-                                  key={tag.code + '_' + index}
-                                  onClick={() => {
-                                    feedType.childIndex = index
-                                    strategy.childCode.value = tag.code
-                                    strategy.init?.()
-                                    if (state.tabActive === EnumFeedType.HEIGHT_WEIGHT) {
-                                      resetHeightWeightScroll()
-                                    }
-                                  }}
-                                >
-                                  {tag.label}
-                                </Tag>
-                              )
-                            })}
-                          </div>
-                        </TabPane>
-                      )
-                    })}
-                  </Tabs>
-                </div>
-                {renderChooseDate(state.tabActive)}
-              </>
-            )}
-            {strategy.render?.()}
-            {renderOrientationButton()}
+        <div class='chart'>
+          <Navbar
+            title='图表'
+            defaultConfig={{
+              frontColor: '#000000',
+              backgroundColor: 'fff8e5'
+            }}
+          ></Navbar>
+          <div class='chart-tabs'>
+            <Tabs v-model={state.tabActive} onChange={handleTopTabChange} border={false}>
+              {tabList.map((feedType) => {
+                return (
+                  <TabPane label={feedType.name} key={feedType.code} name={+feedType.code}>
+                    <div class='tabs-pane-switch'>
+                      {feedType.children.map((tag, index) => {
+                        return (
+                          <Tag
+                            size='large'
+                            class='switch-tag'
+                            round
+                            type={feedType.childIndex === index ? 'primary' : 'default'}
+                            plain={feedType.childIndex !== index}
+                            key={tag.code + '_' + index}
+                            onClick={() => {
+                              feedType.childIndex = index
+                              strategy.childCode.value = tag.code
+                              strategy.init?.()
+                            }}
+                          >
+                            {tag.label}
+                          </Tag>
+                        )
+                      })}
+                    </div>
+                  </TabPane>
+                )
+              })}
+            </Tabs>
           </div>
-        </>
+          {renderChooseDate(state.tabActive)}
+          {strategy.render?.()}
+        </div>
       )
     }
   }

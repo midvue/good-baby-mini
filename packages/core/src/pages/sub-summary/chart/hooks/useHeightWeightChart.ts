@@ -1,4 +1,4 @@
-import { EnumFeedType } from '@/dict'
+﻿import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { EnumYesNoPlus, useDate } from '@allkit/shared'
 import Taro from '@tarojs/taro'
@@ -19,26 +19,8 @@ import {
   type PercentileData
 } from '../data'
 import { EnumHeightWeightIndex } from '../dict'
-
-type GrowthAxisData = {
-  heightArr: (number | undefined)[]
-  weightArr: (number | undefined)[]
-  headCircumferenceArr: (number | undefined)[]
-  footLengthArr: (number | undefined)[]
-}
-
-type HeightWeightStrategy = {
-  data: { value: GrowthAxisData | undefined }
-  childCode: { value: string }
-  chartWidth?: { value: number }
-  chartYAxisWidth?: { value: number }
-  chartContentWidth?: { value: number }
-  chartHeight?: { value: number }
-  orientation?: { value: 'portrait' | 'landscape' }
-  windowSize?: { value: { windowWidth: number; windowHeight: number } }
-  safeAreaInsets?: { value: { top: number; right: number; bottom: number; left: number } }
-  currMonth?: { value: number }
-}
+import { type GrowthAxisData, type HeightWeightStrategy } from '../types'
+import { createGrowthAxisData, getDisplayEndIndex } from '../helpers/heightWeightAxis'
 
 const POINT_WIDTH = 40
 const Y_AXIS_WIDTH = 34
@@ -46,61 +28,16 @@ const POINT_START_PADDING = 8
 const POINT_END_PADDING = 24
 const PORTRAIT_HEIGHT_RATIO = 1.3
 
-const hasMeasurement = (value: unknown) => value !== undefined && value !== null && value !== ''
-
-const findNearestAgeIndex = (ageRows: number[], month: number) => {
-  let nearestIndex = 0
-  let nearestDistance = Number.POSITIVE_INFINITY
-
-  ageRows.forEach((ageMonth, index) => {
-    const distance = Math.abs(ageMonth - month)
-    if (distance < nearestDistance) {
-      nearestDistance = distance
-      nearestIndex = index
-    }
-  })
-
-  return nearestIndex
-}
-
-const getDisplayEndIndex = (ageRows: number[], month: number) => {
-  const cappedMonth = Math.min(Math.max(month, 0), ageRows[ageRows.length - 1])
-  for (let index = ageRows.length - 1; index >= 0; index--) {
-    if (ageRows[index] <= cappedMonth) return index
-  }
-  return 0
-}
-
-const getRoundedAgeMonth = (feedTime: string, birthDate: string) => {
-  const feedDate = useDate(feedTime)
-  let month = feedDate.diff(useDate(birthDate), 'month')
-  const sameMonthTargetDate = useDate(birthDate).add(month, 'month')
-  const diffDays = feedDate.diff(sameMonthTargetDate, 'day')
-
-  if (diffDays > 15) {
-    month += 1
-  }
-
-  return month
-}
-
-const getChartLayout = (
-  labelCount: number,
-  orientation: 'portrait' | 'landscape',
-  windowSize?: { windowWidth: number; windowHeight: number },
-  safeAreaInsets?: { top: number; right: number; bottom: number; left: number }
-) => {
-  const { windowWidth, windowHeight } = windowSize || Taro.getSystemInfoSync()
-  const yAxisWidth =
-    orientation === 'landscape' ? Y_AXIS_WIDTH + (safeAreaInsets?.left || 0) : Y_AXIS_WIDTH
-  const rightSafeInset = orientation === 'landscape' ? safeAreaInsets?.right || 0 : 0
-  const visibleWidth = Math.max(280, windowWidth - rightSafeInset - 8)
+const getChartLayout = (labelCount: number) => {
+  const { windowWidth } = Taro.getSystemInfoSync()
+  const yAxisWidth = Y_AXIS_WIDTH
+  const visibleWidth = Math.max(280, windowWidth - 8)
   const contentAreaWidth = Math.max(0, visibleWidth - yAxisWidth)
   const contentWidth = Math.max(
     contentAreaWidth,
     Math.max(labelCount - 1, 1) * POINT_WIDTH + POINT_START_PADDING + POINT_END_PADDING
   )
-  const chartHeight = orientation === 'landscape' ? windowHeight : windowWidth * PORTRAIT_HEIGHT_RATIO
+  const chartHeight = windowWidth * PORTRAIT_HEIGHT_RATIO
 
   return {
     width: visibleWidth,
@@ -111,12 +48,7 @@ const getChartLayout = (
 }
 
 const syncChartLayout = (strategy: HeightWeightStrategy, labelCount: number) => {
-  const layout = getChartLayout(
-    labelCount,
-    strategy.orientation?.value || 'portrait',
-    strategy.windowSize?.value,
-    strategy.safeAreaInsets?.value
-  )
+  const layout = getChartLayout(labelCount)
   if (strategy.chartWidth) strategy.chartWidth.value = layout.width
   if (strategy.chartYAxisWidth) strategy.chartYAxisWidth.value = layout.yAxisWidth
   if (strategy.chartContentWidth) strategy.chartContentWidth.value = layout.contentWidth
@@ -156,35 +88,7 @@ export function useHeightWeightChart() {
     const currMonth = useDate().diff(useDate(birthDate), 'month')
     if (this.currMonth) this.currMonth.value = currMonth
 
-    this.data.value = list.reduce<GrowthAxisData>(
-      (axis, feedRecord) => {
-        const month = getRoundedAgeMonth(feedRecord.feedTime, birthDate)
-        const heightWeightIndex = findNearestAgeIndex(heightWeightAgeMonths, month)
-        const headCircumferenceIndex = findNearestAgeIndex(headCircumferenceAgeMonths, month)
-        const { content } = feedRecord
-
-        if (hasMeasurement(content.height)) {
-          axis.heightArr[heightWeightIndex] = Number(content.height)
-        }
-        if (hasMeasurement(content.weight)) {
-          axis.weightArr[heightWeightIndex] = Number(content.weight)
-        }
-        if (hasMeasurement(content.headCircumference)) {
-          axis.headCircumferenceArr[headCircumferenceIndex] = Number(content.headCircumference)
-        }
-        if (hasMeasurement(content.footLength)) {
-          axis.footLengthArr[heightWeightIndex] = Number(content.footLength)
-        }
-
-        return axis
-      },
-      {
-        heightArr: new Array(heightWeightAgeMonths.length).fill(undefined),
-        weightArr: new Array(heightWeightAgeMonths.length).fill(undefined),
-        headCircumferenceArr: new Array(headCircumferenceAgeMonths.length).fill(undefined),
-        footLengthArr: new Array(heightWeightAgeMonths.length).fill(undefined)
-      }
-    )
+    this.data.value = createGrowthAxisData(list, birthDate)
 
     await initChart.call(this, code, this.data.value)
   }
