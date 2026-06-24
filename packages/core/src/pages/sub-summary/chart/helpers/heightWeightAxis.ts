@@ -1,4 +1,4 @@
-﻿import { useDate } from '@allkit/shared'
+import { useDate } from '@allkit/shared'
 import {
   headCircumferenceAgeMonths,
   heightWeightAgeMonths
@@ -67,17 +67,13 @@ export const createGrowthAxisData = (
       if (!isEmptyHeightWeightValue(content.headCircumference)) {
         axis.headCircumferenceArr[headCircumferenceIndex] = Number(content.headCircumference)
       }
-      if (!isEmptyHeightWeightValue(content.footLength)) {
-        axis.footLengthArr[heightWeightIndex] = Number(content.footLength)
-      }
 
       return axis
     },
     {
       heightArr: new Array(heightWeightAgeMonths.length).fill(undefined),
       weightArr: new Array(heightWeightAgeMonths.length).fill(undefined),
-      headCircumferenceArr: new Array(headCircumferenceAgeMonths.length).fill(undefined),
-      footLengthArr: new Array(heightWeightAgeMonths.length).fill(undefined)
+      headCircumferenceArr: new Array(headCircumferenceAgeMonths.length).fill(undefined)
     }
   )
 }

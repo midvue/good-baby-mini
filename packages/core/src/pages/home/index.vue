@@ -31,7 +31,7 @@ export default defineComponent({
       }
     )
     const { render: renderHeader } = useHeader()
-    const { render: renderTools } = useTools()
+    const { render: renderTools, renderDrag } = useTools()
     const { render: renderRecords } = useRecords()
     useShareAppMessage(() => {
       return {
@@ -46,6 +46,7 @@ export default defineComponent({
           {renderHeader()}
           {renderTools()}
           {renderRecords()}
+          {renderDrag()}
           <SafeBottom></SafeBottom>
         </div>
       )

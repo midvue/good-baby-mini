@@ -1,9 +1,9 @@
 ﻿<script lang="tsx">
 import { defineComponent, nextTick, onUnmounted, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
-import { ScrollView } from '@tarojs/components'
+import { Canvas } from '@tarojs/components'
 import { EnumYesNoPlus, useDate } from '@allkit/shared'
-import { Canvas, Navbar, Picker, TabPane, Tabs, Tag, Icon } from '@allkit/taro-h5-ui'
+import { Navbar, Picker, TabPane, Tabs, Tag, Icon } from '@allkit/taro-h5-ui'
 import { defineCtxState } from '@allkit/use'
 import { EnumFeedType } from '@/dict'
 import { type DictItem, useDictList, useRoute } from '@/use'
@@ -58,9 +58,10 @@ export default defineComponent({
     const { initBreastFeed } = useBreastFeedChart()
     const { initDiaper } = useDiaperChart()
     const { windowWidth } = getCanvasLayoutSync()
+    const chartHeight = 487
     const heightWeightYAxisWidth = ref(34)
     const heightWeightChartContentWidth = ref(windowWidth)
-    const heightWeightChartHeight = ref(windowWidth * 1.3)
+    const heightWeightChartHeight = ref(chartHeight)
     const heightWeightCurrMonth = ref(0)
     const milkBottleYAxisWidth = ref(44)
     const milkBottleChartContentWidth = ref(windowWidth)
@@ -68,12 +69,28 @@ export default defineComponent({
     const breastFeedChartContentWidth = ref(windowWidth)
     const diaperYAxisWidth = ref(44)
     const diaperChartContentWidth = ref(windowWidth)
+    const canvasIdPrefix = `chart_${Date.now()}`
     let chartInitTimer: ReturnType<typeof setTimeout> | undefined
+
+    type ChartStrategy = {
+      data: { value: unknown }
+      childCode: { value: string }
+      yAxisCanvasId: { value: string }
+      contentCanvasId: { value: string }
+      chartYAxisWidth: { value: number }
+      chartContentWidth: { value: number }
+      chartHeight?: { value: number }
+      currMonth?: { value: number }
+      init: () => Promise<void>
+      render: () => any
+    }
 
     const feedTypeStrategy = {
       [EnumFeedType.HEIGHT_WEIGHT]: {
         data: ref(),
         childCode: ref<string>(EnumYesNoPlus.YES),
+        yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.HEIGHT_WEIGHT}_YAxisCanvas`),
+        contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.HEIGHT_WEIGHT}_ContentCanvas`),
         chartYAxisWidth: heightWeightYAxisWidth,
         chartContentWidth: heightWeightChartContentWidth,
         chartHeight: heightWeightChartHeight,
@@ -84,6 +101,8 @@ export default defineComponent({
       [EnumFeedType.MILK_BOTTLE]: {
         data: ref(),
         childCode: ref(EnumYesNoPlus.YES),
+        yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.MILK_BOTTLE}_YAxisCanvas`),
+        contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.MILK_BOTTLE}_ContentCanvas`),
         chartYAxisWidth: milkBottleYAxisWidth,
         chartContentWidth: milkBottleChartContentWidth,
         init: initMilkBottle,
@@ -92,6 +111,8 @@ export default defineComponent({
       [EnumFeedType.BREAST_FEED_DIRECT]: {
         data: ref(),
         childCode: ref(EnumYesNoPlus.YES),
+        yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.BREAST_FEED_DIRECT}_YAxisCanvas`),
+        contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.BREAST_FEED_DIRECT}_ContentCanvas`),
         chartYAxisWidth: breastFeedYAxisWidth,
         chartContentWidth: breastFeedChartContentWidth,
         init: initBreastFeed,
@@ -100,13 +121,17 @@ export default defineComponent({
       [EnumFeedType.DIAPER]: {
         data: ref(),
         childCode: ref(EnumYesNoPlus.YES),
+        yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.DIAPER}_YAxisCanvas`),
+        contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.DIAPER}_ContentCanvas`),
         chartYAxisWidth: diaperYAxisWidth,
         chartContentWidth: diaperChartContentWidth,
         // 淇敼 init 鍑芥暟锛屼紶閫掓棩鏈熷弬鏁?
         init: initDiaper,
         render: () => renderChartCanvas(EnumFeedType.DIAPER)
       }
-    } as const
+    } satisfies Partial<Record<EnumFeedType, ChartStrategy>>
+    type FeedTypeStrategyKey = keyof typeof feedTypeStrategy
+
     function initChart() {
       if (chartInitTimer) {
         clearTimeout(chartInitTimer)
@@ -133,6 +158,7 @@ export default defineComponent({
         chartInitTimer = undefined
       }, 32)
     }
+
     initChart()
 
     const handleTopTabChange = () => {
@@ -180,7 +206,7 @@ export default defineComponent({
     }
 
     /** 娓叉煋閫夋嫨鏃ユ湡鐨勭粍浠?*/
-    const renderChooseDate = (feedType: EnumFeedType) => {
+    const renderChooseDate = (feedType: FeedTypeStrategyKey) => {
       if (feedType === EnumFeedType.HEIGHT_WEIGHT) return null
       return (
         <div class='date-choose'>
@@ -229,8 +255,11 @@ export default defineComponent({
       )
     }
 
-    function renderChartCanvas(feedType: EnumFeedType) {
+    function renderChartCanvas(feedType: FeedTypeStrategyKey) {
       if (feedType === EnumFeedType.HEIGHT_WEIGHT) {
+        const strategy = feedTypeStrategy[feedType]
+        const yAxisCanvasId = strategy.yAxisCanvasId.value
+        const contentCanvasId = strategy.contentCanvasId.value
         return (
           <div class='chart-canvas-area'>
             <div class='chart-canvas-shell'>
@@ -239,23 +268,18 @@ export default defineComponent({
                 style={{
                   width: `${heightWeightYAxisWidth.value}px`,
                   minWidth: `${heightWeightYAxisWidth.value}px`,
-                  flexBasis: `${heightWeightYAxisWidth.value}px`
+                  flex: `0 0 ${heightWeightYAxisWidth.value}px`
                 }}
               >
                 <Canvas
-                  key={feedType + 'YAxisCanvas'}
-                  canvas-id={feedType + 'YAxisCanvas'}
-                  catchMove={false}
+                  key={yAxisCanvasId}
+                  id={yAxisCanvasId}
+                  type='2d'
+                  catchMove
                   style={{ width: '100%', height: '100%' }}
                 ></Canvas>
               </div>
-              <ScrollView
-                class='chart-canvas-viewport'
-                scrollX
-                scrollY={false}
-                enhanced
-                showScrollbar={false}
-              >
+              <div class='chart-canvas-viewport'>
                 <div
                   class='chart-canvas-content'
                   style={{
@@ -264,13 +288,14 @@ export default defineComponent({
                   }}
                 >
                   <Canvas
-                    key={feedType + 'ContentCanvas'}
-                    canvas-id={feedType + 'ContentCanvas'}
-                    catchMove={false}
+                    key={contentCanvasId}
+                    id={contentCanvasId}
+                    type='2d'
+                    catchMove
                     style={{ width: '100%', height: '100%' }}
                   ></Canvas>
                 </div>
-              </ScrollView>
+              </div>
             </div>
           </div>
         )
@@ -279,7 +304,9 @@ export default defineComponent({
       const strategy = feedTypeStrategy[feedType]
       const yAxisWidth = strategy.chartYAxisWidth?.value || 44
       const chartContentWidth = strategy.chartContentWidth?.value || windowWidth
-      const normalChartHeight = windowWidth * 1.3
+      const normalChartHeight = chartHeight
+      const yAxisCanvasId = strategy.yAxisCanvasId.value
+      const contentCanvasId = strategy.contentCanvasId.value
       return (
         <div class='chart-normal-canvas-shell'>
           <div
@@ -287,39 +314,34 @@ export default defineComponent({
             style={{
               width: `${yAxisWidth}px`,
               minWidth: `${yAxisWidth}px`,
-              flexBasis: `${yAxisWidth}px`
+              flex: `0 0 ${yAxisWidth}px`
             }}
           >
             <Canvas
-              key={feedType + 'YAxisCanvas'}
-              canvas-id={feedType + 'YAxisCanvas'}
-              width={yAxisWidth}
-              height={normalChartHeight}
+              key={yAxisCanvasId}
+              id={yAxisCanvasId}
+              type='2d'
+              catchMove
               style={{ width: `${yAxisWidth}px`, height: `${normalChartHeight}px` }}
             ></Canvas>
           </div>
-          <ScrollView
-            class='chart-normal-canvas-viewport'
-            scrollX
-            scrollY={false}
-            enhanced
-            showScrollbar={false}
-          >
+          <div class='chart-normal-canvas-viewport'>
             <div
               class='chart-normal-canvas-content'
               style={{
-                width: `${chartContentWidth}px`
+                width: `${chartContentWidth}px`,
+                height: `${normalChartHeight}px`
               }}
             >
               <Canvas
-                key={feedType + 'ContentCanvas'}
-                canvas-id={feedType + 'ContentCanvas'}
-                width={chartContentWidth}
-                height={normalChartHeight}
-                style={{ width: `${chartContentWidth}px`, height: `${normalChartHeight}px` }}
+                key={contentCanvasId}
+                id={contentCanvasId}
+                type='2d'
+                catchMove
+                style={{ width: '100%', height: '100%' }}
               ></Canvas>
             </div>
-          </ScrollView>
+          </div>
         </div>
       )
     }

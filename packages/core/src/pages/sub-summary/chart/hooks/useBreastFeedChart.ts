@@ -14,6 +14,8 @@ import {
 type ScrollableChartStrategy = {
   childCode: { value: string }
   data: { value: unknown }
+  yAxisCanvasId: { value: string }
+  contentCanvasId: { value: string }
   chartYAxisWidth?: { value: number }
   chartContentWidth?: { value: number }
 }
@@ -64,10 +66,10 @@ export function useBreastFeedChart() {
     }
     this.data.value = chartData
 
-    initCHart.call(this, code, chartData)
+    await initCHart.call(this, code, chartData)
   }
 
-  function initCHart(
+  async function initCHart(
     this: ScrollableChartStrategy,
     code: string,
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
@@ -101,11 +103,15 @@ export function useBreastFeedChart() {
       ]
     }
 
-    renderSplitCanvas(
+    await renderSplitCanvas(
       EnumFeedType.BREAST_FEED_DIRECT,
       chartConfig,
       SCROLLABLE_Y_AXIS_WIDTH,
-      chartContentWidth
+      chartContentWidth,
+      {
+        yAxisCanvasId: this.yAxisCanvasId.value,
+        contentCanvasId: this.contentCanvasId.value
+      }
     )
   }
 

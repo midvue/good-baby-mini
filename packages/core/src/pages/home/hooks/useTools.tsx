@@ -179,20 +179,18 @@ export const useTools = () => {
             </div>
           )
         })}
-        <Drag
-          gap={{ x: 5, y: 60 }}
-          offset={offset.value}
-          onOffsetChange={(offset) => {
-            setStorage(HOME_DRAG_OFFSET, offset)
-          }}
-        >
-          <Image
-            class='w-[75px] h-[75px]'
-            src={imgHomeAdd}
-            onClick={() => onPopShowClick()}
-          ></Image>
-        </Drag>
       </div>
+    ),
+    renderDrag: () => (
+      <Drag
+        gap={{ x: 5, y: 110 }}
+        offset={offset.value}
+        onOffsetChange={(offset: { x: number; y: number }) => {
+          setStorage(HOME_DRAG_OFFSET, offset)
+        }}
+      >
+        <Image class='w-[75px] h-[75px]' src={imgHomeAdd} onClick={() => onPopShowClick()}></Image>
+      </Drag>
     )
   }
 }

@@ -1,9 +1,17 @@
-import Taro from '@tarojs/taro'
+﻿import Taro from '@tarojs/taro'
 import { isFunction, isNullOrUnDef } from '@allkit/shared'
 import { type ISerie, type DataSet, type ChartOpt } from './types'
+import { canvas2DToTempFilePath, getCanvas2DHandle, type Canvas2DNode } from './canvas2d'
 
-// 定义线条类型枚举
-// 修改枚举名称为 EnumLineType
+type ChartContext = CanvasRenderingContext2D
+declare const wx:
+  | {
+      createOffscreenCanvas?: (...args: any[]) => unknown
+    }
+  | undefined
+
+// 瀹氫箟绾挎潯绫诲瀷鏋氫妇
+// 淇敼鏋氫妇鍚嶇О涓?EnumLineType
 export enum EnumLineType {
   SOLID = 'solid',
   DASHED = 'dashed'
@@ -13,6 +21,7 @@ let sysInfo: Taro.getSystemInfoSync.Result | null = null
 
 export class Chart {
   private canvasId = ''
+  private canvasNode: Canvas2DNode | null = null
   private chartOpt: ChartOpt = {
     chartPieCount: 0,
     hideXYAxis: false,
@@ -71,80 +80,84 @@ export class Chart {
   }
 
   /**
-   * 初始化图表
-   * @param canvasId - 画布的 ID
-   * @param data - 图表配置选项
+   * 鍒濆鍖栧浘琛?
+   * @param canvasId - 鐢诲竷鐨?ID
+   * @param data - 鍥捐〃閰嶇疆閫夐」
    */
-  public init(canvasId: string, data: DataSet): void {
+  public async init(canvasId: string, data: DataSet): Promise<void> {
     this.canvasId = canvasId
     this.checkData(data)
 
-    const ctx: Taro.CanvasContext = this.initCanvas(canvasId)
-    this.drawChart(ctx)
+    const handle = await getCanvas2DHandle(canvasId)
+    if (!handle) return
+
+    this.canvasNode = handle.canvas
+    this.initCanvas()
+    this.drawChart(handle.ctx)
   }
 
   /**
-   * 检查并更新图表数据
-   * @param data - 图表配置选项
+   * 妫€鏌ュ苟鏇存柊鍥捐〃鏁版嵁
+   * @param data - 鍥捐〃閰嶇疆閫夐」
    */
   private checkData(data: DataSet): void {
-    // 检查传入的配置中是否有标题信息
+    // 妫€鏌ヤ紶鍏ョ殑閰嶇疆涓槸鍚︽湁鏍囬淇℃伅
     if (data.title != undefined) {
-      // 若标题颜色存在且不为空字符串，则更新全局数据集的标题颜色
+      // 鑻ユ爣棰橀鑹插瓨鍦ㄤ笖涓嶄负绌哄瓧绗︿覆锛屽垯鏇存柊鍏ㄥ眬鏁版嵁闆嗙殑鏍囬棰滆壊
       if (data.title.color != undefined && data.title.color != '') {
         this.dataSet.title.color = data.title.color
       }
-      // 更新全局数据集的标题文本
+      // 鏇存柊鍏ㄥ眬鏁版嵁闆嗙殑鏍囬鏂囨湰
       this.dataSet.title.text = data.title.text
     }
-    // 检查传入的配置中颜色数组是否存在且不为空，若满足条件则更新全局数据集的颜色数组
+    // 妫€鏌ヤ紶鍏ョ殑閰嶇疆涓鑹叉暟缁勬槸鍚﹀瓨鍦ㄤ笖涓嶄负绌猴紝鑻ユ弧瓒虫潯浠跺垯鏇存柊鍏ㄥ眬鏁版嵁闆嗙殑棰滆壊鏁扮粍
     if (data.colors != undefined && data.colors.length > 0) {
       this.dataSet.colors = data.colors
     }
-    // 更新全局数据集的 X 轴数据
+    // 鏇存柊鍏ㄥ眬鏁版嵁闆嗙殑 X 杞存暟鎹?
     this.dataSet.xAxis = Object.assign(this.dataSet.xAxis, data.xAxis)
     this.dataSet.chart = Object.assign(this.dataSet.chart || {}, data.chart)
 
-    // 更新全局数据集的系列数据
+    // 鏇存柊鍏ㄥ眬鏁版嵁闆嗙殑绯诲垪鏁版嵁
     this.dataSet.series = data.series
 
-    // 用于存储所有系列数据中的数值
+    // 鐢ㄤ簬瀛樺偍鎵€鏈夌郴鍒楁暟鎹腑鐨勬暟鍊?
     const yValues: number[] = []
-    // 遍历全局数据集的系列数据
+    // 閬嶅巻鍏ㄥ眬鏁版嵁闆嗙殑绯诲垪鏁版嵁
     for (let i = 0; i < this.dataSet.series.length; i++) {
-      // 获取当前系列数据
+      // 鑾峰彇褰撳墠绯诲垪鏁版嵁
       const serie: ISerie = this.dataSet.series[i]
-      // 获取当前系列数据的长度
+      // 鑾峰彇褰撳墠绯诲垪鏁版嵁鐨勯暱搴?
       const itemLength: number = serie.data.length
-      // 若当前系列数据的长度大于之前记录的最大柱状图长度，则更新最大柱状图长度
+      // 鑻ュ綋鍓嶇郴鍒楁暟鎹殑闀垮害澶т簬涔嬪墠璁板綍鐨勬渶澶ф煴鐘跺浘闀垮害锛屽垯鏇存柊鏈€澶ф煴鐘跺浘闀垮害
       if (itemLength > this.chartOpt.barLength) {
         this.chartOpt.barLength = itemLength
       }
-      // 遍历当前系列数据中的每个元素
+      // 閬嶅巻褰撳墠绯诲垪鏁版嵁涓殑姣忎釜鍏冪礌
       for (let k = 0; k < itemLength; k++) {
         if (serie.data[k] != undefined) {
           yValues.push(serie.data[k] as number)
         }
       }
-      // 若当前系列为柱状图类型，则增加柱状图数量计数
+      // 鑻ュ綋鍓嶇郴鍒椾负鏌辩姸鍥剧被鍨嬶紝鍒欏鍔犳煴鐘跺浘鏁伴噺璁℃暟
       if (serie.category === 'bar') {
         this.chartOpt.barNum += 1
       }
-      // 若当前系列为饼图类型，则隐藏 X 轴和 Y 轴，并累加饼图数据的总和
+      // 鑻ュ綋鍓嶇郴鍒椾负楗煎浘绫诲瀷锛屽垯闅愯棌 X 杞村拰 Y 杞达紝骞剁疮鍔犻ゼ鍥炬暟鎹殑鎬诲拰
       if (serie.category === 'pie') {
         this.chartOpt.hideXYAxis = true
         for (let k = 0; k < itemLength; k++) {
-          // 累加当前饼图系列中每个数据项的值到饼图数据总和中
+          // 绱姞褰撳墠楗煎浘绯诲垪涓瘡涓暟鎹」鐨勫€煎埌楗煎浘鏁版嵁鎬诲拰涓?
           this.chartOpt.chartPieCount += serie.data[k] as number
         }
       }
     }
 
-    // 计算所有数值中的最小值
+    // 璁＄畻鎵€鏈夋暟鍊间腑鐨勬渶灏忓€?
     const minNum: number = Math.min(...yValues)
-    // 计算所有数值中的最大值
+    // 璁＄畻鎵€鏈夋暟鍊间腑鐨勬渶澶у€?
     const maxNum: number = Math.max(...yValues)
-    // 调用工具函数计算 Y 轴刻度尺数据，将结果存储到全局图表配置中
+    // 璋冪敤宸ュ叿鍑芥暟璁＄畻 Y 杞村埢搴﹀昂鏁版嵁锛屽皢缁撴灉瀛樺偍鍒板叏灞€鍥捐〃閰嶇疆涓?
     this.chartOpt.axisYMarks = this.calculateY(
       minNum,
       maxNum,
@@ -156,12 +169,11 @@ export class Chart {
   }
 
   /**
-   * 初始化 Canvas
-   * @param canvasId - 画布的 ID
-   * @returns Taro 的 Canvas 上下文对象
+   * 鍒濆鍖?Canvas
+   * @param canvasId - 鐢诲竷鐨?ID
+   * @returns Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private initCanvas(canvasId: string): Taro.CanvasContext {
-    const ctx: Taro.CanvasContext = Taro.createCanvasContext(canvasId)
+  private initCanvas(): void {
     if (!sysInfo) {
       sysInfo = Taro.getSystemInfoSync()
     }
@@ -171,7 +183,7 @@ export class Chart {
       : Math.max(this.dataSet.chart?.width || 0, sysInfo.windowWidth)
     this.chartOpt.scrollContentWidth = this.dataSet.chart?.scrollContentWidth
     this.chartOpt.scrollLeft = this.getScrollLeft()
-    this.chartOpt.chartHeight = this.dataSet.chart?.height || sysInfo.windowWidth * 1.3 // Canvas 组件的宽高比
+    this.chartOpt.chartHeight = this.dataSet.chart?.height || sysInfo.windowWidth * 1.3 // Canvas 缁勪欢鐨勫楂樻瘮
 
     this.chartOpt.legendWidth = this.dataSet.legend.size * 1.3
     this.chartOpt.legendHeight = this.dataSet.legend.size * 0.8
@@ -180,7 +192,7 @@ export class Chart {
     this.chartOpt.right = this.getLayoutWidth() - this.chartOpt.chartSpace
     this.chartOpt.bottom = this.chartOpt.chartHeight - this.chartOpt.chartSpace
 
-    // 3 个数字的文字长度
+    // 3 涓暟瀛楃殑鏂囧瓧闀垮害
     const textWidth: number =
       this.dataSet.chart?.yAxisLabelWidth || this.measureText('100', this.dataSet.xAxis.size)
     const legendHeight: number =
@@ -197,27 +209,24 @@ export class Chart {
       this.dataSet.title.size +
       this.chartOpt.textSpace +
       this.dataSet.xAxis.size * 2
-    return ctx
   }
 
   /**
-   * 绘制图表
-   * @param ctx - Taro 的 Canvas 上下文对象
+   * 缁樺埗鍥捐〃
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private drawChart(ctx: Taro.CanvasContext): void {
+  private drawChart(ctx: ChartContext): void {
     this.drawBackground(ctx)
     this.drawTitle(ctx)
     // this.drawLegend(ctx)
     if (this.dataSet.chart?.renderOnlyYAxis) {
       this.drawYAxis(ctx)
-      ctx.draw()
       return
     }
     if (this.dataSet.chart?.renderOnlyContent) {
       this.drawXAxis(ctx)
       this.drawYAxis(ctx)
       this.drawCharts(ctx)
-      ctx.draw()
       return
     }
     if (!this.chartOpt.hideXYAxis) {
@@ -230,31 +239,30 @@ export class Chart {
     if (this.dataSet.chart?.scrollContentWidth && this.dataSet.chart?.showYAxisLabels !== false) {
       this.drawFixedYAxisOverlay(ctx)
     }
-    ctx.draw()
   }
 
   /**
-   * 绘制图表背景
-   * @param ctx - Taro 的 Canvas 上下文对象
+   * 缁樺埗鍥捐〃鑳屾櫙
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private drawBackground(ctx: Taro.CanvasContext): void {
+  private drawBackground(ctx: ChartContext): void {
     if (this.chartOpt.bgColor != '' && this.chartOpt.bgColor != 'transparent') {
-      ctx.setFillStyle(this.chartOpt.bgColor)
+      ctx.fillStyle = this.chartOpt.bgColor
       ctx.fillRect(0, 0, this.chartOpt.chartWidth, this.chartOpt.chartHeight)
     }
   }
 
   /**
-   * 绘制标题
-   * @param ctx - Taro 的 Canvas 上下文对象
+   * 缁樺埗鏍囬
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private drawTitle(ctx: Taro.CanvasContext): void {
+  private drawTitle(ctx: ChartContext): void {
     const title = this.dataSet.title
     if (title.text !== '') {
       const textWidth = this.measureText(title.text, title.size)
-      ctx.setFillStyle(title.color)
-      ctx.setFontSize(title.size)
-      ctx.setTextAlign('left')
+      ctx.fillStyle = title.color
+      this.setFont(ctx, title.size)
+      ctx.textAlign = 'left'
       ctx.fillText(
         title.text,
         (this.chartOpt.chartWidth - textWidth) / 2,
@@ -264,13 +272,13 @@ export class Chart {
   }
 
   /**
-   * 绘制 X 轴刻度尺
-   * @param ctx - Taro 的 Canvas 上下文对象
+   * 缁樺埗 X 杞村埢搴﹀昂
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private drawXAxis(ctx: Taro.CanvasContext): void {
-    // 绘制 X 轴横线
-    ctx.setLineWidth(0.5)
-    ctx.setLineCap('round')
+  private drawXAxis(ctx: ChartContext): void {
+    // 缁樺埗 X 杞存í绾?
+    ctx.lineWidth = 0.5
+    ctx.lineCap = 'round'
     ctx.beginPath()
     ctx.moveTo(this.chartOpt.axisLeft, this.chartOpt.axisBottom)
     ctx.lineTo(this.getViewportRight(), this.chartOpt.axisBottom)
@@ -279,7 +287,7 @@ export class Chart {
 
     const width = this.getPointWidth()
     const data = this.dataSet.xAxis.data
-    // 绘制 X 轴显示文字
+    // 缁樺埗 X 杞存樉绀烘枃瀛?
     for (let i = 0; i < data.length; i++) {
       const show = this.dataSet.xAxis.show
       const isShow = isFunction(show) ? show(i) : show
@@ -297,9 +305,9 @@ export class Chart {
             this.dataSet.xAxis.color
           )
         }
-        ctx.setFillStyle(this.dataSet.xAxis.color)
-        ctx.setFontSize(this.dataSet.xAxis.size)
-        ctx.setTextAlign(isFirstTick ? 'left' : 'center')
+        ctx.fillStyle = this.dataSet.xAxis.color
+        this.setFont(ctx, this.dataSet.xAxis.size)
+        ctx.textAlign = isFirstTick ? 'left' : 'center'
         ctx.fillText(
           data[i],
           textX,
@@ -310,15 +318,15 @@ export class Chart {
   }
 
   /**
-   * 绘制 Y 轴刻度尺
-   * @param ctx - Taro 的 Canvas 上下文对象
+   * 缁樺埗 Y 杞村埢搴﹀昂
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private drawYAxis(ctx: Taro.CanvasContext): void {
-    // 绘制 Y 轴横线
+  private drawYAxis(ctx: ChartContext): void {
+    // 缁樺埗 Y 杞存í绾?
     if (this.dataSet.chart?.showYAxisLine !== false) {
-      ctx.setLineWidth(0.5)
-      ctx.setLineCap('round')
-      ctx.setStrokeStyle(this.chartOpt.lineColor)
+      ctx.lineWidth = 0.5
+      ctx.lineCap = 'round'
+      ctx.strokeStyle = this.chartOpt.lineColor
       ctx.beginPath()
       ctx.moveTo(this.chartOpt.axisLeft, this.chartOpt.axisTop)
       ctx.lineTo(this.chartOpt.axisLeft, this.chartOpt.axisBottom)
@@ -329,18 +337,18 @@ export class Chart {
     const height =
       (this.chartOpt.axisBottom - this.chartOpt.axisTop) / (this.chartOpt.axisYMarks.length - 1)
 
-    // 绘制 Y 轴显示数字
+    // 缁樺埗 Y 杞存樉绀烘暟瀛?
     for (let i = 0; i < this.chartOpt.axisYMarks.length; i++) {
       const y = this.chartOpt.axisBottom - height * i
       if (i > 0 && this.dataSet.chart?.showYAxisGridLines !== false) {
-        ctx.setStrokeStyle(this.chartOpt.lineColor)
+        ctx.strokeStyle = this.chartOpt.lineColor
         this.drawDashLine(ctx, this.chartOpt.axisLeft, y, this.getViewportRight(), y)
       }
 
       if (!this.dataSet.hideYAxis && this.dataSet.chart?.showYAxisLabels !== false) {
-        ctx.setFillStyle(this.dataSet.xAxis.color)
-        ctx.setFontSize(this.dataSet.xAxis.size)
-        ctx.setTextAlign('right')
+        ctx.fillStyle = this.dataSet.xAxis.color
+        this.setFont(ctx, this.dataSet.xAxis.size)
+        ctx.textAlign = 'right'
         ctx.fillText(
           this.chartOpt.axisYMarks[i].toString(),
           this.chartOpt.axisLeft -
@@ -352,10 +360,10 @@ export class Chart {
   }
 
   /**
-   * 绘制图例
-   * @param ctx - Taro 的 Canvas 上下文对象
+   * 缁樺埗鍥句緥
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private drawLegend(ctx: Taro.CanvasContext): void {
+  private drawLegend(ctx: ChartContext): void {
     const series = this.dataSet.series
 
     for (let i = 0; i < series.length; i++) {
@@ -371,9 +379,9 @@ export class Chart {
           const x = startX + legendWidth * k
           const y = this.chartOpt.bottom - this.chartOpt.legendHeight
 
-          ctx.setFillStyle(this.dataSet.xAxis.color)
-          ctx.setFontSize(this.dataSet.legend.size)
-          ctx.setTextAlign('left')
+          ctx.fillStyle = this.dataSet.xAxis.color
+          this.setFont(ctx, this.dataSet.legend.size)
+          ctx.textAlign = 'left'
           ctx.fillText(
             names[k],
             x + this.chartOpt.textSpace + this.chartOpt.legendWidth,
@@ -381,16 +389,16 @@ export class Chart {
           )
 
           const color = this.getColor(k)
-          ctx.setFillStyle(color)
+          ctx.fillStyle = color
           ctx.fillRect(x, y + 1, this.chartOpt.legendWidth, this.chartOpt.legendHeight)
         }
       } else {
         const x = startX + legendWidth * i + this.chartOpt.legendWidth * i
         const y = this.chartOpt.bottom - this.chartOpt.legendHeight
 
-        ctx.setFillStyle(this.dataSet.xAxis.color)
-        ctx.setFontSize(this.dataSet.legend.size)
-        ctx.setTextAlign('left')
+        ctx.fillStyle = this.dataSet.xAxis.color
+        this.setFont(ctx, this.dataSet.legend.size)
+        ctx.textAlign = 'left'
         ctx.fillText(
           series[i].name,
           x + this.chartOpt.chartSpace + this.chartOpt.legendWidth,
@@ -398,9 +406,9 @@ export class Chart {
         )
 
         const color = this.getColor(i)
-        ctx.setFillStyle(color)
-        ctx.setLineWidth(2)
-        ctx.setStrokeStyle(color)
+        ctx.fillStyle = color
+        ctx.lineWidth = 2
+        ctx.strokeStyle = color
         if (series[i].category === 'bar') {
           ctx.fillRect(x, y + 1, this.chartOpt.legendWidth, this.chartOpt.legendHeight)
         } else if (series[i].category === 'line') {
@@ -419,31 +427,31 @@ export class Chart {
   }
 
   /**
-   * 绘制数据标签
-   * @param ctx - Taro 的 Canvas 上下文对象
-   * @param text - 要绘制的文本
-   * @param x - 文本的 X 坐标
-   * @param y - 文本的 Y 坐标
-   * @param color - 文本的颜色
+   * 缁樺埗鏁版嵁鏍囩
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
+   * @param text - 瑕佺粯鍒剁殑鏂囨湰
+   * @param x - 鏂囨湰鐨?X 鍧愭爣
+   * @param y - 鏂囨湰鐨?Y 鍧愭爣
+   * @param color - 鏂囨湰鐨勯鑹?
    */
   private drawToolTips(
-    ctx: Taro.CanvasContext,
+    ctx: ChartContext,
     text: string,
     x: number,
     y: number,
     color: string
   ): void {
-    ctx.setFillStyle(color)
-    ctx.setFontSize(this.dataSet.xAxis.size)
-    ctx.setTextAlign('center')
+    ctx.fillStyle = color
+    this.setFont(ctx, this.dataSet.xAxis.size)
+    ctx.textAlign = 'center'
     ctx.fillText(text, x, y)
   }
 
   /**
-   * 画图
-   * @param ctx - Taro 的 Canvas 上下文对象
+   * 鐢诲浘
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
    */
-  private drawCharts(ctx: Taro.CanvasContext): void {
+  private drawCharts(ctx: ChartContext): void {
     const series = this.dataSet.series
     for (let i = 0; i < series.length; i++) {
       const category = series[i].category
@@ -463,16 +471,16 @@ export class Chart {
   }
 
   /**
-   * 绘制柱状图
-   * @param ctx - Taro 的 Canvas 上下文对象
-   * @param i - 系列的索引
-   * @param series - 系列数据
-   * @param barWidth - 柱状图的宽度
-   * @param barHeight - 柱状图的高度
-   * @param maxMark - Y 轴最大刻度值
+   * 缁樺埗鏌辩姸鍥?
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
+   * @param i - 绯诲垪鐨勭储寮?
+   * @param series - 绯诲垪鏁版嵁
+   * @param barWidth - 鏌辩姸鍥剧殑瀹藉害
+   * @param barHeight - 鏌辩姸鍥剧殑楂樺害
+   * @param maxMark - Y 杞存渶澶у埢搴﹀€?
    */
   private drawBarChart(
-    ctx: Taro.CanvasContext,
+    ctx: ChartContext,
     i: number,
     series: ISerie[],
     barWidth: number,
@@ -494,7 +502,7 @@ export class Chart {
       const y = this.chartOpt.axisBottom - itemHeight
       if (!this.isXVisible(x, itemWidth)) continue
       const color = this.getColor(series.length <= 1 ? k : i)
-      ctx.setFillStyle(color)
+      ctx.fillStyle = color
       ctx.fillRect(x, y, itemWidth, itemHeight)
 
       this.drawToolTips(
@@ -508,26 +516,26 @@ export class Chart {
   }
 
   /**
-   * 绘制折线图
-   * @param ctx - Taro 的 Canvas 上下文对象
-   * @param i - 系列的索引
-   * @param series - 系列数据
-   * @param barWidth - 柱状图的宽度
-   * @param barHeight - 柱状图的高度
+   * 缁樺埗鎶樼嚎鍥?
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
+   * @param i - 绯诲垪鐨勭储寮?
+   * @param series - 绯诲垪鏁版嵁
+   * @param barWidth - 鏌辩姸鍥剧殑瀹藉害
+   * @param barHeight - 鏌辩姸鍥剧殑楂樺害
    */
   private drawLineChart(
-    ctx: Taro.CanvasContext,
+    ctx: ChartContext,
     i: number,
     series: ISerie[],
     barWidth: number,
     barHeight: number
   ): void {
     const item = series[i]
-    // 更新枚举引用
+    // 鏇存柊鏋氫妇寮曠敤
     const lineType = item.type || EnumLineType.SOLID
     const color = this.getColor(i)
-    ctx.setLineWidth(item.type === EnumLineType.DASHED ? 1.5 : this.dataSet.chart?.lineWidth || 2)
-    ctx.setStrokeStyle(color)
+    ctx.lineWidth = item.type === EnumLineType.DASHED ? 1.5 : this.dataSet.chart?.lineWidth || 2
+    ctx.strokeStyle = color
     ctx.beginPath()
 
     let prevPoint: { x: number; y: number } | null = null
@@ -543,11 +551,11 @@ export class Chart {
       if (k === 0 || !prevPoint) {
         ctx.moveTo(point.x, point.y)
       } else {
-        // 更新枚举引用
+        // 鏇存柊鏋氫妇寮曠敤
         if (lineType === EnumLineType.SOLID) {
           ctx.lineTo(point.x, point.y)
         } else if (lineType === EnumLineType.DASHED && prevPoint) {
-          // 绘制虚线
+          // 缁樺埗铏氱嚎
           this.drawDashLine(ctx, prevPoint.x, prevPoint.y, point.x, point.y)
         }
       }
@@ -574,12 +582,12 @@ export class Chart {
   }
 
   /**
-   * 获取折线图上点的坐标
-   * @param k - 数据点的索引
-   * @param item - 系列数据项
-   * @param barWidth - 柱状图的宽度
-   * @param barHeight - 柱状图的高度
-   * @returns 点的坐标对象
+   * 鑾峰彇鎶樼嚎鍥句笂鐐圭殑鍧愭爣
+   * @param k - 鏁版嵁鐐圭殑绱㈠紩
+   * @param item - 绯诲垪鏁版嵁椤?
+   * @param barWidth - 鏌辩姸鍥剧殑瀹藉害
+   * @param barHeight - 鏌辩姸鍥剧殑楂樺害
+   * @returns 鐐圭殑鍧愭爣瀵硅薄
    */
   private getLinePoint(
     k: number,
@@ -634,12 +642,14 @@ export class Chart {
   }
 
   private toViewportX(x: number): number {
+    if (this.dataSet.chart?.renderOnlyContent) return x
     if (!this.dataSet.chart?.scrollContentWidth) return x
     if (x <= this.chartOpt.axisLeft) return x
     return x - (this.chartOpt.scrollLeft || 0)
   }
 
   private getViewportRight(): number {
+    if (this.dataSet.chart?.renderOnlyContent) return this.chartOpt.right
     return this.chartOpt.chartWidth - this.chartOpt.chartSpace
   }
 
@@ -650,21 +660,21 @@ export class Chart {
   }
 
   /**
-   * 绘制点
-   * @param ctx - Taro 的 Canvas 上下文对象
-   * @param x - 点的 X 坐标
-   * @param y - 点的 Y 坐标
-   * @param radius - 点的半径
-   * @param color - 点的颜色
+   * 缁樺埗鐐?
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
+   * @param x - 鐐圭殑 X 鍧愭爣
+   * @param y - 鐐圭殑 Y 鍧愭爣
+   * @param radius - 鐐圭殑鍗婂緞
+   * @param color - 鐐圭殑棰滆壊
    */
   private drawPoint(
-    ctx: Taro.CanvasContext,
+    ctx: ChartContext,
     x: number,
     y: number,
     radius: number,
     color: string
   ): void {
-    ctx.setFillStyle(color)
+    ctx.fillStyle = color
     ctx.beginPath()
     ctx.arc(x, y, radius, 0, 2 * Math.PI)
     ctx.fill()
@@ -672,12 +682,12 @@ export class Chart {
   }
 
   /**
-   * 绘制饼图
-   * @param ctx - Taro 的 Canvas 上下文对象
-   * @param i - 系列的索引
-   * @param series - 系列数据
+   * 缁樺埗楗煎浘
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
+   * @param i - 绯诲垪鐨勭储寮?
+   * @param series - 绯诲垪鏁版嵁
    */
-  private drawPieChart(ctx: Taro.CanvasContext, i: number, series: ISerie[]): void {
+  private drawPieChart(ctx: ChartContext, i: number, series: ISerie[]): void {
     const item = series[i]
 
     const x = (this.chartOpt.right - this.chartOpt.left) / 2 + this.chartOpt.left
@@ -702,7 +712,7 @@ export class Chart {
         curAngel
       )
 
-      ctx.setFillStyle(color)
+      ctx.fillStyle = color
       ctx.beginPath()
       ctx.moveTo(x, y)
       ctx.arc(x, y, radius, (lastAngel - 0.5) * Math.PI, (lastAngel + curAngel - 0.5) * Math.PI)
@@ -713,18 +723,18 @@ export class Chart {
   }
 
   /**
-   * 绘制饼图数据标签
-   * @param ctx - Taro 的 Canvas 上下文对象
-   * @param value - 要显示的值
-   * @param color - 标签的颜色
-   * @param x - 圆心的 X 坐标
-   * @param y - 圆心的 Y 坐标
-   * @param radius - 饼图的半径
-   * @param lastAngel - 上一个扇形的角度
-   * @param curAngel - 当前扇形的角度
+   * 缁樺埗楗煎浘鏁版嵁鏍囩
+   * @param ctx - Taro 鐨?Canvas 涓婁笅鏂囧璞?
+   * @param value - 瑕佹樉绀虹殑鍊?
+   * @param color - 鏍囩鐨勯鑹?
+   * @param x - 鍦嗗績鐨?X 鍧愭爣
+   * @param y - 鍦嗗績鐨?Y 鍧愭爣
+   * @param radius - 楗煎浘鐨勫崐寰?
+   * @param lastAngel - 涓婁竴涓墖褰㈢殑瑙掑害
+   * @param curAngel - 褰撳墠鎵囧舰鐨勮搴?
    */
   private drawPieToolTips(
-    ctx: Taro.CanvasContext,
+    ctx: ChartContext,
     value: string,
     color: string,
     x: number,
@@ -742,11 +752,11 @@ export class Chart {
     const x2 = (radius + 20) * cosc + x
     const y2 = (radius + 20) * sinc + y
 
-    ctx.setFillStyle(color)
-    ctx.setTextAlign(x2 < x1 ? 'right' : 'left')
-    ctx.setFontSize(this.dataSet.xAxis.size)
-    ctx.setStrokeStyle(color)
-    ctx.setLineWidth(1)
+    ctx.fillStyle = color
+    ctx.textAlign = x2 < x1 ? 'right' : 'left'
+    this.setFont(ctx, this.dataSet.xAxis.size)
+    ctx.strokeStyle = color
+    ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo(x1, y1)
     if (x1 >= x && y1 < y) {
@@ -767,9 +777,9 @@ export class Chart {
   }
 
   /**
-   * 获取柱状图颜色值，循环渲染
-   * @param index - 颜色的索引
-   * @returns 颜色值
+   * 鑾峰彇鏌辩姸鍥鹃鑹插€硷紝寰幆娓叉煋
+   * @param index - 棰滆壊鐨勭储寮?
+   * @returns 棰滆壊鍊?
    */
   private getColor(index: number): string {
     const cLength = this.dataSet.colors.length
@@ -781,30 +791,49 @@ export class Chart {
   }
 
   /**
-   * 保存图表为图片
-   * @param func - 回调函数
+   * 淇濆瓨鍥捐〃涓哄浘鐗?
+   * @param func - 鍥炶皟鍑芥暟
    */
   public saveCanvas(func: () => void): void {
-    Taro.canvasToTempFilePath({
-      canvasId: this.canvasId,
-      success: function (res) {
-        // Taro.previewImage({
-        //   urls: [res.tempFilePath],
-        // })
-        Taro.saveImageToPhotosAlbum({
-          filePath: res.tempFilePath,
-          success(ress) {
-            console.log(ress)
-          }
-        })
-      }
+    if (!this.canvasNode) return
+
+    canvas2DToTempFilePath(this.canvasNode).then((res) => {
+      // Taro.previewImage({
+      //   urls: [res.tempFilePath],
+      // })
+      Taro.saveImageToPhotosAlbum({
+        filePath: res.tempFilePath,
+        success(ress) {
+          console.log(ress)
+          func?.()
+        }
+      })
     })
   }
 
+  public async saveCanvasWithOffscreenFallback(func: () => void): Promise<void> {
+    if (this.canvasNode) {
+      const res = await canvas2DToTempFilePath(this.canvasNode)
+      await Taro.saveImageToPhotosAlbum({ filePath: res.tempFilePath })
+      func?.()
+      return
+    }
+
+    if (typeof wx !== 'undefined' && wx.createOffscreenCanvas) {
+      // 预留离屏合成入口；当前展示路径不依赖离屏 canvas。
+      return
+    }
+  }
+
+  private setFont(ctx: ChartContext, size: number): void {
+    ctx.font = `${size}px sans-serif`
+    ctx.textBaseline = 'alphabetic'
+  }
+
   /**
-   * 测量文字宽度，
-   * Canvas宽度太大，微信提供的setTextAlign(center)
-   * 方法并不能准确居中显示
+   * 娴嬮噺鏂囧瓧瀹藉害锛?
+   * Canvas瀹藉害澶ぇ锛屽井淇℃彁渚涚殑setTextAlign(center)
+   * 鏂规硶骞朵笉鑳藉噯纭眳涓樉绀?
    */
   private measureText(text: string, textSize: number) {
     const ratio = textSize / 20
@@ -827,7 +856,7 @@ export class Chart {
   }
 
   /**
-   * 计算Y轴显示刻度
+   * 璁＄畻Y杞存樉绀哄埢搴?
    */
   private calculateY(
     dMin: number,
@@ -911,10 +940,10 @@ export class Chart {
   }
 
   /**
-   * 绘制虚线
+   * 缁樺埗铏氱嚎
    */
   private drawDashLine(
-    ctx: Taro.CanvasContext,
+    ctx: ChartContext,
     x1: number,
     y1: number,
     x2: number,
@@ -939,14 +968,14 @@ export class Chart {
     }
   }
 
-  private drawFixedYAxisOverlay(ctx: Taro.CanvasContext): void {
-    ctx.setFillStyle(this.chartOpt.bgColor)
+  private drawFixedYAxisOverlay(ctx: ChartContext): void {
+    ctx.fillStyle = this.chartOpt.bgColor
     ctx.fillRect(0, 0, this.chartOpt.axisLeft + 1, this.chartOpt.chartHeight)
 
     if (this.dataSet.chart?.showYAxisLine !== false) {
-      ctx.setLineWidth(0.5)
-      ctx.setLineCap('round')
-      ctx.setStrokeStyle(this.chartOpt.lineColor)
+      ctx.lineWidth = 0.5
+      ctx.lineCap = 'round'
+      ctx.strokeStyle = this.chartOpt.lineColor
       ctx.beginPath()
       ctx.moveTo(this.chartOpt.axisLeft, this.chartOpt.axisTop)
       ctx.lineTo(this.chartOpt.axisLeft, this.chartOpt.axisBottom)
@@ -959,9 +988,9 @@ export class Chart {
 
     for (let i = 0; i < this.chartOpt.axisYMarks.length; i++) {
       const y = this.chartOpt.axisBottom - height * i
-      ctx.setFillStyle(this.dataSet.xAxis.color)
-      ctx.setFontSize(this.dataSet.xAxis.size)
-      ctx.setTextAlign('right')
+      ctx.fillStyle = this.dataSet.xAxis.color
+      this.setFont(ctx, this.dataSet.xAxis.size)
+      ctx.textAlign = 'right'
       ctx.fillText(
         this.chartOpt.axisYMarks[i].toString(),
         this.chartOpt.axisLeft - (this.dataSet.chart?.yAxisTextSpace ?? this.chartOpt.textSpace),
@@ -971,10 +1000,10 @@ export class Chart {
   }
 
   /**
-   * 绘制圆角矩形
+   * 缁樺埗鍦嗚鐭╁舰
    */
   private drawRoundBar(
-    ctx: Taro.CanvasContext,
+    ctx: ChartContext,
     x: number,
     y: number,
     width: number,

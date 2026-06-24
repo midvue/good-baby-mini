@@ -25,7 +25,8 @@ import { getCanvasLayoutSync } from '../helpers/chartLayout'
 const POINT_WIDTH = 40
 const Y_AXIS_WIDTH = 34
 const POINT_START_PADDING = 8
-const POINT_END_PADDING = 24
+const POINT_END_PADDING = 8
+const CHART_HEIGHT = 487
 
 const getChartLayout = (labelCount: number) => {
   const { windowWidth } = getCanvasLayoutSync()
@@ -41,7 +42,7 @@ const getChartLayout = (labelCount: number) => {
     width: visibleWidth,
     yAxisWidth,
     contentWidth,
-    height: windowWidth * 1.3
+    height: CHART_HEIGHT
   }
 }
 
@@ -126,12 +127,6 @@ export function useHeightWeightChart() {
         xAxisLabels = headCircumferenceAgeLabels
         ageRows = headCircumferenceAgeMonths
         break
-      case EnumHeightWeightIndex.FOOT_LENGTH:
-        seriesData = {}
-        yData = axis.footLengthArr
-        xAxisLabels = heightWeightAgeLabels
-        ageRows = heightWeightAgeMonths
-        break
       default:
         seriesData = {}
         yData = []
@@ -213,33 +208,35 @@ export function useHeightWeightChart() {
       ]
     }
 
-    new Chart().init(`${EnumFeedType.HEIGHT_WEIGHT}YAxisCanvas`, {
-      hideYAxis: false,
-      title: { text: '', color: '#333', size: 14 },
-      ...chartConfig,
-      chart: {
-        ...chartConfig.chart,
-        width: layout.yAxisWidth,
-        respectWidth: true,
-        renderOnlyYAxis: true,
-        showYAxisGridLines: false,
-        yAxisAxisLeft: layout.yAxisWidth
-      }
-    })
-    new Chart().init(`${EnumFeedType.HEIGHT_WEIGHT}ContentCanvas`, {
-      hideYAxis: false,
-      title: { text: '', color: '#333', size: 14 },
-      ...chartConfig,
-      chart: {
-        ...chartConfig.chart,
-        width: layout.contentWidth,
-        respectWidth: true,
-        renderOnlyContent: true,
-        showYAxisLabels: false,
-        showYAxisLine: false,
-        axisLeft: 0
-      }
-    })
+    await Promise.all([
+      new Chart().init(this.yAxisCanvasId.value, {
+        hideYAxis: false,
+        title: { text: '', color: '#333', size: 14 },
+        ...chartConfig,
+        chart: {
+          ...chartConfig.chart,
+          width: layout.yAxisWidth,
+          respectWidth: true,
+          renderOnlyYAxis: true,
+          showYAxisGridLines: false,
+          yAxisAxisLeft: layout.yAxisWidth
+        }
+      }),
+      new Chart().init(this.contentCanvasId.value, {
+        hideYAxis: false,
+        title: { text: '', color: '#333', size: 14 },
+        ...chartConfig,
+        chart: {
+          ...chartConfig.chart,
+          width: layout.contentWidth,
+          respectWidth: true,
+          renderOnlyContent: true,
+          showYAxisLabels: false,
+          showYAxisLine: false,
+          axisLeft: 0
+        }
+      })
+    ])
   }
 
   return {

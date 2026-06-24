@@ -14,6 +14,8 @@ import { IChartState } from '../types'
 
 type ScrollableChartStrategy = {
   data: { value: unknown }
+  yAxisCanvasId: { value: string }
+  contentCanvasId: { value: string }
   chartYAxisWidth?: { value: number }
   chartContentWidth?: { value: number }
 }
@@ -53,13 +55,13 @@ export function useDiaperChart() {
     }
     this.data.value = chartData
 
-    initCHart.call(this, chartData)
+    await initCHart.call(this, chartData)
   }
 
   /**
    * 初始化尿布图表
    */
-  function initCHart(this: ScrollableChartStrategy, axis: { xAxisData: any[]; yAxisData: any[] }) {
+  async function initCHart(this: ScrollableChartStrategy, axis: { xAxisData: any[]; yAxisData: any[] }) {
     // 求平均值
     let average = (
       axis.yAxisData.reduce((sum, num) => sum + num, 0) / axis.yAxisData.length
@@ -113,7 +115,10 @@ export function useDiaperChart() {
       ]
     }
 
-    renderSplitCanvas(EnumFeedType.DIAPER, chartConfig, SCROLLABLE_Y_AXIS_WIDTH, chartContentWidth)
+    await renderSplitCanvas(EnumFeedType.DIAPER, chartConfig, SCROLLABLE_Y_AXIS_WIDTH, chartContentWidth, {
+      yAxisCanvasId: this.yAxisCanvasId.value,
+      contentCanvasId: this.contentCanvasId.value
+    })
   }
 
   return {

@@ -20,37 +20,43 @@ export const createXAxisShowFn = (length: number) => {
   return (index: number) => length <= 7 || index % interval === 0
 }
 
-export const renderSplitCanvas = (
+export const renderSplitCanvas = async (
   feedType: string | number,
   chartConfig: Omit<DataSet, 'hideYAxis' | 'title'>,
   yAxisWidth: number,
-  contentWidth: number
+  contentWidth: number,
+  canvasIds?: {
+    yAxisCanvasId: string
+    contentCanvasId: string
+  }
 ) => {
-  new Chart().init(`${feedType}YAxisCanvas`, {
-    hideYAxis: false,
-    title: { text: '', color: '#333', size: 14 },
-    ...chartConfig,
-    chart: {
-      ...chartConfig.chart,
-      width: yAxisWidth,
-      respectWidth: true,
-      renderOnlyYAxis: true,
-      showYAxisGridLines: false,
-      yAxisAxisLeft: yAxisWidth
-    }
-  })
-  new Chart().init(`${feedType}ContentCanvas`, {
-    hideYAxis: false,
-    title: { text: '', color: '#333', size: 14 },
-    ...chartConfig,
-    chart: {
-      ...chartConfig.chart,
-      width: contentWidth,
-      respectWidth: true,
-      renderOnlyContent: true,
-      showYAxisLabels: false,
-      showYAxisLine: false,
-      axisLeft: 0
-    }
-  })
+  await Promise.all([
+    new Chart().init(canvasIds?.yAxisCanvasId || `${feedType}YAxisCanvas`, {
+      hideYAxis: false,
+      title: { text: '', color: '#333', size: 14 },
+      ...chartConfig,
+      chart: {
+        ...chartConfig.chart,
+        width: yAxisWidth,
+        respectWidth: true,
+        renderOnlyYAxis: true,
+        showYAxisGridLines: false,
+        yAxisAxisLeft: yAxisWidth
+      }
+    }),
+    new Chart().init(canvasIds?.contentCanvasId || `${feedType}ContentCanvas`, {
+      hideYAxis: false,
+      title: { text: '', color: '#333', size: 14 },
+      ...chartConfig,
+      chart: {
+        ...chartConfig.chart,
+        width: contentWidth,
+        respectWidth: true,
+        renderOnlyContent: true,
+        showYAxisLabels: false,
+        showYAxisLine: false,
+        axisLeft: 0
+      }
+    })
+  ])
 }

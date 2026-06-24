@@ -15,6 +15,8 @@ import { IChartState } from '../types'
 type ScrollableChartStrategy = {
   childCode: { value: string }
   data: { value: unknown }
+  yAxisCanvasId: { value: string }
+  contentCanvasId: { value: string }
   chartYAxisWidth?: { value: number }
   chartContentWidth?: { value: number }
 }
@@ -65,10 +67,10 @@ export function useMilkBottleChart() {
     }
     this.data.value = chartData
 
-    initChart.call(this, code, chartData)
+    await initChart.call(this, code, chartData)
   }
 
-  function initChart(
+  async function initChart(
     this: ScrollableChartStrategy,
     code: string | undefined,
     axis: { xAxisData: any[]; yAxisNum: any[]; yAxisVolume: any[] }
@@ -129,11 +131,15 @@ export function useMilkBottleChart() {
       ]
     }
 
-    renderSplitCanvas(
+    await renderSplitCanvas(
       EnumFeedType.MILK_BOTTLE,
       chartConfig,
       SCROLLABLE_Y_AXIS_WIDTH,
-      chartContentWidth
+      chartContentWidth,
+      {
+        yAxisCanvasId: this.yAxisCanvasId.value,
+        contentCanvasId: this.contentCanvasId.value
+      }
     )
   }
 
