@@ -20,8 +20,6 @@ export type HeightWeightStrategy = {
   yAxisCanvasId: { value: string }
   contentCanvasId: { value: string }
   chartWidth?: { value: number }
-  chartYAxisWidth?: { value: number }
   chartContentWidth?: { value: number }
-  chartHeight?: { value: number }
   currMonth?: { value: number }
 }

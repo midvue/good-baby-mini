@@ -1,6 +1,7 @@
 .chart {
   width: 100%;
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,6 +30,7 @@
   .date-choose {
     width: calc(100% - 32px);
     height: 40px;
+    flex: none;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -75,7 +77,8 @@
 
   .chart-canvas-area {
     width: 100%;
-    flex: none;
+    flex: 1;
+    min-height: 0;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -83,8 +86,8 @@
 
   .chart-normal-canvas-shell {
     width: 100%;
-    flex: none;
-    height: 487px;
+    flex: 1;
+    min-height: 0;
     display: flex;
     align-items: stretch;
     padding: 0 4px;
@@ -117,12 +120,14 @@
   .chart-normal-canvas-content {
     display: block;
     flex: none;
+    height: 100%;
   }
 
   .chart-canvas-shell {
     width: 100%;
-    flex: none;
-    height: 487px;
+    flex: 1;
+    min-height: 0;
+    height: 100%;
     display: flex;
     align-items: stretch;
     gap: 0;
@@ -133,9 +138,9 @@
   }
 
   .chart-y-axis-canvas {
-    width: 34px;
-    min-width: 34px;
-    flex: 0 0 34px;
+    width: 44px;
+    min-width: 44px;
+    flex: 0 0 44px;
     height: 100%;
     position: relative;
     z-index: 1;
@@ -144,7 +149,7 @@
 
   .chart-canvas-viewport {
     flex: 1;
-    width: calc(100% - 34px);
+    width: calc(100% - 44px);
     height: 100%;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -153,6 +158,7 @@
   .chart-canvas-content {
     display: block;
     flex: none;
+    height: 100%;
   }
 }
 

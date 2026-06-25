@@ -6,11 +6,11 @@ const { windowWidth } = Taro.getSystemInfoSync()
 
 export const getCanvasLayoutSync = () => ({ windowWidth })
 
+export const CHART_Y_AXIS_WIDTH = 44
 export const SCROLLABLE_POINT_WIDTH = 34
-export const SCROLLABLE_Y_AXIS_WIDTH = 44
 
 export const getScrollableContentWidth = (length: number) => {
-  const visibleContentWidth = Math.max(0, windowWidth - SCROLLABLE_Y_AXIS_WIDTH - 8)
+  const visibleContentWidth = Math.max(0, windowWidth - CHART_Y_AXIS_WIDTH - 8)
   const pointContentWidth = Math.max(length - 1, 1) * SCROLLABLE_POINT_WIDTH + 80
   return Math.max(visibleContentWidth, pointContentWidth)
 }

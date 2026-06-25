@@ -22,6 +22,7 @@ let sysInfo: Taro.getSystemInfoSync.Result | null = null
 export class Chart {
   private canvasId = ''
   private canvasNode: Canvas2DNode | null = null
+  private canvasCssHeight = 0
   private chartOpt: ChartOpt = {
     chartPieCount: 0,
     hideXYAxis: false,
@@ -92,6 +93,7 @@ export class Chart {
     if (!handle) return
 
     this.canvasNode = handle.canvas
+    this.canvasCssHeight = handle.height
     this.initCanvas()
     this.drawChart(handle.ctx)
   }
@@ -183,7 +185,7 @@ export class Chart {
       : Math.max(this.dataSet.chart?.width || 0, sysInfo.windowWidth)
     this.chartOpt.scrollContentWidth = this.dataSet.chart?.scrollContentWidth
     this.chartOpt.scrollLeft = this.getScrollLeft()
-    this.chartOpt.chartHeight = this.dataSet.chart?.height || sysInfo.windowWidth * 1.3 // Canvas 缁勪欢鐨勫楂樻瘮
+    this.chartOpt.chartHeight = this.dataSet.chart?.height || this.canvasCssHeight || sysInfo.windowWidth * 1.3 // Canvas 缁勪欢鐨勫楂樻瘮
 
     this.chartOpt.legendWidth = this.dataSet.legend.size * 1.3
     this.chartOpt.legendHeight = this.dataSet.legend.size * 0.8

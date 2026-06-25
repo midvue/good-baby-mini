@@ -183,7 +183,7 @@ export const useTools = () => {
     ),
     renderDrag: () => (
       <Drag
-        gap={{ x: 5, y: 110 }}
+        gap={{ x: 5, y: 70 }}
         offset={offset.value}
         onOffsetChange={(offset: { x: number; y: number }) => {
           setStorage(HOME_DRAG_OFFSET, offset)

@@ -4,7 +4,7 @@ import { EnumYesNoPlus, useDate } from '@allkit/shared'
 import { useCtxState } from '@allkit/use'
 import { EnumLineType } from '../../utils/chart'
 import {
-  SCROLLABLE_Y_AXIS_WIDTH,
+  CHART_Y_AXIS_WIDTH,
   getScrollableContentWidth,
   createXAxisShowFn,
   renderSplitCanvas
@@ -17,7 +17,6 @@ type ScrollableChartStrategy = {
   data: { value: unknown }
   yAxisCanvasId: { value: string }
   contentCanvasId: { value: string }
-  chartYAxisWidth?: { value: number }
   chartContentWidth?: { value: number }
 }
 
@@ -81,7 +80,6 @@ export function useMilkBottleChart() {
     let average = (yDatas.reduce((sum, num) => sum + num, 0) / yDatas.length).toFixed(1)
     let xDataLength = axis.xAxisData.length
     const chartContentWidth = getScrollableContentWidth(xDataLength)
-    if (this.chartYAxisWidth) this.chartYAxisWidth.value = SCROLLABLE_Y_AXIS_WIDTH
     if (this.chartContentWidth) this.chartContentWidth.value = chartContentWidth
 
     const chartConfig = {
@@ -134,7 +132,7 @@ export function useMilkBottleChart() {
     await renderSplitCanvas(
       EnumFeedType.MILK_BOTTLE,
       chartConfig,
-      SCROLLABLE_Y_AXIS_WIDTH,
+      CHART_Y_AXIS_WIDTH,
       chartContentWidth,
       {
         yAxisCanvasId: this.yAxisCanvasId.value,

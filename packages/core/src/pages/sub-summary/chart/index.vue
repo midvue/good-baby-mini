@@ -12,7 +12,7 @@ import { useDiaperChart } from './hooks/useDiaperChart'
 import { useHeightWeightChart } from './hooks/useHeightWeightChart'
 import { useMilkBottleChart } from './hooks/useMilkBottleChart'
 import { type IChartState } from './types'
-import { getCanvasLayoutSync } from './helpers/chartLayout'
+import { CHART_Y_AXIS_WIDTH, getCanvasLayoutSync } from './helpers/chartLayout'
 
 export default defineComponent({
   name: 'Chart',
@@ -58,17 +58,7 @@ export default defineComponent({
     const { initBreastFeed } = useBreastFeedChart()
     const { initDiaper } = useDiaperChart()
     const { windowWidth } = getCanvasLayoutSync()
-    const chartHeight = 487
-    const heightWeightYAxisWidth = ref(34)
-    const heightWeightChartContentWidth = ref(windowWidth)
-    const heightWeightChartHeight = ref(chartHeight)
     const heightWeightCurrMonth = ref(0)
-    const milkBottleYAxisWidth = ref(44)
-    const milkBottleChartContentWidth = ref(windowWidth)
-    const breastFeedYAxisWidth = ref(44)
-    const breastFeedChartContentWidth = ref(windowWidth)
-    const diaperYAxisWidth = ref(44)
-    const diaperChartContentWidth = ref(windowWidth)
     const canvasIdPrefix = `chart_${Date.now()}`
     let chartInitTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -77,9 +67,7 @@ export default defineComponent({
       childCode: { value: string }
       yAxisCanvasId: { value: string }
       contentCanvasId: { value: string }
-      chartYAxisWidth: { value: number }
       chartContentWidth: { value: number }
-      chartHeight?: { value: number }
       currMonth?: { value: number }
       init: () => Promise<void>
       render: () => any
@@ -91,9 +79,7 @@ export default defineComponent({
         childCode: ref<string>(EnumYesNoPlus.YES),
         yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.HEIGHT_WEIGHT}_YAxisCanvas`),
         contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.HEIGHT_WEIGHT}_ContentCanvas`),
-        chartYAxisWidth: heightWeightYAxisWidth,
-        chartContentWidth: heightWeightChartContentWidth,
-        chartHeight: heightWeightChartHeight,
+        chartContentWidth: ref(windowWidth),
         currMonth: heightWeightCurrMonth,
         init: initHeightWeight,
         render: () => renderChartCanvas(EnumFeedType.HEIGHT_WEIGHT)
@@ -103,8 +89,7 @@ export default defineComponent({
         childCode: ref(EnumYesNoPlus.YES),
         yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.MILK_BOTTLE}_YAxisCanvas`),
         contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.MILK_BOTTLE}_ContentCanvas`),
-        chartYAxisWidth: milkBottleYAxisWidth,
-        chartContentWidth: milkBottleChartContentWidth,
+        chartContentWidth: ref(windowWidth),
         init: initMilkBottle,
         render: () => renderChartCanvas(EnumFeedType.MILK_BOTTLE)
       },
@@ -113,8 +98,7 @@ export default defineComponent({
         childCode: ref(EnumYesNoPlus.YES),
         yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.BREAST_FEED_DIRECT}_YAxisCanvas`),
         contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.BREAST_FEED_DIRECT}_ContentCanvas`),
-        chartYAxisWidth: breastFeedYAxisWidth,
-        chartContentWidth: breastFeedChartContentWidth,
+        chartContentWidth: ref(windowWidth),
         init: initBreastFeed,
         render: () => renderChartCanvas(EnumFeedType.BREAST_FEED_DIRECT)
       },
@@ -123,8 +107,7 @@ export default defineComponent({
         childCode: ref(EnumYesNoPlus.YES),
         yAxisCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.DIAPER}_YAxisCanvas`),
         contentCanvasId: ref(`${canvasIdPrefix}_${EnumFeedType.DIAPER}_ContentCanvas`),
-        chartYAxisWidth: diaperYAxisWidth,
-        chartContentWidth: diaperChartContentWidth,
+        chartContentWidth: ref(windowWidth),
         // 淇敼 init 鍑芥暟锛屼紶閫掓棩鏈熷弬鏁?
         init: initDiaper,
         render: () => renderChartCanvas(EnumFeedType.DIAPER)
@@ -266,9 +249,9 @@ export default defineComponent({
               <div
                 class='chart-y-axis-canvas'
                 style={{
-                  width: `${heightWeightYAxisWidth.value}px`,
-                  minWidth: `${heightWeightYAxisWidth.value}px`,
-                  flex: `0 0 ${heightWeightYAxisWidth.value}px`
+                  width: `${CHART_Y_AXIS_WIDTH}px`,
+                  minWidth: `${CHART_Y_AXIS_WIDTH}px`,
+                  flex: `0 0 ${CHART_Y_AXIS_WIDTH}px`
                 }}
               >
                 <Canvas
@@ -283,8 +266,7 @@ export default defineComponent({
                 <div
                   class='chart-canvas-content'
                   style={{
-                    width: `${heightWeightChartContentWidth.value}px`,
-                    height: `${heightWeightChartHeight.value}px`
+                    width: `${strategy.chartContentWidth.value}px`
                   }}
                 >
                   <Canvas
@@ -302,9 +284,7 @@ export default defineComponent({
       }
 
       const strategy = feedTypeStrategy[feedType]
-      const yAxisWidth = strategy.chartYAxisWidth?.value || 44
       const chartContentWidth = strategy.chartContentWidth?.value || windowWidth
-      const normalChartHeight = chartHeight
       const yAxisCanvasId = strategy.yAxisCanvasId.value
       const contentCanvasId = strategy.contentCanvasId.value
       return (
@@ -312,9 +292,9 @@ export default defineComponent({
           <div
             class='chart-normal-y-axis-canvas'
             style={{
-              width: `${yAxisWidth}px`,
-              minWidth: `${yAxisWidth}px`,
-              flex: `0 0 ${yAxisWidth}px`
+              width: `${CHART_Y_AXIS_WIDTH}px`,
+              minWidth: `${CHART_Y_AXIS_WIDTH}px`,
+              flex: `0 0 ${CHART_Y_AXIS_WIDTH}px`
             }}
           >
             <Canvas
@@ -322,15 +302,14 @@ export default defineComponent({
               id={yAxisCanvasId}
               type='2d'
               catchMove
-              style={{ width: `${yAxisWidth}px`, height: `${normalChartHeight}px` }}
+              style={{ width: '100%', height: '100%' }}
             ></Canvas>
           </div>
           <div class='chart-normal-canvas-viewport'>
             <div
               class='chart-normal-canvas-content'
               style={{
-                width: `${chartContentWidth}px`,
-                height: `${normalChartHeight}px`
+                width: `${chartContentWidth}px`
               }}
             >
               <Canvas

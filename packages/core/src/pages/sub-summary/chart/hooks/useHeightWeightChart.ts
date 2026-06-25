@@ -20,17 +20,15 @@ import {
 import { EnumHeightWeightIndex } from '../dict'
 import { type GrowthAxisData, type HeightWeightStrategy } from '../types'
 import { createGrowthAxisData, getDisplayEndIndex } from '../helpers/heightWeightAxis'
-import { getCanvasLayoutSync } from '../helpers/chartLayout'
+import { CHART_Y_AXIS_WIDTH, getCanvasLayoutSync } from '../helpers/chartLayout'
 
 const POINT_WIDTH = 40
-const Y_AXIS_WIDTH = 34
 const POINT_START_PADDING = 8
 const POINT_END_PADDING = 8
-const CHART_HEIGHT = 487
 
 const getChartLayout = (labelCount: number) => {
   const { windowWidth } = getCanvasLayoutSync()
-  const yAxisWidth = Y_AXIS_WIDTH
+  const yAxisWidth = CHART_Y_AXIS_WIDTH
   const visibleWidth = Math.max(280, windowWidth - 8)
   const contentAreaWidth = Math.max(0, visibleWidth - yAxisWidth)
   const contentWidth = Math.max(
@@ -41,17 +39,14 @@ const getChartLayout = (labelCount: number) => {
   return {
     width: visibleWidth,
     yAxisWidth,
-    contentWidth,
-    height: CHART_HEIGHT
+    contentWidth
   }
 }
 
 const syncChartLayout = (strategy: HeightWeightStrategy, labelCount: number) => {
   const layout = getChartLayout(labelCount)
   if (strategy.chartWidth) strategy.chartWidth.value = layout.width
-  if (strategy.chartYAxisWidth) strategy.chartYAxisWidth.value = layout.yAxisWidth
   if (strategy.chartContentWidth) strategy.chartContentWidth.value = layout.contentWidth
-  if (strategy.chartHeight) strategy.chartHeight.value = layout.height
   return layout
 }
 
@@ -157,8 +152,8 @@ export function useHeightWeightChart() {
         lineWidth: 1.8,
         showYAxisLabels: true,
         showYAxisLine: true,
-        yAxisLabelWidth: Y_AXIS_WIDTH,
-        axisLeft: Y_AXIS_WIDTH,
+        yAxisLabelWidth: CHART_Y_AXIS_WIDTH,
+        axisLeft: CHART_Y_AXIS_WIDTH,
         pointOnTick: true,
         firstXAxisLabelOffset: 0,
         pointStartPadding: POINT_START_PADDING,

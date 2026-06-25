@@ -5,7 +5,7 @@ import { EnumFeedType } from '@/dict'
 import { useCtxState } from '@allkit/use'
 import { IChartState } from '../types'
 import {
-  SCROLLABLE_Y_AXIS_WIDTH,
+  CHART_Y_AXIS_WIDTH,
   getScrollableContentWidth,
   createXAxisShowFn,
   renderSplitCanvas
@@ -16,7 +16,6 @@ type ScrollableChartStrategy = {
   data: { value: unknown }
   yAxisCanvasId: { value: string }
   contentCanvasId: { value: string }
-  chartYAxisWidth?: { value: number }
   chartContentWidth?: { value: number }
 }
 
@@ -77,7 +76,6 @@ export function useBreastFeedChart() {
     let yData = code === '10' ? axis.yAxisNum : axis.yAxisVolume
     let xDataLength = axis.xAxisData.length
     const chartContentWidth = getScrollableContentWidth(xDataLength)
-    if (this.chartYAxisWidth) this.chartYAxisWidth.value = SCROLLABLE_Y_AXIS_WIDTH
     if (this.chartContentWidth) this.chartContentWidth.value = chartContentWidth
     const chartConfig = {
       chart: {
@@ -106,7 +104,7 @@ export function useBreastFeedChart() {
     await renderSplitCanvas(
       EnumFeedType.BREAST_FEED_DIRECT,
       chartConfig,
-      SCROLLABLE_Y_AXIS_WIDTH,
+      CHART_Y_AXIS_WIDTH,
       chartContentWidth,
       {
         yAxisCanvasId: this.yAxisCanvasId.value,
