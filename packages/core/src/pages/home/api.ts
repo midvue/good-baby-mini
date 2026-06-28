@@ -65,3 +65,19 @@ export const apiAddBabyFoster = (data: { familyId: number; relation: string }) =
   }
   return http.post<IBaby[]>(option)
 }
+
+/** 订阅授权上报单项 */
+export interface ISubscribeReportItem {
+  templateId: string
+  status: 'accept' | 'reject'
+}
+
+/**
+ * 上报订阅授权结果（requestSubscribeMessage 回调中 accept 的调用）
+ */
+export const apiReportSubscribe = (list: ISubscribeReportItem[]) => {
+  return http.post<boolean>({
+    url: '/subscribe/report',
+    data: { list }
+  })
+}

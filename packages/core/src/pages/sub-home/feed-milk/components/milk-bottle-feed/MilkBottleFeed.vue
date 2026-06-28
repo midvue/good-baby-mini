@@ -18,6 +18,7 @@ import { navigateBack, useDictList } from '@/use'
 import { getBabyInfo } from '@/utils'
 import { EnumFeedType } from '@/dict'
 import { apiAddFeedRecord, apiGetLatestFeedRecords, apiUpdateFeedRecord } from './api'
+import { requestSubscribeAndReport } from '@/pages/home/utils/subscribe'
 import bgMilkVolume from './assets/bg_milk_volume.png'
 
 export default defineComponent({
@@ -159,6 +160,8 @@ export default defineComponent({
       const res = await apiFunc(record).catch(() => false)
       if (!res) return
       Taro.showToast({ title: '添加成功' })
+      // 保存成功后引导订阅（H5 静默跳过，失败不影响返回）
+      await requestSubscribeAndReport()
       navigateBack()
     }
 

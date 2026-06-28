@@ -14,7 +14,7 @@ import { getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
 if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
   const { miniProgram } = Taro.getAccountInfoSync()
   setEnvVersion(
-    miniProgram.envVersion === EnumEnvVersion.RELEASE ? EnumEnvVersion.RELEASE : EnumEnvVersion.DEV
+    miniProgram.envVersion === EnumEnvVersion.DEV ? EnumEnvVersion.DEV : EnumEnvVersion.RELEASE
   )
 } else {
   setEnvVersion(getEnvVersion() || EnumEnvVersion.DEV)

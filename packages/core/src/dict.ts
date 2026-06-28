@@ -1,7 +1,7 @@
 /** 环境版本 */
 export enum EnumEnvVersion {
   /** 开发/测试环境 (小程序开发版/体验版默认) */
-  DEV = 'dev',
+  DEV = 'develop',
   /** 生产环境 (小程序正式版) */
   RELEASE = 'release'
 }

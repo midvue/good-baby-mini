@@ -10,6 +10,7 @@ import { EnumFeedType } from '@/dict'
 import { useAppStore } from '@/stores'
 import { navigateTo, reLaunch, useDictList, useDictMap } from '@/use'
 import { apiBabyList, apiGetFeedRecordListByDay } from '../api'
+import { requestSubscribeAndReport } from '../utils/subscribe'
 import { type IHomeState } from '../types'
 
 /**  喂养记录 */
@@ -213,7 +214,9 @@ export const useRecords = () => {
               喂养记录
               <Tag
                 size='mini'
-                onClick={() => {
+                onClick={async () => {
+                  // 进入周报前先引导订阅（H5 静默跳过，失败不阻断）
+                  await requestSubscribeAndReport()
                   navigateTo({
                     path: '/pages/sub-home/weekly/index'
                   })
