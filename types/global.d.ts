@@ -64,6 +64,6 @@ const META_ENV: {
 declare type MetaEnvType = typeof META_ENV
 
 declare const META_ENV_MAP: {
-  dev: MetaEnvType
+  develop: MetaEnvType
   release: MetaEnvType
 }
