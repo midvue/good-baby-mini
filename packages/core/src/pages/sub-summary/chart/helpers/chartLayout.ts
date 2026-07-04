@@ -7,17 +7,25 @@ const { windowWidth } = Taro.getSystemInfoSync()
 export const getCanvasLayoutSync = () => ({ windowWidth })
 
 export const CHART_Y_AXIS_WIDTH = 44
-export const SCROLLABLE_POINT_WIDTH = 34
 
-export const getScrollableContentWidth = (length: number) => {
-  const visibleContentWidth = Math.max(0, windowWidth - CHART_Y_AXIS_WIDTH - 8)
-  const pointContentWidth = Math.max(length - 1, 1) * SCROLLABLE_POINT_WIDTH + 80
-  return Math.max(visibleContentWidth, pointContentWidth)
+/** x 轴每个日期标签的预估宽度（px），用于计算不重叠的标签间隔 */
+const X_AXIS_LABEL_WIDTH = 36
+
+/**
+ * 获取图表内容区宽度（始终一屏，不滚动）
+ */
+export const getScrollableContentWidth = (_length: number) => {
+  return Math.max(0, windowWidth - CHART_Y_AXIS_WIDTH - 8)
 }
 
+/**
+ * 根据可视宽度和数据点数量，计算 x 轴标签的显示间隔，避免重叠
+ */
 export const createXAxisShowFn = (length: number) => {
-  const interval = Math.floor(length / 7)
-  return (index: number) => length <= 7 || index % interval === 0
+  const visibleContentWidth = Math.max(0, windowWidth - CHART_Y_AXIS_WIDTH - 8)
+  const maxLabels = Math.max(1, Math.floor(visibleContentWidth / X_AXIS_LABEL_WIDTH))
+  const interval = Math.max(1, Math.ceil(length / maxLabels))
+  return (index: number) => length <= maxLabels || index % interval === 0
 }
 
 export const renderSplitCanvas = async (

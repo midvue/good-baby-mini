@@ -1,4 +1,4 @@
-﻿<script lang="tsx">
+<script lang="tsx">
 import { defineComponent, nextTick, onUnmounted, reactive, ref } from 'vue'
 import Taro from '@tarojs/taro'
 import { Canvas } from '@tarojs/components'
