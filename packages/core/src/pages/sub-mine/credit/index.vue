@@ -1,10 +1,11 @@
 <script lang="tsx">
 import { defineComponent, reactive } from 'vue'
+import { useDidShow } from '@tarojs/taro'
 import { Button, Image, Navbar } from '@allkit/taro-h5-ui'
+import { switchTab, navigateTo } from '@/use'
 import { apiPointList, apiPointSummary, apiPointToday, apiUpdatePoint } from './api'
 import { type Point } from './types'
 import { EnumPointStatus, EnumTriggerType, pointStatusStrategy, ruleRouteStrategy } from './dict'
-import { switchTab, navigateTo } from '@/use'
 
 export default defineComponent({
   name: 'Credit',
@@ -30,7 +31,9 @@ export default defineComponent({
         state.todayPoints = res?.todayPoints || 0
       })
     }
-    init()
+    useDidShow(() => {
+      init()
+    })
 
     function onPointClick(point: Point) {
       // MANUAL类型且待领取：领取积分

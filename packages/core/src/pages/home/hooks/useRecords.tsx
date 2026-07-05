@@ -1,4 +1,4 @@
-import { reactive, watch } from 'vue'
+﻿import { reactive, watch } from 'vue'
 import { ScrollView } from '@tarojs/components'
 import { useDidShow } from '@tarojs/taro'
 import { dateDiff, durationFormatNoZero, useDate } from '@allkit/shared'
@@ -214,12 +214,12 @@ export const useRecords = () => {
               喂养记录
               <Tag
                 size='mini'
-                onClick={async () => {
-                  // 进入周报前先引导订阅（H5 静默跳过，失败不阻断）
-                  await requestSubscribeAndReport()
+                onClick={() => {
                   navigateTo({
                     path: '/pages/sub-home/weekly/index'
                   })
+                  // 进入周报前先引导订阅（H5 静默跳过，失败不阻断）
+                  requestSubscribeAndReport()
                 }}
               >
                 周报

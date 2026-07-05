@@ -48,7 +48,6 @@ export default defineComponent({
           },
           {} as IWeeklyState['userMap']
         )
-        console.log(state.userMap)
       })
     }
 

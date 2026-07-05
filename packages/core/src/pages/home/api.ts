@@ -66,14 +66,17 @@ export const apiAddBabyFoster = (data: { familyId: number; relation: string }) =
   return http.post<IBaby[]>(option)
 }
 
+/** 微信 requestSubscribeMessage 回包 status 取值 */
+export type SubscribeStatus = 'accept' | 'reject' | 'ban' | 'filter'
+
 /** 订阅授权上报单项 */
 export interface ISubscribeReportItem {
   templateId: string
-  status: 'accept' | 'reject'
+  status: SubscribeStatus
 }
 
 /**
- * 上报订阅授权结果（requestSubscribeMessage 回调中 accept 的调用）
+ * 上报订阅授权结果（全量上报真实 status，后端按 accept 过滤累加配额）
  */
 export const apiReportSubscribe = (list: ISubscribeReportItem[]) => {
   return http.post<boolean>({

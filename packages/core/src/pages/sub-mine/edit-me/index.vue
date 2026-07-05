@@ -19,6 +19,8 @@ import { useAppStore } from '@/stores'
 import { type IUser } from './types'
 import { apiUserUpdate } from './api'
 
+const phoneReg = /^1[3-9]\d{9}$/
+
 export default defineComponent({
   name: 'EditMe',
   emits: ['close'],
@@ -90,6 +92,18 @@ export default defineComponent({
       }
     ]
     const onSubmit = async () => {
+      const nickname = currState.form.nickname?.trim()
+      const phone = currState.form.phone?.trim() || ''
+      if (!nickname) {
+        Taro.showToast({ title: '请输入昵称', icon: 'none' })
+        return
+      }
+      if (!phoneReg.test(phone)) {
+        Taro.showToast({ title: '手机号格式错误', icon: 'none' })
+        return
+      }
+      currState.form.nickname = nickname
+      currState.form.phone = phone
       const res = await apiUserUpdate(currState.form).catch(() => false)
       if (!res) return
       appStore.updateUseInfo()

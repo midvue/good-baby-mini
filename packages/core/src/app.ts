@@ -11,13 +11,13 @@ import { useAppStore } from './stores'
 import { initDict, useUpdateManager } from './use'
 import { getEnvVersion, getMetaEnv, getToken, setEnvVersion } from './utils'
 
-if (Taro.getEnv() !== Taro.ENV_TYPE.WEB) {
+if (process.env.TARO_ENV === 'h5') {
+  setEnvVersion(getEnvVersion() || EnumEnvVersion.DEV)
+} else {
   const { miniProgram } = Taro.getAccountInfoSync()
   setEnvVersion(
     miniProgram.envVersion === EnumEnvVersion.DEV ? EnumEnvVersion.DEV : EnumEnvVersion.RELEASE
   )
-} else {
-  setEnvVersion(getEnvVersion() || EnumEnvVersion.DEV)
 }
 
 const App = createApp({

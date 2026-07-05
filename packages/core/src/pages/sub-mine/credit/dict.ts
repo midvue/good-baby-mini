@@ -35,7 +35,7 @@ export enum EnumTriggerType {
  *
  */
 
-export let pointStatusStrategy = {
+export const pointStatusStrategy = {
   [EnumPointStatus.UNCOMPLETED]: {
     text: '去完成',
     type: 'warning',
@@ -60,4 +60,5 @@ export let pointStatusStrategy = {
  */
 export const ruleRouteStrategy: Record<string, RuleRoute> = {
   daily_feed: { path: '/pages/home/index', isTab: true },
+  complete_profile: { path: '/pages/sub-mine/edit-me/index' }
 }
